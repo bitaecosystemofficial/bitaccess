@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,16 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				bitaccess: {
+					gold: "#FFD700",
+					"gold-light": "#F5CC7F",
+					"gold-dark": "#B8860B",
+					black: "#0D0D0D",
+					"black-light": "#1A1A1A",
+					"black-dark": "#000000",
+					slate: "#2F4F4F",
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,11 +94,34 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-gold': {
+					'0%, 100%': {
+						opacity: '1',
+					},
+					'50%': {
+						opacity: '0.7',
+					},
+				},
+				'float': {
+					'0%, 100%': {
+						transform: 'translateY(0)',
+					},
+					'50%': {
+						transform: 'translateY(-10px)',
+					},
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-gold': 'pulse-gold 3s infinite',
+				'float': 'float 5s ease-in-out infinite',
+			},
+			backgroundImage: {
+				'gold-gradient': 'linear-gradient(to right, #B8860B, #FFD700, #F5CC7F)',
+				'black-gradient': 'linear-gradient(to right, #000000, #1A1A1A)',
+				'hero-pattern': 'radial-gradient(circle at center, rgba(245, 204, 127, 0.15) 0%, rgba(13, 13, 13, 0.95) 70%)',
 			}
 		}
 	},
