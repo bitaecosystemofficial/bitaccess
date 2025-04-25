@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
-import { Wheel } from "lucide-react";
+import { RotateCw } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { toast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -57,7 +57,7 @@ const SpinWheel = () => {
           <div className="max-w-3xl mx-auto bg-bitaccess-black-light rounded-xl p-8 border border-bitaccess-gold/20">
             <div className="flex flex-col md:flex-row items-center mb-8">
               <div className="bg-bitaccess-gold/10 p-4 rounded-full mb-4 md:mb-0 md:mr-6">
-                <Wheel size={40} className="text-bitaccess-gold" />
+                <RotateCw size={40} className="text-bitaccess-gold" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white mb-2">Daily Rewards</h3>

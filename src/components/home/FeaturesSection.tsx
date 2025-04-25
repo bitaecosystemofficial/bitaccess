@@ -1,7 +1,7 @@
 
 import SectionHeading from "@/components/ui/section-heading";
 import FeatureCard from "@/components/ui/feature-card";
-import { Gift, Coins, TrendingUp, ArrowLeftRight, ShoppingCart, Users, Wheel } from "lucide-react";
+import { Gift, Coins, TrendingUp, ArrowLeftRight, ShoppingCart, Users, RotateCw } from "lucide-react";
 
 const FeaturesSection = () => {
   const features = [
@@ -38,7 +38,7 @@ const FeaturesSection = () => {
     {
       title: "Spin & Win",
       description: "Try your luck with our daily spin-a-wheel game for a chance to win BIT tokens and other rewards.",
-      icon: <Wheel size={24} />
+      icon: <RotateCw size={24} />
     },
   ];
 
