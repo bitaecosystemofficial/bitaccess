@@ -1,4 +1,3 @@
-
 // Smart contract utilities for Binance Smart Chain interactions
 import { useEffect, useState } from 'react';
 
@@ -43,7 +42,12 @@ export const usePresaleData = () => {
     progress: 68,
     softCap: 2000000,
     hardCap: 5000000,
-    endTimeInSeconds: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 7 days from now
+    endTimeInSeconds: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+    paymentMethods: {
+      bnb: { rate: 250, min: 0.1, max: 50 },
+      usdt: { rate: 1, min: 50, max: 25000 }
+    },
+    address: '0x1234567890123456789012345678901234567890'
   });
 
   useEffect(() => {
@@ -261,7 +265,11 @@ export const useSpinWheelData = () => {
 };
 
 // Presale Contract Interactions
-export const buyPresaleTokens = async (amount: number, walletAddress: string): Promise<ContractResult> => {
+export const buyPresaleTokens = async (
+  amount: number, 
+  paymentMethod: 'bnb' | 'usdt',
+  walletAddress: string
+): Promise<ContractResult> => {
   try {
     const hash = await mockTransaction();
     return { 

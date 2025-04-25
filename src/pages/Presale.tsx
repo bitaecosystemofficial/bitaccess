@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
@@ -13,6 +12,7 @@ const Presale = () => {
   const { isConnected, address, connectWallet } = useWallet();
   const presaleData = usePresaleData();
   
+  const [paymentMethod, setPaymentMethod] = useState<'bnb' | 'usdt'>('bnb');
   const [usdAmount, setUsdAmount] = useState<number>(0);
   const [tokenAmount, setTokenAmount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -25,11 +25,11 @@ const Presale = () => {
       // Apply bonus structure
       let bonus = 0;
       if (usdAmount >= 5000) {
-        bonus = 0.15; // 15% bonus
+        bonus = 0.15;
       } else if (usdAmount >= 1000) {
-        bonus = 0.10; // 10% bonus
+        bonus = 0.10;
       } else if (usdAmount >= 500) {
-        bonus = 0.05; // 5% bonus
+        bonus = 0.05;
       }
       
       const totalTokens = calculatedTokens * (1 + bonus);
@@ -48,7 +48,19 @@ const Presale = () => {
     if (usdAmount <= 0) {
       toast({
         title: "Invalid Amount",
-        description: "Please enter a valid USD amount",
+        description: "Please enter a valid amount",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    const minAmount = presaleData.paymentMethods[paymentMethod].min;
+    const maxAmount = presaleData.paymentMethods[paymentMethod].max;
+    
+    if (usdAmount < minAmount || usdAmount > maxAmount) {
+      toast({
+        title: "Invalid Amount",
+        description: `Amount must be between ${minAmount} and ${maxAmount} ${paymentMethod.toUpperCase()}`,
         variant: "destructive"
       });
       return;
@@ -56,7 +68,7 @@ const Presale = () => {
     
     setIsLoading(true);
     try {
-      const result = await buyPresaleTokens(tokenAmount, address);
+      const result = await buyPresaleTokens(tokenAmount, paymentMethod, address);
       if (result.success) {
         toast({
           title: "Purchase Successful",
@@ -81,7 +93,7 @@ const Presale = () => {
       setIsLoading(false);
     }
   };
-  
+
   // Calculate time remaining
   const calculateTimeRemaining = () => {
     const now = Math.floor(Date.now() / 1000);
@@ -113,7 +125,7 @@ const Presale = () => {
         <div className="container px-4 md:px-8">
           <SectionHeading
             title="BitAccess Token Presale"
-            subtitle="Secure your BIT tokens at the most advantageous price before public listing"
+            subtitle="Secure your BIT tokens using BNB or USDT before public listing"
             centered
           />
           
@@ -199,16 +211,48 @@ const Presale = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-gray-400 text-sm mb-2">Amount in USD</label>
+                  <label className="block text-gray-400 text-sm mb-2">Payment Method</label>
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => setPaymentMethod('bnb')}
+                      className={`flex-1 p-3 rounded border ${
+                        paymentMethod === 'bnb'
+                          ? 'bg-bitaccess-gold/20 border-bitaccess-gold text-bitaccess-gold'
+                          : 'border-gray-600 text-gray-400'
+                      }`}
+                    >
+                      BNB
+                    </button>
+                    <button
+                      onClick={() => setPaymentMethod('usdt')}
+                      className={`flex-1 p-3 rounded border ${
+                        paymentMethod === 'usdt'
+                          ? 'bg-bitaccess-gold/20 border-bitaccess-gold text-bitaccess-gold'
+                          : 'border-gray-600 text-gray-400'
+                      }`}
+                    >
+                      USDT
+                    </button>
+                  </div>
+                  <p className="mt-2 text-sm text-gray-400">
+                    Min: {presaleData.paymentMethods[paymentMethod].min} {paymentMethod.toUpperCase()} |
+                    Max: {presaleData.paymentMethods[paymentMethod].max} {paymentMethod.toUpperCase()}
+                  </p>
+                </div>
+                
+                <div>
+                  <label className="block text-gray-400 text-sm mb-2">Amount in {paymentMethod.toUpperCase()}</label>
                   <div className="relative">
                     <input
                       type="number"
-                      placeholder="Enter USD amount"
+                      placeholder={`Enter ${paymentMethod.toUpperCase()} amount`}
                       value={usdAmount || ''}
                       onChange={(e) => setUsdAmount(parseFloat(e.target.value) || 0)}
-                      className="w-full p-3 bg-bitaccess-black-dark border border-bitaccess-gold/20 rounded text-white focus:border-bitaccess-gold focus:outline-none pr-12"
+                      className="w-full p-3 bg-bitaccess-black-dark border border-bitaccess-gold/20 rounded text-white focus:border-bitaccess-gold focus:outline-none pr-20"
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">USD</span>
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                      {paymentMethod.toUpperCase()}
+                    </span>
                   </div>
                 </div>
                 
