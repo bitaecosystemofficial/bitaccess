@@ -1,4 +1,3 @@
-
 import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
@@ -34,7 +33,7 @@ const Presale = () => {
                 <span className="text-gray-400">Progress</span>
                 <span className="text-bitaccess-gold">68% (3,400,000 / 5,000,000 BIT)</span>
               </div>
-              <Progress value={68} className="h-3 bg-gray-700" indicatorClassName="bg-bitaccess-gold" />
+              <Progress value={68} className="h-3 bg-gray-700" />
               <div className="flex justify-between mt-2">
                 <span className="text-xs text-gray-400">Soft Cap: 2M BIT</span>
                 <span className="text-xs text-gray-400">Hard Cap: 5M BIT</span>

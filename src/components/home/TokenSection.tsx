@@ -2,7 +2,7 @@
 import SectionHeading from "@/components/ui/section-heading";
 import TokenStatCard from "@/components/ui/token-stat-card";
 import { Button } from "@/components/ui/button";
-import { Coins, TrendingUp, Exchange } from "lucide-react";
+import { Coins, TrendingUp, ArrowLeftRight } from "lucide-react";
 
 const TokenSection = () => {
   return (
@@ -28,7 +28,7 @@ const TokenSection = () => {
           <TokenStatCard
             title="Total Supply"
             value="100,000,000 BIT"
-            icon={<Exchange size={24} />}
+            icon={<ArrowLeftRight size={24} />}
           />
         </div>
         

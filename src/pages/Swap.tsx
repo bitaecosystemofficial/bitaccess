@@ -2,7 +2,7 @@
 import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
-import { Exchange } from "lucide-react";
+import { ArrowLeftRight } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Swap = () => {
@@ -20,7 +20,7 @@ const Swap = () => {
             <div className="bg-bitaccess-black-light rounded-xl p-8 border border-bitaccess-gold/20">
               <div className="flex items-center justify-center mb-8">
                 <div className="bg-bitaccess-gold/10 p-3 rounded-full">
-                  <Exchange size={32} className="text-bitaccess-gold" />
+                  <ArrowLeftRight size={32} className="text-bitaccess-gold" />
                 </div>
               </div>
               
@@ -55,7 +55,7 @@ const Swap = () => {
               {/* Swap Icon */}
               <div className="flex justify-center my-4">
                 <button className="bg-bitaccess-black p-2 rounded-full border border-bitaccess-gold/20 hover:border-bitaccess-gold transition-colors">
-                  <Exchange size={20} className="text-bitaccess-gold" />
+                  <ArrowLeftRight size={20} className="text-bitaccess-gold" />
                 </button>
               </div>
               

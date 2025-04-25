@@ -1,7 +1,7 @@
 
 import SectionHeading from "@/components/ui/section-heading";
 import FeatureCard from "@/components/ui/feature-card";
-import { Gift, Coins, TrendingUp, Exchange, ShoppingCart, Users } from "lucide-react";
+import { Gift, Coins, TrendingUp, ArrowLeftRight, ShoppingCart, Users } from "lucide-react";
 
 const FeaturesSection = () => {
   const features = [
@@ -23,7 +23,7 @@ const FeaturesSection = () => {
     {
       title: "Token Swap",
       description: "Seamlessly swap BIT tokens with other cryptocurrencies through our integrated decentralized exchange.",
-      icon: <Exchange size={24} />
+      icon: <ArrowLeftRight size={24} />
     },
     {
       title: "Merchant Network",
