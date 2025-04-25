@@ -1,9 +1,10 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Wallet } from "lucide-react";
 import Logo from "@/components/layout/Logo";
+import { useWallet } from "@/contexts/WalletContext";
 
 const navItems = [
   { label: "Home", path: "/" },
@@ -12,12 +13,19 @@ const navItems = [
   { label: "Staking", path: "/staking" },
   { label: "Swap", path: "/swap" },
   { label: "Merchants", path: "/merchants" },
+  { label: "Spin Wheel", path: "/spin-wheel" },
   { label: "Docs", path: "/docs" },
   { label: "Contact", path: "/contact" },
 ];
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { address, isConnected, isConnecting, balance, connectWallet, disconnectWallet } = useWallet();
+  const location = useLocation();
+
+  const truncateAddress = (address: string) => {
+    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-black bg-opacity-80 backdrop-blur-md border-b border-bitaccess-gold/30">
@@ -33,7 +41,11 @@ const Header = () => {
             <Link
               key={item.path}
               to={item.path}
-              className="px-3 py-2 text-sm rounded-md hover:bg-bitaccess-gold/10 transition-colors text-bitaccess-gold-light"
+              className={`px-3 py-2 text-sm rounded-md hover:bg-bitaccess-gold/10 transition-colors ${
+                location.pathname === item.path 
+                  ? "text-bitaccess-gold border-b-2 border-bitaccess-gold" 
+                  : "text-bitaccess-gold-light"
+              }`}
             >
               {item.label}
             </Link>
@@ -41,9 +53,30 @@ const Header = () => {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
-          <Button variant="outline" className="border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10">
-            Connect Wallet
-          </Button>
+          {isConnected ? (
+            <div className="flex items-center gap-3">
+              <div className="bg-bitaccess-black-light px-3 py-1 rounded-full border border-bitaccess-gold/20">
+                <span className="text-bitaccess-gold text-sm font-medium">{balance} BIT</span>
+              </div>
+              <Button 
+                variant="outline" 
+                className="border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
+                onClick={disconnectWallet}
+              >
+                <Wallet size={16} className="mr-2" />
+                {truncateAddress(address as string)}
+              </Button>
+            </div>
+          ) : (
+            <Button 
+              variant="outline" 
+              className="border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
+              onClick={connectWallet}
+              disabled={isConnecting}
+            >
+              {isConnecting ? "Connecting..." : "Connect Wallet"}
+            </Button>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -63,18 +96,48 @@ const Header = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className="px-2 py-2 text-sm rounded-md hover:bg-bitaccess-gold/10 transition-colors text-bitaccess-gold-light"
+                className={`px-2 py-2 text-sm rounded-md hover:bg-bitaccess-gold/10 transition-colors ${
+                  location.pathname === item.path 
+                    ? "text-bitaccess-gold font-medium" 
+                    : "text-bitaccess-gold-light"
+                }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.label}
               </Link>
             ))}
-            <Button 
-              variant="outline" 
-              className="mt-3 border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
-            >
-              Connect Wallet
-            </Button>
+            {isConnected ? (
+              <>
+                <div className="px-2 py-2">
+                  <div className="bg-bitaccess-black-light px-3 py-1 rounded-full border border-bitaccess-gold/20 inline-block">
+                    <span className="text-bitaccess-gold text-sm font-medium">{balance} BIT</span>
+                  </div>
+                </div>
+                <Button 
+                  variant="outline" 
+                  className="mt-3 border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
+                  onClick={() => {
+                    disconnectWallet();
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  <Wallet size={16} className="mr-2" />
+                  {truncateAddress(address as string)}
+                </Button>
+              </>
+            ) : (
+              <Button 
+                variant="outline" 
+                className="mt-3 border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
+                onClick={() => {
+                  connectWallet();
+                  setIsMenuOpen(false);
+                }}
+                disabled={isConnecting}
+              >
+                {isConnecting ? "Connecting..." : "Connect Wallet"}
+              </Button>
+            )}
           </nav>
         </div>
       )}
