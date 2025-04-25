@@ -1,14 +1,18 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { toast } from '@/hooks/use-toast';
+import { networkInfo } from '@/utils/contractUtils';
 
 export interface WalletContextType {
   address: string | null;
   isConnected: boolean;
   isConnecting: boolean;
   balance: string;
+  networkName: string;
+  chainId: number;
   connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
+  addBscNetwork: () => Promise<void>;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
@@ -29,6 +33,8 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   const [address, setAddress] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [balance, setBalance] = useState('0');
+  const [networkName, setNetworkName] = useState(networkInfo.name);
+  const [chainId, setChainId] = useState(networkInfo.chainId);
 
   // Check for previous wallet connection
   useEffect(() => {
@@ -57,7 +63,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
       
       toast({
         title: "Wallet Connected",
-        description: `Connected to ${mockAddress.substring(0, 6)}...${mockAddress.substring(38)}`,
+        description: `Connected to ${mockAddress.substring(0, 6)}...${mockAddress.substring(38)} on ${networkName}`,
       });
     } catch (error) {
       console.error("Error connecting wallet:", error);
@@ -81,6 +87,25 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
     });
   };
 
+  const addBscNetwork = async () => {
+    try {
+      // In a real app, this would interact with the actual browser wallet
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "Network Added",
+        description: `${networkInfo.name} has been added to your wallet.`,
+      });
+    } catch (error) {
+      console.error("Error adding network:", error);
+      toast({
+        title: "Network Addition Failed",
+        description: `Could not add ${networkInfo.name} to your wallet.`,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <WalletContext.Provider
       value={{
@@ -88,8 +113,11 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
         isConnected: !!address,
         isConnecting,
         balance,
+        networkName,
+        chainId,
         connectWallet,
-        disconnectWallet
+        disconnectWallet,
+        addBscNetwork
       }}
     >
       {children}

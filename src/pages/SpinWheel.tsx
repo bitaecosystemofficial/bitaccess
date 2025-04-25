@@ -1,47 +1,94 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
-import { RotateCw } from "lucide-react";
+import { RotateCw, Trophy, Users } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { toast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useSpinWheelData, spinWheel } from "@/utils/contractUtils";
 
 const SpinWheel = () => {
-  const { isConnected, connectWallet } = useWallet();
+  const { isConnected, address, connectWallet } = useWallet();
+  const spinWheelData = useSpinWheelData();
   const [isSpinning, setIsSpinning] = useState(false);
   const [showPrizeDialog, setShowPrizeDialog] = useState(false);
   const [prize, setPrize] = useState("");
-
-  const prizes = [
-    "5 BIT Tokens",
-    "10 BIT Tokens",
-    "25 BIT Tokens",
-    "50 BIT Tokens",
-    "100 BIT Tokens",
-    "Try Again"
-  ];
-
-  const handleSpin = () => {
+  const [timeToNextSpin, setTimeToNextSpin] = useState<string>("");
+  
+  // Calculate time until next spin is available
+  useEffect(() => {
+    if (!spinWheelData.userCanSpin && spinWheelData.userLastSpinTime > 0) {
+      const updateTimer = () => {
+        const now = Math.floor(Date.now() / 1000);
+        const nextSpinTime = spinWheelData.userLastSpinTime + spinWheelData.cooldownPeriod;
+        const secondsLeft = Math.max(0, nextSpinTime - now);
+        
+        if (secondsLeft <= 0) {
+          setTimeToNextSpin("");
+          return;
+        }
+        
+        const hours = Math.floor(secondsLeft / 3600);
+        const minutes = Math.floor((secondsLeft % 3600) / 60);
+        const seconds = secondsLeft % 60;
+        
+        setTimeToNextSpin(
+          `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+        );
+      };
+      
+      updateTimer();
+      const timer = setInterval(updateTimer, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [spinWheelData.userCanSpin, spinWheelData.userLastSpinTime, spinWheelData.cooldownPeriod]);
+  
+  const handleSpin = async () => {
     if (!isConnected) {
+      connectWallet();
+      return;
+    }
+    
+    if (!spinWheelData.userCanSpin) {
       toast({
-        title: "Wallet Required",
-        description: "Please connect your wallet to spin the wheel",
+        title: "Spin Limit Reached",
+        description: `You can spin again in ${timeToNextSpin}`,
         variant: "destructive",
       });
       return;
     }
-
+    
     setIsSpinning(true);
     
-    // Simulate wheel spinning
-    setTimeout(() => {
-      const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
-      setPrize(randomPrize);
+    try {
+      const result = await spinWheel(address!);
+      if (result.success) {
+        // Simulate wheel spinning with a random prize
+        setTimeout(() => {
+          const winningIndex = Math.floor(Math.random() * spinWheelData.prizes.length);
+          const randomPrize = spinWheelData.prizes[winningIndex];
+          setPrize(randomPrize);
+          setIsSpinning(false);
+          setShowPrizeDialog(true);
+        }, 3000);
+      } else {
+        setIsSpinning(false);
+        toast({
+          title: "Spin Failed",
+          description: result.error || "Failed to spin the wheel. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
       setIsSpinning(false);
-      setShowPrizeDialog(true);
-    }, 3000);
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -67,6 +114,30 @@ const SpinWheel = () => {
               </div>
             </div>
             
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="bg-bitaccess-black p-4 rounded-lg border border-bitaccess-gold/10 text-center">
+                <Trophy size={24} className="mx-auto mb-2 text-bitaccess-gold" />
+                <p className="text-gray-400 text-sm">Total Spins</p>
+                <p className="text-xl font-bold text-white">{spinWheelData.totalSpins.toLocaleString()}</p>
+              </div>
+              
+              <div className="bg-bitaccess-black p-4 rounded-lg border border-bitaccess-gold/10 text-center">
+                <Users size={24} className="mx-auto mb-2 text-bitaccess-gold" />
+                <p className="text-gray-400 text-sm">Daily Spins</p>
+                <p className="text-xl font-bold text-white">{spinWheelData.dailySpins.toLocaleString()}</p>
+              </div>
+              
+              <div className="bg-bitaccess-black p-4 rounded-lg border border-bitaccess-gold/10 text-center">
+                <div className="flex justify-center">
+                  <div className="rounded-full h-6 w-6 bg-bitaccess-gold flex items-center justify-center text-bitaccess-black font-bold text-xs">
+                    %
+                  </div>
+                </div>
+                <p className="text-gray-400 text-sm mt-2">Win Rate</p>
+                <p className="text-xl font-bold text-white">{spinWheelData.winRate}%</p>
+              </div>
+            </div>
+            
             <div className="relative flex justify-center items-center my-12">
               {/* Stylized wheel representation */}
               <div className={`w-64 h-64 md:w-80 md:h-80 rounded-full border-8 border-bitaccess-gold relative overflow-hidden ${isSpinning ? "animate-spin" : ""}`} 
@@ -75,14 +146,14 @@ const SpinWheel = () => {
                   backgroundImage: "conic-gradient(#ffd700, #b8860b, #ffd700, #b8860b, #ffd700, #b8860b)" 
                 }}
               >
-                {prizes.map((prize, index) => (
+                {spinWheelData.prizes.map((prize, index) => (
                   <div 
                     key={index} 
                     className="absolute w-full text-center text-black font-bold"
                     style={{
                       top: '50%',
                       left: '50%',
-                      transform: `rotate(${index * (360 / prizes.length)}deg) translateY(-120px) rotate(90deg)`,
+                      transform: `rotate(${index * (360 / spinWheelData.prizes.length)}deg) translateY(-120px) rotate(90deg)`,
                       transformOrigin: 'left'
                     }}
                   >
@@ -100,14 +171,22 @@ const SpinWheel = () => {
             
             <div className="text-center mt-12">
               {isConnected ? (
-                <Button 
-                  onClick={handleSpin}
-                  disabled={isSpinning}
-                  size="lg" 
-                  className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium"
-                >
-                  {isSpinning ? "Spinning..." : "Spin the Wheel"}
-                </Button>
+                <>
+                  <Button 
+                    onClick={handleSpin}
+                    disabled={isSpinning || !spinWheelData.userCanSpin}
+                    size="lg" 
+                    className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium"
+                  >
+                    {isSpinning ? "Spinning..." : 
+                     !spinWheelData.userCanSpin && timeToNextSpin ? `Spin Again in ${timeToNextSpin}` : 
+                     "Spin the Wheel"}
+                  </Button>
+                  
+                  {!spinWheelData.userCanSpin && timeToNextSpin && (
+                    <p className="text-sm text-gray-400 mt-2">You can spin again after the cooldown period ends.</p>
+                  )}
+                </>
               ) : (
                 <Button 
                   onClick={connectWallet}
@@ -117,6 +196,10 @@ const SpinWheel = () => {
                   Connect Wallet to Spin
                 </Button>
               )}
+            </div>
+            
+            <div className="mt-6 text-center text-sm text-gray-400">
+              <p>Running on Binance Smart Chain (BSC) | View contract on <a href="https://bscscan.com" target="_blank" rel="noopener noreferrer" className="text-bitaccess-gold hover:underline">BscScan</a></p>
             </div>
           </div>
 

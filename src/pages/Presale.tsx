@@ -1,10 +1,112 @@
+
+import { useEffect, useState } from 'react';
 import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Coins } from "lucide-react";
+import { useWallet } from "@/contexts/WalletContext";
+import { usePresaleData, buyPresaleTokens } from "@/utils/contractUtils";
+import { toast } from "@/hooks/use-toast";
 
 const Presale = () => {
+  const { isConnected, address, connectWallet } = useWallet();
+  const presaleData = usePresaleData();
+  
+  const [usdAmount, setUsdAmount] = useState<number>(0);
+  const [tokenAmount, setTokenAmount] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // Calculate token amount based on USD input
+  useEffect(() => {
+    if (usdAmount > 0) {
+      const calculatedTokens = usdAmount / presaleData.currentPrice;
+      
+      // Apply bonus structure
+      let bonus = 0;
+      if (usdAmount >= 5000) {
+        bonus = 0.15; // 15% bonus
+      } else if (usdAmount >= 1000) {
+        bonus = 0.10; // 10% bonus
+      } else if (usdAmount >= 500) {
+        bonus = 0.05; // 5% bonus
+      }
+      
+      const totalTokens = calculatedTokens * (1 + bonus);
+      setTokenAmount(parseFloat(totalTokens.toFixed(2)));
+    } else {
+      setTokenAmount(0);
+    }
+  }, [usdAmount, presaleData.currentPrice]);
+  
+  const handleBuyTokens = async () => {
+    if (!isConnected || !address) {
+      connectWallet();
+      return;
+    }
+    
+    if (usdAmount <= 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid USD amount",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      const result = await buyPresaleTokens(tokenAmount, address);
+      if (result.success) {
+        toast({
+          title: "Purchase Successful",
+          description: `You have successfully purchased ${tokenAmount.toFixed(2)} BIT tokens!`,
+        });
+        setUsdAmount(0);
+        setTokenAmount(0);
+      } else {
+        toast({
+          title: "Purchase Failed",
+          description: result.error || "Transaction failed. Please try again.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Calculate time remaining
+  const calculateTimeRemaining = () => {
+    const now = Math.floor(Date.now() / 1000);
+    const timeLeft = presaleData.endTimeInSeconds - now;
+    
+    if (timeLeft <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    
+    const days = Math.floor(timeLeft / (24 * 60 * 60));
+    const hours = Math.floor((timeLeft % (24 * 60 * 60)) / (60 * 60));
+    const minutes = Math.floor((timeLeft % (60 * 60)) / 60);
+    const seconds = Math.floor(timeLeft % 60);
+    
+    return { days, hours, minutes, seconds };
+  };
+  
+  const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining());
+  
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeRemaining(calculateTimeRemaining());
+    }, 1000);
+    
+    return () => clearInterval(timer);
+  }, [presaleData.endTimeInSeconds]);
+
   return (
     <Layout>
       <div className="py-16 md:py-24 bg-hero-pattern">
@@ -23,7 +125,7 @@ const Presale = () => {
               <div>
                 <h3 className="text-xl font-bold text-white mb-2">Presale Phase: 2 of 3</h3>
                 <p className="text-gray-400">
-                  Current Price: $0.042 | Next Phase: $0.056 | Launch Price: $0.07
+                  Current Price: ${presaleData.currentPrice} | Next Phase: ${presaleData.nextPhasePrice} | Launch Price: ${presaleData.launchPrice}
                 </p>
               </div>
             </div>
@@ -31,12 +133,14 @@ const Presale = () => {
             <div className="mb-8">
               <div className="flex justify-between mb-2">
                 <span className="text-gray-400">Progress</span>
-                <span className="text-bitaccess-gold">68% (3,400,000 / 5,000,000 BIT)</span>
+                <span className="text-bitaccess-gold">
+                  {presaleData.progress}% ({(presaleData.soldTokens).toLocaleString()} / {(presaleData.totalSupply).toLocaleString()} BIT)
+                </span>
               </div>
-              <Progress value={68} className="h-3 bg-gray-700" />
+              <Progress value={presaleData.progress} className="h-3 bg-gray-700" />
               <div className="flex justify-between mt-2">
-                <span className="text-xs text-gray-400">Soft Cap: 2M BIT</span>
-                <span className="text-xs text-gray-400">Hard Cap: 5M BIT</span>
+                <span className="text-xs text-gray-400">Soft Cap: {(presaleData.softCap / 1000000).toFixed(1)}M BIT</span>
+                <span className="text-xs text-gray-400">Hard Cap: {(presaleData.hardCap / 1000000).toFixed(1)}M BIT</span>
               </div>
             </div>
             
@@ -45,19 +149,27 @@ const Presale = () => {
                 <p className="text-gray-400 text-sm mb-1">Presale Ends In</p>
                 <div className="grid grid-cols-4 gap-2">
                   <div className="bg-bitaccess-black-dark p-2 text-center rounded">
-                    <span className="block text-xl font-bold text-bitaccess-gold">07</span>
+                    <span className="block text-xl font-bold text-bitaccess-gold">
+                      {String(timeRemaining.days).padStart(2, '0')}
+                    </span>
                     <span className="text-xs text-gray-500">Days</span>
                   </div>
                   <div className="bg-bitaccess-black-dark p-2 text-center rounded">
-                    <span className="block text-xl font-bold text-bitaccess-gold">18</span>
+                    <span className="block text-xl font-bold text-bitaccess-gold">
+                      {String(timeRemaining.hours).padStart(2, '0')}
+                    </span>
                     <span className="text-xs text-gray-500">Hours</span>
                   </div>
                   <div className="bg-bitaccess-black-dark p-2 text-center rounded">
-                    <span className="block text-xl font-bold text-bitaccess-gold">45</span>
+                    <span className="block text-xl font-bold text-bitaccess-gold">
+                      {String(timeRemaining.minutes).padStart(2, '0')}
+                    </span>
                     <span className="text-xs text-gray-500">Minutes</span>
                   </div>
                   <div className="bg-bitaccess-black-dark p-2 text-center rounded">
-                    <span className="block text-xl font-bold text-bitaccess-gold">32</span>
+                    <span className="block text-xl font-bold text-bitaccess-gold">
+                      {String(timeRemaining.seconds).padStart(2, '0')}
+                    </span>
                     <span className="text-xs text-gray-500">Seconds</span>
                   </div>
                 </div>
@@ -92,6 +204,8 @@ const Presale = () => {
                     <input
                       type="number"
                       placeholder="Enter USD amount"
+                      value={usdAmount || ''}
+                      onChange={(e) => setUsdAmount(parseFloat(e.target.value) || 0)}
                       className="w-full p-3 bg-bitaccess-black-dark border border-bitaccess-gold/20 rounded text-white focus:border-bitaccess-gold focus:outline-none pr-12"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">USD</span>
@@ -104,6 +218,7 @@ const Presale = () => {
                     <input
                       type="number"
                       placeholder="0.0"
+                      value={tokenAmount || ''}
                       className="w-full p-3 bg-bitaccess-black-dark border border-bitaccess-gold/20 rounded text-white focus:border-bitaccess-gold focus:outline-none pr-12"
                       readOnly
                     />
@@ -114,9 +229,18 @@ const Presale = () => {
             </div>
             
             <div className="text-center">
-              <Button size="lg" className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium">
-                Connect Wallet to Purchase
+              <Button 
+                size="lg" 
+                className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium"
+                onClick={handleBuyTokens}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Processing...' : isConnected ? 'Buy BIT Tokens' : 'Connect Wallet to Purchase'}
               </Button>
+            </div>
+
+            <div className="mt-6 text-center text-sm text-gray-400">
+              <p>Running on Binance Smart Chain (BSC) | View contract on <a href={`https://bscscan.com/address/${presaleData.address}`} target="_blank" rel="noopener noreferrer" className="text-bitaccess-gold hover:underline">BscScan</a></p>
             </div>
           </div>
         </div>
