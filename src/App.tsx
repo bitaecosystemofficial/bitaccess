@@ -15,6 +15,8 @@ import Contact from "./pages/Contact";
 import SpinWheel from "./pages/SpinWheel";
 import NotFound from "./pages/NotFound";
 import Education from "./pages/Education";
+import Community from "./pages/Community";
+import CourseDetails from "./pages/CourseDetails";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +37,8 @@ const App = () => (
             <Route path="/spin-wheel" element={<SpinWheel />} />
             <Route path="/docs" element={<Docs />} />
             <Route path="/education" element={<Education />} />
+            <Route path="/education/:courseId" element={<CourseDetails />} />
+            <Route path="/community" element={<Community />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

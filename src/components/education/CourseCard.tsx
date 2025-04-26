@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { BookText } from "lucide-react";
 import { Course } from "@/utils/contractUtils";
+import { Link } from "react-router-dom";
 
 interface CourseCardProps {
   course: Course;
@@ -36,12 +37,21 @@ const CourseCard = ({ course, onEnroll, isConnected }: CourseCardProps) => {
         </div>
       </div>
 
-      <Button 
-        className="w-full bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black"
-        onClick={onEnroll}
-      >
-        {isConnected ? "Enroll Now" : "Connect Wallet to Enroll"}
-      </Button>
+      <div className="flex gap-2">
+        <Button 
+          className="flex-1 bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black"
+          onClick={onEnroll}
+        >
+          {isConnected ? "Enroll Now" : "Connect Wallet"}
+        </Button>
+        <Button 
+          variant="outline" 
+          className="border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
+          asChild
+        >
+          <Link to={`/education/${course.id}`}>View Details</Link>
+        </Button>
+      </div>
     </div>
   );
 };
