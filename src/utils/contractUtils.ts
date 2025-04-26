@@ -14,6 +14,10 @@ export interface Course {
   duration: string;
   level: string;
   enrolledStudents: number;
+  modules: {
+    title: string;
+    description: string;
+  }[];
 }
 
 export const contractAddresses = {
@@ -282,7 +286,21 @@ export const useEducationData = () => {
         description: "Learn the fundamentals of blockchain technology and its applications",
         duration: "4 weeks",
         level: "Beginner",
-        enrolledStudents: 1245
+        enrolledStudents: 1245,
+        modules: [
+          {
+            title: "Introduction to Blockchain",
+            description: "Understanding the basics of distributed ledger technology"
+          },
+          {
+            title: "Consensus Mechanisms",
+            description: "Proof of Work, Proof of Stake, and other consensus algorithms"
+          },
+          {
+            title: "Smart Contracts",
+            description: "Introduction to programmable blockchain agreements"
+          }
+        ]
       },
       {
         id: "bitcoin-crypto",
@@ -290,7 +308,21 @@ export const useEducationData = () => {
         description: "Master the history, trading, and investment strategies in crypto",
         duration: "6 weeks",
         level: "Intermediate",
-        enrolledStudents: 892
+        enrolledStudents: 892,
+        modules: [
+          {
+            title: "History of Bitcoin",
+            description: "The origins and evolution of the first cryptocurrency"
+          },
+          {
+            title: "Trading Strategies",
+            description: "Techniques for successful cryptocurrency trading"
+          },
+          {
+            title: "Investment Strategies",
+            description: "Long-term investment approaches in the crypto market"
+          }
+        ]
       },
       {
         id: "web3-dapps",
@@ -298,7 +330,21 @@ export const useEducationData = () => {
         description: "Explore smart contracts, DeFi, and NFTs in the Web3 ecosystem",
         duration: "8 weeks",
         level: "Advanced",
-        enrolledStudents: 567
+        enrolledStudents: 567,
+        modules: [
+          {
+            title: "Smart Contract Development",
+            description: "Building decentralized applications with smart contracts"
+          },
+          {
+            title: "Decentralized Finance (DeFi)",
+            description: "Exploring lending, borrowing, and yield farming in DeFi"
+          },
+          {
+            title: "Non-Fungible Tokens (NFTs)",
+            description: "Creating and trading unique digital assets"
+          }
+        ]
       },
       {
         id: "evolution-money",
@@ -306,7 +352,21 @@ export const useEducationData = () => {
         description: "Understand the journey from barter to digital currencies",
         duration: "3 weeks",
         level: "Beginner",
-        enrolledStudents: 1023
+        enrolledStudents: 1023,
+        modules: [
+          {
+            title: "From Barter to Coins",
+            description: "The earliest forms of exchange and the invention of coinage"
+          },
+          {
+            title: "Paper Money and Banking",
+            description: "The rise of paper currency and modern banking systems"
+          },
+          {
+            title: "Digital Payments",
+            description: "The advent of electronic payments and digital currencies"
+          }
+        ]
       },
       {
         id: "bit-applications",
@@ -314,7 +374,21 @@ export const useEducationData = () => {
         description: "Discover real-world use cases of Bitcoin and blockchain technology",
         duration: "5 weeks",
         level: "Intermediate",
-        enrolledStudents: 734
+        enrolledStudents: 734,
+        modules: [
+          {
+            title: "Supply Chain Management",
+            description: "Using blockchain to track and verify products"
+          },
+          {
+            title: "Healthcare",
+            description: "Securing patient data and improving healthcare services"
+          },
+          {
+            title: "Voting Systems",
+            description: "Creating transparent and secure voting platforms"
+          }
+        ]
       },
       {
         id: "future-bit",
@@ -322,7 +396,21 @@ export const useEducationData = () => {
         description: "Explore trends, regulations, and innovations in digital payments",
         duration: "4 weeks",
         level: "Advanced",
-        enrolledStudents: 456
+        enrolledStudents: 456,
+        modules: [
+          {
+            title: "Central Bank Digital Currencies (CBDCs)",
+            description: "The potential impact of government-issued digital currencies"
+          },
+          {
+            title: "Regulatory Landscape",
+            description: "Navigating the legal and regulatory challenges of digital payments"
+          },
+          {
+            title: "Innovations in Payment Technology",
+            description: "Exploring new technologies like stablecoins and layer-2 solutions"
+          }
+        ]
       }
     ]
   });
@@ -342,6 +430,142 @@ export const useEducationData = () => {
   }, []);
 
   return educationData;
+};
+
+// Let's add community-related contract functions
+export interface Proposal {
+  id: string;
+  title: string;
+  description: string;
+  votes: number;
+  status: 'active' | 'completed' | 'failed';
+  endTime: number;
+}
+
+export interface SocialActivity {
+  id: string;
+  type: 'share' | 'engage' | 'create';
+  reward: number;
+  description: string;
+}
+
+export interface Promotion {
+  id: string;
+  title: string;
+  description: string;
+  reward: number;
+  endTime: number;
+  isActive: boolean;
+}
+
+export interface ReferralStats {
+  totalReferrals: number;
+  activeReferrals: number;
+  totalEarnings: number;
+  pendingRewards: number;
+}
+
+export const useCommunityData = () => {
+  const [communityData, setCommunityData] = useState({
+    socialActivities: [
+      {
+        id: "share-1",
+        type: "share",
+        reward: 5,
+        description: "Share our platform on Twitter"
+      },
+      {
+        id: "engage-1",
+        type: "engage",
+        reward: 10,
+        description: "Participate in community discussions"
+      },
+      {
+        id: "create-1",
+        type: "create",
+        reward: 20,
+        description: "Create educational content"
+      }
+    ],
+    proposals: [
+      {
+        id: "prop-1",
+        title: "New Reward Structure",
+        description: "Implement tiered rewards for community participation",
+        votes: 156,
+        status: 'active',
+        endTime: Date.now() + 7 * 24 * 60 * 60 * 1000
+      }
+    ],
+    promotions: [
+      {
+        id: "promo-1",
+        title: "Early Bird Bonus",
+        description: "Get 2x rewards for all activities this week",
+        reward: 2,
+        endTime: Date.now() + 3 * 24 * 60 * 60 * 1000,
+        isActive: true
+      }
+    ],
+    referralStats: {
+      totalReferrals: 245,
+      activeReferrals: 178,
+      totalEarnings: 12500,
+      pendingRewards: 450
+    }
+  });
+
+  return communityData;
+};
+
+// Community contract interactions
+export const participateInActivity = async (
+  activityId: string,
+  walletAddress: string
+): Promise<ContractResult> => {
+  try {
+    const hash = await mockTransaction();
+    return { success: true, hash };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    };
+  }
+};
+
+export const voteOnProposal = async (
+  proposalId: string,
+  walletAddress: string
+): Promise<ContractResult> => {
+  try {
+    const hash = await mockTransaction();
+    return { success: true, hash };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    };
+  }
+};
+
+export const claimPromotionReward = async (
+  promotionId: string,
+  walletAddress: string
+): Promise<ContractResult> => {
+  try {
+    const hash = await mockTransaction();
+    return { success: true, hash };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    };
+  }
+};
+
+export const getReferralLink = (walletAddress: string): string => {
+  return `https://example.com/ref/${walletAddress}`;
 };
 
 // Presale Contract Interactions
