@@ -7,6 +7,15 @@ export interface ContractResult {
   error?: string;
 }
 
+export interface Course {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  level: string;
+  enrolledStudents: number;
+}
+
 export const contractAddresses = {
   presale: '0x1234567890123456789012345678901234567890',
   airdrop: '0x0987654321098765432109876543210987654321',
@@ -264,6 +273,77 @@ export const useSpinWheelData = () => {
   return spinWheelData;
 };
 
+export const useEducationData = () => {
+  const [educationData, setEducationData] = useState({
+    courses: [
+      {
+        id: "blockchain101",
+        title: "Blockchain 101",
+        description: "Learn the fundamentals of blockchain technology and its applications",
+        duration: "4 weeks",
+        level: "Beginner",
+        enrolledStudents: 1245
+      },
+      {
+        id: "bitcoin-crypto",
+        title: "Bitcoin & Cryptocurrency",
+        description: "Master the history, trading, and investment strategies in crypto",
+        duration: "6 weeks",
+        level: "Intermediate",
+        enrolledStudents: 892
+      },
+      {
+        id: "web3-dapps",
+        title: "Web3 & DApps",
+        description: "Explore smart contracts, DeFi, and NFTs in the Web3 ecosystem",
+        duration: "8 weeks",
+        level: "Advanced",
+        enrolledStudents: 567
+      },
+      {
+        id: "evolution-money",
+        title: "Evolution of Money & Payments",
+        description: "Understand the journey from barter to digital currencies",
+        duration: "3 weeks",
+        level: "Beginner",
+        enrolledStudents: 1023
+      },
+      {
+        id: "bit-applications",
+        title: "Applications of BIT",
+        description: "Discover real-world use cases of Bitcoin and blockchain technology",
+        duration: "5 weeks",
+        level: "Intermediate",
+        enrolledStudents: 734
+      },
+      {
+        id: "future-bit",
+        title: "Future of BIT & Digital Payments",
+        description: "Explore trends, regulations, and innovations in digital payments",
+        duration: "4 weeks",
+        level: "Advanced",
+        enrolledStudents: 456
+      }
+    ]
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setEducationData(prev => ({
+        ...prev,
+        courses: prev.courses.map(course => ({
+          ...course,
+          enrolledStudents: course.enrolledStudents + Math.floor(Math.random() * 2)
+        }))
+      }));
+    }, 30000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  return educationData;
+};
+
 // Presale Contract Interactions
 export const buyPresaleTokens = async (
   amount: number, 
@@ -389,6 +469,22 @@ export const subscribeMerchant = async (
 
 // SpinWheel Contract Interactions
 export const spinWheel = async (walletAddress: string): Promise<ContractResult> => {
+  try {
+    const hash = await mockTransaction();
+    return { 
+      success: true, 
+      hash 
+    };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    };
+  }
+};
+
+// Education Contract Interactions
+export const enrollInCourse = async (courseId: string, walletAddress: string): Promise<ContractResult> => {
   try {
     const hash = await mockTransaction();
     return { 

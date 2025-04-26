@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +14,7 @@ import Docs from "./pages/Docs";
 import Contact from "./pages/Contact";
 import SpinWheel from "./pages/SpinWheel";
 import NotFound from "./pages/NotFound";
+import Education from "./pages/Education";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +34,7 @@ const App = () => (
             <Route path="/merchants" element={<Merchants />} />
             <Route path="/spin-wheel" element={<SpinWheel />} />
             <Route path="/docs" element={<Docs />} />
+            <Route path="/education" element={<Education />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

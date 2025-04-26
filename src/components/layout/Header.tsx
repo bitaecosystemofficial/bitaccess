@@ -14,6 +14,7 @@ const navItems = [
   { label: "Swap", path: "/swap" },
   { label: "Merchants", path: "/merchants" },
   { label: "Spin Wheel", path: "/spin-wheel" },
+  { label: "Education", path: "/education" },
   { label: "Docs", path: "/docs" },
   { label: "Contact", path: "/contact" },
 ];
