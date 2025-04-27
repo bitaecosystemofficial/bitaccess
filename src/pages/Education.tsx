@@ -2,7 +2,7 @@
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { BookText } from "lucide-react";
-import { useEducationData, enrollInCourse } from "@/utils/contractUtils";
+import { useEducationData, enrollInCourse } from "@/hooks/useEducation";
 import { useWallet } from "@/contexts/WalletContext";
 import { toast } from "@/hooks/use-toast";
 import CourseCard from "@/components/education/CourseCard";

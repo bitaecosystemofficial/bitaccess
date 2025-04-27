@@ -5,8 +5,8 @@ import SectionHeading from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
 import { Gift } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
-import { useAirdropData, claimAirdrop } from "@/utils/contractUtils";
 import { toast } from "@/hooks/use-toast";
+import { useAirdropData, claimAirdrop } from "@/utils/airdrop/airdropHooks";
 
 const Airdrop = () => {
   const { isConnected, address, connectWallet } = useWallet();

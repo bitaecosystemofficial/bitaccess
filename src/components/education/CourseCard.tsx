@@ -1,8 +1,8 @@
 
 import { Button } from "@/components/ui/button";
 import { BookText } from "lucide-react";
-import { Course } from "@/utils/contractUtils";
 import { Link } from "react-router-dom";
+import { Course } from "@/types/contracts";
 
 interface CourseCardProps {
   course: Course;

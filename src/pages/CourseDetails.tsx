@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Book, Info } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { toast } from "@/hooks/use-toast";
-import { useEducationData, enrollInCourse } from "@/utils/contractUtils";
+import { useEducationData, enrollInCourse } from "@/hooks/useEducation";
 
 const CourseDetails = () => {
   const { courseId } = useParams();

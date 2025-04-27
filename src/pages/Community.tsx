@@ -11,7 +11,7 @@ import {
   voteOnProposal,
   claimPromotionReward,
   getReferralLink
-} from "@/utils/contractUtils";
+} from "@/hooks/useCommunity";
 
 const Community = () => {
   const { isConnected, address, connectWallet } = useWallet();
