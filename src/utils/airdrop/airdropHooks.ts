@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { toast } from "@/hooks/use-toast";
 
@@ -48,6 +47,29 @@ export const useAirdropData = () => {
   return airdropData;
 };
 
+// Export the claimAirdrop function
+export const claimAirdrop = async (address: string) => {
+  try {
+    // Mock transaction delay
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Generate a mock transaction hash
+    const txHash = '0x' + Array(64).fill(0).map(() => 
+      Math.floor(Math.random() * 16).toString(16)).join('');
+    
+    return {
+      success: true,
+      txHash
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: 'Transaction failed. Please try again.'
+    };
+  }
+};
+
+// Keep the original function for backward compatibility
 export const useClaimAirdrop = () => {
   const mockTransaction = async (): Promise<string> => {
     await new Promise(resolve => setTimeout(resolve, 2000));

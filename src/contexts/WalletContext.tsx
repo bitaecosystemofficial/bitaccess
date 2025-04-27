@@ -1,10 +1,20 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
 import { networkInfo } from "@/constants/contracts";
+
+// Add ethereum to Window interface
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
 
 interface WalletContextType {
   address: string | null;
   isConnected: boolean;
+  isConnecting: boolean;
+  balance: number;
   connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
 }
@@ -12,6 +22,8 @@ interface WalletContextType {
 const WalletContext = createContext<WalletContextType>({
   address: null,
   isConnected: false,
+  isConnecting: false,
+  balance: 0,
   connectWallet: async () => {},
   disconnectWallet: () => {},
 });
@@ -22,7 +34,19 @@ interface WalletProviderProps {
 
 export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   const [address, setAddress] = useState<string | null>(null);
+  const [isConnecting, setIsConnecting] = useState<boolean>(false);
+  const [balance, setBalance] = useState<number>(0);
   const isConnected = !!address;
+
+  // Check for saved wallet on mount
+  useEffect(() => {
+    const savedAddress = localStorage.getItem('walletAddress');
+    if (savedAddress) {
+      setAddress(savedAddress);
+      // Mock balance for demo purposes
+      setBalance(Math.floor(Math.random() * 10000) / 100);
+    }
+  }, []);
 
   const connectWallet = async () => {
     if (typeof window.ethereum === 'undefined') {
@@ -34,10 +58,14 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       return;
     }
 
+    setIsConnecting(true);
     try {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       const walletAddress = accounts[0];
       setAddress(walletAddress);
+      // Mock balance for demo purposes
+      const mockBalance = Math.floor(Math.random() * 10000) / 100;
+      setBalance(mockBalance);
       localStorage.setItem('walletAddress', walletAddress);
       toast({
         title: "Wallet Connected",
@@ -50,11 +78,14 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
         description: error.message || "Failed to connect to wallet.",
         variant: "destructive",
       });
+    } finally {
+      setIsConnecting(false);
     }
   };
 
   const disconnectWallet = () => {
     setAddress(null);
+    setBalance(0);
     localStorage.removeItem('walletAddress');
     toast({
       title: "Wallet Disconnected",
@@ -63,7 +94,14 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   };
 
   return (
-    <WalletContext.Provider value={{ address, isConnected, connectWallet, disconnectWallet }}>
+    <WalletContext.Provider value={{ 
+      address, 
+      isConnected, 
+      isConnecting, 
+      balance, 
+      connectWallet, 
+      disconnectWallet 
+    }}>
       {children}
     </WalletContext.Provider>
   );
