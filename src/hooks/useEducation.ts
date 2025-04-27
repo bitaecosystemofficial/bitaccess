@@ -1,6 +1,8 @@
+
 import { useState, useEffect } from 'react';
 import { Course, ContractResult } from '@/types/contracts';
 import { mockTransaction } from '@/utils/blockchainUtils';
+import { contractAddresses } from '@/constants/contracts';
 
 export const useEducationData = () => {
   const [educationData, setEducationData] = useState({
@@ -141,15 +143,30 @@ export const useEducationData = () => {
   });
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setEducationData(prev => ({
-        ...prev,
-        courses: prev.courses.map(course => ({
-          ...course,
-          enrolledStudents: course.enrolledStudents + Math.floor(Math.random() * 2)
-        }))
-      }));
-    }, 30000);
+    // In a real implementation, this would fetch data from the blockchain
+    const fetchEducationData = async () => {
+      try {
+        if (typeof window.ethereum !== 'undefined') {
+          // Mock blockchain data fetching for education platform
+          console.log("Fetching education data from blockchain");
+          
+          // In real implementation, this would query the blockchain or a decentralized storage like IPFS
+          // For now, using mock data with small random variations
+          setEducationData(prev => ({
+            ...prev,
+            courses: prev.courses.map(course => ({
+              ...course,
+              enrolledStudents: course.enrolledStudents + Math.floor(Math.random() * 2)
+            }))
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching education data:", error);
+      }
+    };
+
+    fetchEducationData();
+    const interval = setInterval(fetchEducationData, 30000);
     
     return () => clearInterval(interval);
   }, []);
@@ -159,6 +176,11 @@ export const useEducationData = () => {
 
 export const enrollInCourse = async (courseId: string, walletAddress: string): Promise<ContractResult> => {
   try {
+    console.log("Enrolling in course:", courseId, "for address:", walletAddress);
+    
+    // In real implementation, this would use ethers.js or web3.js to call contract methods
+    // or interact with a decentralized education platform
+    
     const hash = await mockTransaction();
     return { success: true, hash };
   } catch (error) {

@@ -1,5 +1,7 @@
+
 import { useState, useEffect } from 'react';
 import { toast } from "@/hooks/use-toast";
+import { contractAddresses } from "@/constants/contracts";
 
 interface AirdropData {
   phase: number;
@@ -33,13 +35,31 @@ export const useAirdropData = () => {
   });
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setAirdropData(prev => ({
-        ...prev,
-        claimed: prev.claimed + Math.floor(Math.random() * 50),
-        progress: Math.min(Math.floor((prev.claimed + Math.floor(Math.random() * 50)) / prev.allocation * 100), 100)
-      }));
-    }, 30000);
+    // In a real implementation, this would fetch data from the blockchain
+    const fetchAirdropData = async () => {
+      try {
+        if (typeof window.ethereum !== 'undefined') {
+          // Mock blockchain data fetching
+          console.log("Fetching airdrop data from contract:", contractAddresses.airdrop);
+          
+          // In real implementation, this would use ethers.js or web3.js to call contract methods
+          // Example: const airdropContract = new ethers.Contract(contractAddresses.airdrop, ABI, provider);
+          // const phase = await airdropContract.getCurrentPhase();
+          
+          // For now, using mock data with small random variations
+          setAirdropData(prev => ({
+            ...prev,
+            claimed: prev.claimed + Math.floor(Math.random() * 50),
+            progress: Math.min(Math.floor((prev.claimed + Math.floor(Math.random() * 50)) / prev.allocation * 100), 100)
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching airdrop data:", error);
+      }
+    };
+
+    fetchAirdropData();
+    const interval = setInterval(fetchAirdropData, 30000);
     
     return () => clearInterval(interval);
   }, []);
@@ -50,6 +70,14 @@ export const useAirdropData = () => {
 // Export the claimAirdrop function
 export const claimAirdrop = async (address: string) => {
   try {
+    console.log("Claiming airdrop for address:", address);
+    console.log("Using airdrop contract:", contractAddresses.airdrop);
+    
+    // In real implementation, this would use ethers.js or web3.js to call contract methods
+    // Example: const airdropContract = new ethers.Contract(contractAddresses.airdrop, ABI, signer);
+    // const tx = await airdropContract.claim();
+    // await tx.wait();
+    
     // Mock transaction delay
     await new Promise(resolve => setTimeout(resolve, 2000));
     
@@ -72,6 +100,8 @@ export const claimAirdrop = async (address: string) => {
 // Keep the original function for backward compatibility
 export const useClaimAirdrop = () => {
   const mockTransaction = async (): Promise<string> => {
+    // In real implementation, this would call the contract method
+    console.log("Using airdrop contract:", contractAddresses.airdrop);
     await new Promise(resolve => setTimeout(resolve, 2000));
     return '0x' + Array(64).fill(0).map(() => 
       Math.floor(Math.random() * 16).toString(16)).join('');

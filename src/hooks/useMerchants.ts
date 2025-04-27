@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { ContractResult } from '@/types/contracts';
 import { mockTransaction } from '@/utils/blockchainUtils';
+import { contractAddresses } from '@/constants/contracts';
 
 export const useMerchantData = () => {
   const [merchantData, setMerchantData] = useState({
@@ -58,13 +59,31 @@ export const useMerchantData = () => {
   });
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setMerchantData(prev => ({
-        ...prev,
-        totalMerchants: prev.totalMerchants + Math.floor(Math.random() * 2),
-        activeMerchants: Math.min(prev.activeMerchants + Math.floor(Math.random() * 2), prev.totalMerchants + Math.floor(Math.random() * 2))
-      }));
-    }, 30000);
+    // In a real implementation, this would fetch data from the blockchain
+    const fetchMerchantData = async () => {
+      try {
+        if (typeof window.ethereum !== 'undefined') {
+          // Mock blockchain data fetching
+          console.log("Fetching merchant data from contract:", contractAddresses.merchants);
+          
+          // In real implementation, this would use ethers.js or web3.js to call contract methods
+          // Example: const merchantContract = new ethers.Contract(contractAddresses.merchants, ABI, provider);
+          // const totalMerchants = await merchantContract.getTotalMerchants();
+          
+          // For now, using mock data with small random variations
+          setMerchantData(prev => ({
+            ...prev,
+            totalMerchants: prev.totalMerchants + Math.floor(Math.random() * 2),
+            activeMerchants: Math.min(prev.activeMerchants + Math.floor(Math.random() * 2), prev.totalMerchants + Math.floor(Math.random() * 2))
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching merchant data:", error);
+      }
+    };
+
+    fetchMerchantData();
+    const interval = setInterval(fetchMerchantData, 30000);
     
     return () => clearInterval(interval);
   }, []);
@@ -78,6 +97,14 @@ export const subscribeMerchant = async (
   walletAddress: string
 ): Promise<ContractResult> => {
   try {
+    console.log("Subscribing merchant plan:", plan, "for address:", walletAddress);
+    console.log("Using merchants contract:", contractAddresses.merchants);
+    
+    // In real implementation, this would use ethers.js or web3.js to call contract methods
+    // Example: const merchantContract = new ethers.Contract(contractAddresses.merchants, ABI, signer);
+    // const tx = await merchantContract.subscribe(plan, duration);
+    // await tx.wait();
+    
     const hash = await mockTransaction();
     return { success: true, hash };
   } catch (error) {
