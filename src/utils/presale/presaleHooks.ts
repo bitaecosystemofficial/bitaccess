@@ -1,6 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { toast } from "@/hooks/use-toast";
+import { contractService } from '@/services/ContractService';
+import { useWallet } from '@/contexts/WalletContext';
+import { ethers } from 'ethers';
 
 export interface PresaleData {
   currentPrice: number;
@@ -27,6 +29,7 @@ interface TimeRemaining {
 }
 
 export const usePresaleData = () => {
+  const { isConnected } = useWallet();
   const [presaleData, setPresaleData] = useState<PresaleData>({
     currentPrice: 0.042,
     nextPhasePrice: 0.056,
@@ -45,59 +48,34 @@ export const usePresaleData = () => {
   });
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setPresaleData(prev => ({
-        ...prev,
-        soldTokens: prev.soldTokens + Math.floor(Math.random() * 100),
-        progress: Math.min(Math.floor((prev.soldTokens + Math.floor(Math.random() * 100)) / prev.totalSupply * 100), 100)
-      }));
-    }, 30000);
-    
+    const fetchPresaleData = async () => {
+      if (!isConnected) return;
+
+      try {
+        const info = await contractService.getPresaleInfo();
+        setPresaleData(prev => ({
+          ...prev,
+          currentPrice: parseFloat(ethers.utils.formatEther(info.price)),
+          soldTokens: parseFloat(ethers.utils.formatEther(info.available)),
+          endTimeInSeconds: info.endTime.toNumber()
+        }));
+      } catch (error) {
+        console.error("Error fetching presale data:", error);
+      }
+    };
+
+    fetchPresaleData();
+    const interval = setInterval(fetchPresaleData, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isConnected]);
 
   return presaleData;
 };
 
-export const usePresaleTimer = (): TimeRemaining => {
-  const presaleData = usePresaleData();
-  const [timeRemaining, setTimeRemaining] = useState<TimeRemaining>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-
-  useEffect(() => {
-    const calculateTimeRemaining = () => {
-      const now = Math.floor(Date.now() / 1000);
-      const timeLeft = presaleData.endTimeInSeconds - now;
-      
-      if (timeLeft <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-      
-      const days = Math.floor(timeLeft / (24 * 60 * 60));
-      const hours = Math.floor((timeLeft % (24 * 60 * 60)) / (60 * 60));
-      const minutes = Math.floor((timeLeft % (60 * 60)) / 60);
-      const seconds = Math.floor(timeLeft % 60);
-      
-      return { days, hours, minutes, seconds };
-    };
-
-    const timer = setInterval(() => {
-      setTimeRemaining(calculateTimeRemaining());
-    }, 1000);
-    
-    return () => clearInterval(timer);
-  }, [presaleData.endTimeInSeconds]);
-
-  return timeRemaining;
-};
-
 export const useBuyTokens = () => {
-  const mockTransaction = async (): Promise<string> => {
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    return '0x' + Array(64).fill(0).map(() => 
-      Math.floor(Math.random() * 16).toString(16)).join('');
-  };
-
-  return async (amount: number, paymentMethod: 'bnb' | 'usdt') => {
+  return async (amount: number) => {
     try {
-      await mockTransaction();
+      const tx = await contractService.buyPresaleTokens(amount);
       toast({
         title: "Purchase Successful",
         description: `You have successfully purchased ${amount.toFixed(2)} BIT tokens!`,
@@ -106,7 +84,7 @@ export const useBuyTokens = () => {
     } catch (error) {
       toast({
         title: "Purchase Failed",
-        description: "Transaction failed. Please try again.",
+        description: error instanceof Error ? error.message : "Transaction failed. Please try again.",
         variant: "destructive"
       });
       return false;

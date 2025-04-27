@@ -1,6 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import { toast } from "@/hooks/use-toast";
+import { contractService } from '@/services/ContractService';
+import { useWallet } from '@/contexts/WalletContext';
 import { contractAddresses } from "@/constants/contracts";
 
 interface AirdropData {
@@ -19,6 +20,7 @@ interface AirdropData {
 }
 
 export const useAirdropData = () => {
+  const { address, isConnected } = useWallet();
   const [airdropData, setAirdropData] = useState<AirdropData>({
     phase: 1,
     totalPhases: 3,
@@ -35,8 +37,9 @@ export const useAirdropData = () => {
   });
 
   useEffect(() => {
-    // In a real implementation, this would fetch data from the blockchain
     const fetchAirdropData = async () => {
+      if (!isConnected || !address) return;
+
       try {
         if (typeof window.ethereum !== 'undefined') {
           // Mock blockchain data fetching
@@ -60,39 +63,24 @@ export const useAirdropData = () => {
 
     fetchAirdropData();
     const interval = setInterval(fetchAirdropData, 30000);
-    
     return () => clearInterval(interval);
-  }, []);
+  }, [address, isConnected]);
 
   return airdropData;
 };
 
-// Export the claimAirdrop function
-export const claimAirdrop = async (address: string) => {
+export const claimAirdrop = async () => {
   try {
-    console.log("Claiming airdrop for address:", address);
-    console.log("Using airdrop contract:", contractAddresses.airdrop);
-    
-    // In real implementation, this would use ethers.js or web3.js to call contract methods
-    // Example: const airdropContract = new ethers.Contract(contractAddresses.airdrop, ABI, signer);
-    // const tx = await airdropContract.claim();
-    // await tx.wait();
-    
-    // Mock transaction delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Generate a mock transaction hash
-    const txHash = '0x' + Array(64).fill(0).map(() => 
-      Math.floor(Math.random() * 16).toString(16)).join('');
+    const result = await contractService.claimAirdrop();
     
     return {
       success: true,
-      txHash
+      txHash: result.transactionHash
     };
   } catch (error) {
     return {
       success: false,
-      error: 'Transaction failed. Please try again.'
+      error: error instanceof Error ? error.message : 'Transaction failed'
     };
   }
 };

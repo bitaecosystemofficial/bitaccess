@@ -1,25 +1,22 @@
-
+import { contractService } from '@/services/ContractService';
 import { ContractResult } from '@/types/contracts';
-import { mockTransaction } from '@/utils/blockchainUtils';
-import { contractAddresses } from '@/constants/contracts';
+import { toast } from '@/hooks/use-toast';
+import { useWallet } from '@/contexts/WalletContext';
 
 export const swapTokens = async (
   fromToken: string, 
   toToken: string, 
-  amount: number, 
-  walletAddress: string
+  amount: string
 ): Promise<ContractResult> => {
   try {
-    console.log("Swapping tokens:", fromToken, "to", toToken, "amount:", amount, "for address:", walletAddress);
-    console.log("Using swap contract:", contractAddresses.swap);
+    const quote = await contractService.getSwapQuote(fromToken, toToken, amount);
+    const minAmount = quote.mul(95).div(100); // 5% slippage
+    const tx = await contractService.executeSwap(fromToken, toToken, amount, minAmount);
     
-    // In real implementation, this would use ethers.js or web3.js to call contract methods
-    // Example: const swapContract = new ethers.Contract(contractAddresses.swap, ABI, signer);
-    // const tx = await swapContract.swap(fromToken, toToken, amount);
-    // await tx.wait();
-    
-    const hash = await mockTransaction();
-    return { success: true, hash };
+    return { 
+      success: true, 
+      hash: tx.transactionHash 
+    };
   } catch (error) {
     return { 
       success: false, 
