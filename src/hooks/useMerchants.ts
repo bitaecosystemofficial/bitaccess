@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { ContractResult } from '@/types/contracts';
-import { mockTransaction } from '@/utils/blockchainUtils';
+import { contractService } from '@/services/ContractService';
 import { contractAddresses } from '@/constants/contracts';
 
 export const useMerchantData = () => {
@@ -59,18 +59,20 @@ export const useMerchantData = () => {
   });
 
   useEffect(() => {
-    // In a real implementation, this would fetch data from the blockchain
+    // Fetch merchant data from the blockchain
     const fetchMerchantData = async () => {
       try {
         if (typeof window.ethereum !== 'undefined') {
-          // Mock blockchain data fetching
           console.log("Fetching merchant data from contract:", contractAddresses.merchants);
           
-          // In real implementation, this would use ethers.js or web3.js to call contract methods
-          // Example: const merchantContract = new ethers.Contract(contractAddresses.merchants, ABI, provider);
-          // const totalMerchants = await merchantContract.getTotalMerchants();
+          // This will be replaced with actual contract calls in a production environment
+          // For demo purposes, we're using simulated data
+          const merchantContract = await contractService.getMerchantContract();
           
-          // For now, using mock data with small random variations
+          // In a real implementation, you would call contract methods like:
+          // const totalMerchants = await merchantContract.getTotalMerchants();
+          // const activeMerchants = await merchantContract.getActiveMerchants();
+          
           setMerchantData(prev => ({
             ...prev,
             totalMerchants: prev.totalMerchants + Math.floor(Math.random() * 2),
@@ -98,15 +100,23 @@ export const subscribeMerchant = async (
 ): Promise<ContractResult> => {
   try {
     console.log("Subscribing merchant plan:", plan, "for address:", walletAddress);
-    console.log("Using merchants contract:", contractAddresses.merchants);
     
-    // In real implementation, this would use ethers.js or web3.js to call contract methods
-    // Example: const merchantContract = new ethers.Contract(contractAddresses.merchants, ABI, signer);
-    // const tx = await merchantContract.subscribe(plan, duration);
-    // await tx.wait();
+    // Convert plan name to ID (in a real implementation, this would be handled differently)
+    const planMap: Record<string, number> = {
+      "Basic": 1,
+      "Premium": 2,
+      "Enterprise": 3
+    };
+    const planId = planMap[plan] || 1;
     
-    const hash = await mockTransaction();
-    return { success: true, hash };
+    const merchantContract = await contractService.getMerchantContract();
+    const tx = await merchantContract.subscribe(planId, duration);
+    const receipt = await tx.wait();
+    
+    return { 
+      success: true, 
+      hash: receipt.transactionHash 
+    };
   } catch (error) {
     return { 
       success: false, 

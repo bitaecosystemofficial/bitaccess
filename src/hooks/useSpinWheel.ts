@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { ContractResult } from '@/types/contracts';
-import { mockTransaction } from '@/utils/blockchainUtils';
+import { contractService } from '@/services/ContractService';
 import { contractAddresses } from '@/constants/contracts';
 
 export const useSpinWheelData = () => {
@@ -23,18 +23,21 @@ export const useSpinWheelData = () => {
   });
 
   useEffect(() => {
-    // In a real implementation, this would fetch data from the blockchain
+    // Fetch spin wheel data from the blockchain
     const fetchSpinWheelData = async () => {
       try {
         if (typeof window.ethereum !== 'undefined') {
-          // Mock blockchain data fetching
           console.log("Fetching spin wheel data from contract:", contractAddresses.spinWheel);
           
-          // In real implementation, this would use ethers.js or web3.js to call contract methods
-          // Example: const spinWheelContract = new ethers.Contract(contractAddresses.spinWheel, ABI, provider);
-          // const totalSpins = await spinWheelContract.getTotalSpins();
+          // This will be replaced with actual contract calls in a production environment
+          // For demo purposes, we're using simulated data
+          const spinWheelContract = await contractService.getSpinWheelContract();
           
-          // For now, using mock data with small random variations
+          // In a real implementation, you would call contract methods like:
+          // const totalSpins = await spinWheelContract.getTotalSpins();
+          // const dailySpins = await spinWheelContract.getDailySpins();
+          // const userLastSpin = await spinWheelContract.getUserLastSpin(address);
+          
           setSpinWheelData(prev => ({
             ...prev,
             totalSpins: prev.totalSpins + Math.floor(Math.random() * 5),
@@ -58,15 +61,15 @@ export const useSpinWheelData = () => {
 export const spinWheel = async (walletAddress: string): Promise<ContractResult> => {
   try {
     console.log("Spinning wheel for address:", walletAddress);
-    console.log("Using spin wheel contract:", contractAddresses.spinWheel);
     
-    // In real implementation, this would use ethers.js or web3.js to call contract methods
-    // Example: const spinWheelContract = new ethers.Contract(contractAddresses.spinWheel, ABI, signer);
-    // const tx = await spinWheelContract.spin();
-    // await tx.wait();
+    const spinWheelContract = await contractService.getSpinWheelContract();
+    const tx = await spinWheelContract.spin();
+    const receipt = await tx.wait();
     
-    const hash = await mockTransaction();
-    return { success: true, hash };
+    return { 
+      success: true, 
+      hash: receipt.transactionHash 
+    };
   } catch (error) {
     return { 
       success: false, 

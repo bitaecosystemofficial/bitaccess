@@ -1,60 +1,40 @@
-import { useState, useEffect } from 'react';
-import { toast } from "@/hooks/use-toast";
-import { contractService } from '@/services/ContractService';
-import { useWallet } from '@/contexts/WalletContext';
-import { contractAddresses } from "@/constants/contracts";
 
-interface AirdropData {
+import { useState, useEffect } from 'react';
+import { contractAddresses } from '@/constants/contracts';
+import { contractService } from '@/services/ContractService';
+
+export interface AirdropData {
   phase: number;
   totalPhases: number;
   allocation: number;
-  claimed: number;
-  progress: number;
   endTimeInSeconds: number;
-  tasks: {
-    twitter: boolean;
-    telegram: boolean;
-    newsletter: boolean;
-    share: boolean;
-  };
+  tasks: string[];
+  taskCompletions: boolean[];
+  userAddress: string | null;
 }
 
 export const useAirdropData = () => {
-  const { address, isConnected } = useWallet();
   const [airdropData, setAirdropData] = useState<AirdropData>({
     phase: 1,
     totalPhases: 3,
-    allocation: 2000000,
-    claimed: 840000,
-    progress: 42,
-    endTimeInSeconds: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60,
-    tasks: {
-      twitter: false,
-      telegram: false,
-      newsletter: false,
-      share: false
-    }
+    allocation: 500000,
+    endTimeInSeconds: Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60, // 14 days from now
+    tasks: [
+      'Follow on Twitter',
+      'Join Telegram',
+      'Subscribe to newsletter',
+      'Share announcement'
+    ],
+    taskCompletions: [false, false, false, false],
+    userAddress: null
   });
 
   useEffect(() => {
     const fetchAirdropData = async () => {
-      if (!isConnected || !address) return;
-
       try {
         if (typeof window.ethereum !== 'undefined') {
-          // Mock blockchain data fetching
-          console.log("Fetching airdrop data from contract:", contractAddresses.airdrop);
-          
-          // In real implementation, this would use ethers.js or web3.js to call contract methods
-          // Example: const airdropContract = new ethers.Contract(contractAddresses.airdrop, ABI, provider);
-          // const phase = await airdropContract.getCurrentPhase();
-          
-          // For now, using mock data with small random variations
-          setAirdropData(prev => ({
-            ...prev,
-            claimed: prev.claimed + Math.floor(Math.random() * 50),
-            progress: Math.min(Math.floor((prev.claimed + Math.floor(Math.random() * 50)) / prev.allocation * 100), 100)
-          }));
+          // Using mock data for now, but in a real implementation we would call the smart contract
+          console.log("Fetching airdrop data from blockchain");
         }
       } catch (error) {
         console.error("Error fetching airdrop data:", error);
@@ -63,53 +43,41 @@ export const useAirdropData = () => {
 
     fetchAirdropData();
     const interval = setInterval(fetchAirdropData, 30000);
+    
     return () => clearInterval(interval);
-  }, [address, isConnected]);
+  }, []);
 
   return airdropData;
 };
 
 export const claimAirdrop = async () => {
   try {
-    const result = await contractService.claimAirdrop();
+    console.log("Claiming airdrop");
+    const tx = await contractService.claimAirdrop();
     
-    return {
-      success: true,
-      txHash: result.transactionHash
+    return { 
+      success: true, 
+      hash: tx.transactionHash 
     };
   } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Transaction failed'
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
     };
   }
 };
 
-// Keep the original function for backward compatibility
-export const useClaimAirdrop = () => {
-  const mockTransaction = async (): Promise<string> => {
-    // In real implementation, this would call the contract method
-    console.log("Using airdrop contract:", contractAddresses.airdrop);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    return '0x' + Array(64).fill(0).map(() => 
-      Math.floor(Math.random() * 16).toString(16)).join('');
-  };
-
-  return async () => {
-    try {
-      await mockTransaction();
-      toast({
-        title: "Claim Successful",
-        description: "You have successfully claimed your airdrop tokens!",
-      });
-      return true;
-    } catch (error) {
-      toast({
-        title: "Claim Failed",
-        description: "Transaction failed. Please try again.",
-        variant: "destructive"
-      });
-      return false;
-    }
-  };
+export const verifyTask = async (taskId: number, walletAddress: string) => {
+  try {
+    // In a real implementation, we would call the smart contract
+    console.log(`Verifying task ${taskId} for wallet ${walletAddress}`);
+    
+    // Mock successful response
+    return { success: true };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    };
+  }
 };

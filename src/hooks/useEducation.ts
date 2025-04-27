@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Course, ContractResult } from '@/types/contracts';
-import { mockTransaction } from '@/utils/blockchainUtils';
+import { contractService } from '@/services/ContractService';
 import { contractAddresses } from '@/constants/contracts';
 
 export const useEducationData = () => {
@@ -143,15 +143,19 @@ export const useEducationData = () => {
   });
 
   useEffect(() => {
-    // In a real implementation, this would fetch data from the blockchain
+    // Fetch education data from the blockchain
     const fetchEducationData = async () => {
       try {
         if (typeof window.ethereum !== 'undefined') {
-          // Mock blockchain data fetching for education platform
-          console.log("Fetching education data from blockchain");
+          console.log("Fetching education data from contract:", contractAddresses.education);
           
-          // In real implementation, this would query the blockchain or a decentralized storage like IPFS
-          // For now, using mock data with small random variations
+          // This will be replaced with actual contract calls in a production environment
+          const educationContract = await contractService.getEducationContract();
+          
+          // In a real implementation, you would call contract methods like:
+          // For each course ID, get the enrollment count
+          // const enrollmentForCourse1 = await educationContract.getEnrolledStudents(courseId1);
+          
           setEducationData(prev => ({
             ...prev,
             courses: prev.courses.map(course => ({
@@ -178,11 +182,14 @@ export const enrollInCourse = async (courseId: string, walletAddress: string): P
   try {
     console.log("Enrolling in course:", courseId, "for address:", walletAddress);
     
-    // In real implementation, this would use ethers.js or web3.js to call contract methods
-    // or interact with a decentralized education platform
+    const educationContract = await contractService.getEducationContract();
+    const tx = await educationContract.enrollInCourse(courseId);
+    const receipt = await tx.wait();
     
-    const hash = await mockTransaction();
-    return { success: true, hash };
+    return { 
+      success: true, 
+      hash: receipt.transactionHash 
+    };
   } catch (error) {
     return { 
       success: false, 

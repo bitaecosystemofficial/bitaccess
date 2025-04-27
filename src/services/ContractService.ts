@@ -6,6 +6,9 @@ import { AirdropABI } from '@/contracts/abis/AirdropABI';
 import { PresaleABI } from '@/contracts/abis/PresaleABI';
 import { StakingABI } from '@/contracts/abis/StakingABI';
 import { SwapABI } from '@/contracts/abis/SwapABI';
+import { MerchantABI } from '@/contracts/abis/MerchantABI';
+import { SpinWheelABI } from '@/contracts/abis/SpinWheelABI';
+import { EducationABI } from '@/contracts/abis/EducationABI';
 
 export class ContractService {
   private provider: ethers.providers.Web3Provider;
@@ -41,6 +44,18 @@ export class ContractService {
     return new ethers.Contract(contractAddresses.swap, SwapABI, this.signer);
   }
 
+  async getMerchantContract() {
+    return new ethers.Contract(contractAddresses.merchants, MerchantABI, this.signer);
+  }
+
+  async getSpinWheelContract() {
+    return new ethers.Contract(contractAddresses.spinWheel, SpinWheelABI, this.signer);
+  }
+
+  async getEducationContract() {
+    return new ethers.Contract(contractAddresses.education, EducationABI, this.signer);
+  }
+
   // Token methods
   async getBalance(address: string) {
     const contract = await this.getTokenContract();
@@ -57,6 +72,12 @@ export class ContractService {
   async checkAirdropEligibility(address: string) {
     const contract = await this.getAirdropContract();
     return contract.isEligible(address);
+  }
+
+  async verifyAirdropTask(address: string, taskId: number) {
+    const contract = await this.getAirdropContract();
+    const tx = await contract.verifyTasks(address, taskId);
+    return tx.wait();
   }
 
   // Presale methods
@@ -96,6 +117,12 @@ export class ContractService {
     return { stakedBalance, rewards };
   }
 
+  async claimStakingRewards() {
+    const contract = await this.getStakingContract();
+    const tx = await contract.claimRewards();
+    return tx.wait();
+  }
+
   // Swap methods
   async getSwapQuote(tokenIn: string, tokenOut: string, amountIn: string) {
     const contract = await this.getSwapContract();
@@ -106,6 +133,44 @@ export class ContractService {
     const contract = await this.getSwapContract();
     const tx = await contract.swap(tokenIn, tokenOut, amountIn, minAmountOut, await this.signer.getAddress());
     return tx.wait();
+  }
+
+  // Merchant methods
+  async subscribeMerchant(planId: number, duration: number) {
+    const contract = await this.getMerchantContract();
+    const tx = await contract.subscribe(planId, duration);
+    return tx.wait();
+  }
+
+  async getMerchantStatus(address: string) {
+    const contract = await this.getMerchantContract();
+    return contract.getMerchantStatus(address);
+  }
+
+  // SpinWheel methods
+  async spin() {
+    const contract = await this.getSpinWheelContract();
+    const tx = await contract.spin();
+    return tx.wait();
+  }
+
+  async getSpinCooldown(address: string) {
+    const contract = await this.getSpinWheelContract();
+    // This method depends on the actual contract implementation
+    // For demo, assuming there's a method like this
+    return contract.getUserLastSpin(address);
+  }
+
+  // Education methods
+  async enrollInCourse(courseId: string) {
+    const contract = await this.getEducationContract();
+    const tx = await contract.enrollInCourse(courseId);
+    return tx.wait();
+  }
+
+  async getCourseStatus(courseId: string, address: string) {
+    const contract = await this.getEducationContract();
+    return contract.getCourseStatus(courseId, address);
   }
 }
 
