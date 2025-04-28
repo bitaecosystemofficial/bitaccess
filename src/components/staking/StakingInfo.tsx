@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingUp, Award } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
@@ -17,33 +18,34 @@ const StakingInfo = () => {
     apy: 15
   });
 
-  useEffect(() => {
-    const fetchStakingInfo = async () => {
-      if (!isConnected || !address) return;
-      
-      try {
-        const info = await contractService.getStakingInfo(address);
-        setStakingInfo(prev => ({
-          ...prev,
-          userStaked: ethers.utils.formatEther(info.stakedBalance),
-          rewards: ethers.utils.formatEther(info.rewards),
-          apy: info.apy.toNumber()
-        }));
-      } catch (error) {
-        console.error("Error fetching staking info:", error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch staking information",
-          variant: "destructive"
-        });
-      }
-    };
+  // Define fetchStakingInfo as a useCallback so it can be used in multiple useEffect hooks
+  const fetchStakingInfo = useCallback(async () => {
+    if (!isConnected || !address) return;
+    
+    try {
+      const info = await contractService.getStakingInfo(address);
+      setStakingInfo(prev => ({
+        ...prev,
+        userStaked: ethers.utils.formatEther(info.stakedBalance),
+        rewards: ethers.utils.formatEther(info.rewards),
+        apy: info.apy.toNumber()
+      }));
+    } catch (error) {
+      console.error("Error fetching staking info:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch staking information",
+        variant: "destructive"
+      });
+    }
+  }, [isConnected, address]);
 
+  useEffect(() => {
     fetchStakingInfo();
     const interval = setInterval(fetchStakingInfo, 30000);
     
     return () => clearInterval(interval);
-  }, [isConnected, address]);
+  }, [fetchStakingInfo]);
 
   // Update UI when new staking events are received
   useEffect(() => {
@@ -54,7 +56,7 @@ const StakingInfo = () => {
         description: `New ${latestStakingEvent.type} event received`,
       });
     }
-  }, [latestStakingEvent]);
+  }, [latestStakingEvent, fetchStakingInfo]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
