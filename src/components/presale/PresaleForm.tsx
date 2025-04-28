@@ -1,26 +1,21 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useWallet } from "@/contexts/WalletContext";
-import { usePresaleData, useBuyTokens } from "@/utils/presale/presaleHooks";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { TrendingUp } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { usePresaleData, useBuyTokens } from "@/utils/presale/presaleHooks";
 
 const PresaleForm = () => {
-  const { isConnected, address, connectWallet } = useWallet();
+  const [amount, setAmount] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<'bnb' | 'usdt'>('bnb');
+  const [isLoading, setIsLoading] = useState(false);
   const presaleData = usePresaleData();
   const buyTokens = useBuyTokens();
-  
-  const [paymentMethod, setPaymentMethod] = useState<'bnb' | 'usdt'>('bnb');
-  const [usdAmount, setUsdAmount] = useState<number>(0);
-  const [tokenAmount, setTokenAmount] = useState<number>(0);
 
-  const handleBuyTokens = async () => {
-    if (!isConnected) {
-      connectWallet();
-      return;
-    }
-    
-    if (usdAmount <= 0) {
+  const handlePurchase = async () => {
+    if (!amount || parseFloat(amount) <= 0) {
       toast({
         title: "Invalid Amount",
         description: "Please enter a valid amount",
@@ -28,11 +23,11 @@ const PresaleForm = () => {
       });
       return;
     }
-    
+
     const minAmount = presaleData.paymentMethods[paymentMethod].min;
     const maxAmount = presaleData.paymentMethods[paymentMethod].max;
     
-    if (usdAmount < minAmount || usdAmount > maxAmount) {
+    if (parseFloat(amount) < minAmount || parseFloat(amount) > maxAmount) {
       toast({
         title: "Invalid Amount",
         description: `Amount must be between ${minAmount} and ${maxAmount} ${paymentMethod.toUpperCase()}`,
@@ -41,87 +36,74 @@ const PresaleForm = () => {
       return;
     }
 
-    await buyTokens(tokenAmount, paymentMethod);
-    setUsdAmount(0);
-    setTokenAmount(0);
+    setIsLoading(true);
+    try {
+      await buyTokens(parseFloat(amount));
+      setAmount("");
+      toast({
+        title: "Success",
+        description: "Purchase successful!"
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Purchase failed",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="bg-bitaccess-black p-6 rounded-lg border border-bitaccess-gold/10 mb-8">
-      <h4 className="font-medium text-white mb-4">Purchase BIT Tokens</h4>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-gray-400 text-sm mb-2">Payment Method</label>
-          <div className="flex gap-4">
-            <button
-              onClick={() => setPaymentMethod('bnb')}
-              className={`flex-1 p-3 rounded border ${
-                paymentMethod === 'bnb'
-                  ? 'bg-bitaccess-gold/20 border-bitaccess-gold text-bitaccess-gold'
-                  : 'border-gray-600 text-gray-400'
-              }`}
-            >
-              BNB
-            </button>
-            <button
-              onClick={() => setPaymentMethod('usdt')}
-              className={`flex-1 p-3 rounded border ${
-                paymentMethod === 'usdt'
-                  ? 'bg-bitaccess-gold/20 border-bitaccess-gold text-bitaccess-gold'
-                  : 'border-gray-600 text-gray-400'
-              }`}
-            >
-              USDT
-            </button>
+    <Card className="bg-bitaccess-black p-6 border border-bitaccess-gold/10">
+      <CardContent className="space-y-4 p-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-gray-400 text-sm mb-2">Payment Method</label>
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                onClick={() => setPaymentMethod('bnb')}
+                className={paymentMethod === 'bnb' ? 'bg-bitaccess-gold/20 text-bitaccess-gold' : ''}
+              >
+                BNB
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setPaymentMethod('usdt')}
+                className={paymentMethod === 'usdt' ? 'bg-bitaccess-gold/20 text-bitaccess-gold' : ''}
+              >
+                USDT
+              </Button>
+            </div>
           </div>
-          <p className="mt-2 text-sm text-gray-400">
-            Min: {presaleData.paymentMethods[paymentMethod].min} {paymentMethod.toUpperCase()} |
-            Max: {presaleData.paymentMethods[paymentMethod].max} {paymentMethod.toUpperCase()}
-          </p>
-        </div>
-        
-        <div>
-          <label className="block text-gray-400 text-sm mb-2">Amount in {paymentMethod.toUpperCase()}</label>
-          <div className="relative">
-            <input
-              type="number"
-              placeholder={`Enter ${paymentMethod.toUpperCase()} amount`}
-              value={usdAmount || ''}
-              onChange={(e) => setUsdAmount(parseFloat(e.target.value) || 0)}
-              className="w-full p-3 bg-bitaccess-black-dark border border-bitaccess-gold/20 rounded text-white focus:border-bitaccess-gold focus:outline-none pr-20"
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-              {paymentMethod.toUpperCase()}
-            </span>
-          </div>
-        </div>
-        
-        <div>
-          <label className="block text-gray-400 text-sm mb-2">You will receive</label>
-          <div className="relative">
-            <input
-              type="number"
-              placeholder="0.0"
-              value={tokenAmount || ''}
-              className="w-full p-3 bg-bitaccess-black-dark border border-bitaccess-gold/20 rounded text-white focus:border-bitaccess-gold focus:outline-none pr-12"
-              readOnly
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">BIT</span>
-          </div>
-        </div>
-      </div>
 
-      <div className="text-center mt-6">
-        <Button 
-          size="lg" 
-          className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium"
-          onClick={handleBuyTokens}
+          <div>
+            <label className="block text-gray-400 text-sm mb-2">Amount</label>
+            <Input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder={`Enter amount in ${paymentMethod.toUpperCase()}`}
+              className="bg-bitaccess-black-dark"
+            />
+            <p className="text-sm text-gray-400 mt-1">
+              Min: {presaleData.paymentMethods[paymentMethod].min} {paymentMethod.toUpperCase()} |
+              Max: {presaleData.paymentMethods[paymentMethod].max} {paymentMethod.toUpperCase()}
+            </p>
+          </div>
+        </div>
+
+        <Button
+          onClick={handlePurchase}
+          disabled={isLoading}
+          className="w-full bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black mt-4"
         >
-          {isConnected ? 'Buy BIT Tokens' : 'Connect Wallet to Purchase'}
+          {isLoading ? "Processing..." : "Purchase Tokens"}
         </Button>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
