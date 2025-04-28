@@ -1,3 +1,4 @@
+
 export const contractAddresses = {
   presale: '0x1234567890123456789012345678901234567890',
   airdrop: '0x0987654321098765432109876543210987654321',
@@ -10,9 +11,11 @@ export const contractAddresses = {
 };
 
 export const networkInfo = {
-  name: "Binance Smart Chain",
-  chainId: 56,
-  currency: "BNB",
-  rpcUrl: "https://bsc-dataseed.binance.org/",
-  blockExplorerUrl: "https://bscscan.com/"
+  name: "BSC Testnet",
+  chainId: 97, // BSC Testnet chain ID
+  currency: "tBNB",
+  rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+  blockExplorerUrl: "https://testnet.bscscan.com/",
+  testnet: true
 };
+
