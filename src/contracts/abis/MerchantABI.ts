@@ -1,7 +1,19 @@
 
 export const MerchantABI = [
+  // Core merchant functions
   "function subscribe(uint256 planId, uint256 duration) external returns (bool)",
   "function getMerchantStatus(address merchant) view returns (uint8)",
   "function getSubscriptionEnd(address merchant) view returns (uint256)",
-  "event Subscribed(address indexed merchant, uint256 planId, uint256 duration)"
+  "function getPlanDetails(uint256 planId) view returns (tuple(string name, uint256 price, string[] features))",
+  "function getAllPlans() view returns (tuple(uint256 id, string name, uint256 price, string[] features)[])",
+  "function getTotalMerchants() view returns (uint256)",
+  "function getActiveMerchants() view returns (uint256)",
+  "function getMerchantsByCategory(string category) view returns (address[])",
+  "function extendSubscription(uint256 duration) external returns (bool)",
+  
+  // Events
+  "event Subscribed(address indexed merchant, uint256 planId, uint256 duration, uint256 price)",
+  "event SubscriptionExtended(address indexed merchant, uint256 duration)",
+  "event PlanUpdated(uint256 indexed planId, string name, uint256 price)",
+  "event MerchantStatusChanged(address indexed merchant, uint8 status)"
 ];
