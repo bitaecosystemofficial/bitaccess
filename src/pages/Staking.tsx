@@ -6,8 +6,11 @@ import StakeForm from "@/components/staking/StakeForm";
 import UnstakeForm from "@/components/staking/UnstakeForm";
 import StakingInfo from "@/components/staking/StakingInfo";
 import StakingContract from "@/components/staking/StakingContract";
+import { useWallet } from "@/contexts/WalletContext";
 
 const Staking = () => {
+  const { isConnected, connectWallet } = useWallet();
+  
   return (
     <Layout>
       <div className="py-16 md:py-24 bg-hero-pattern">
@@ -28,11 +31,11 @@ const Staking = () => {
               </TabsList>
               
               <TabsContent value="stake" className="space-y-4 mt-4">
-                <StakeForm />
+                <StakeForm isConnected={isConnected} connectWallet={connectWallet} />
               </TabsContent>
 
               <TabsContent value="unstake" className="space-y-4 mt-4">
-                <UnstakeForm />
+                <UnstakeForm isConnected={isConnected} connectWallet={connectWallet} />
               </TabsContent>
             </Tabs>
 

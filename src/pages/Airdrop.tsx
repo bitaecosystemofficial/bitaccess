@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
 import AirdropTasks from "@/components/airdrop/AirdropTasks";
@@ -6,9 +7,27 @@ import AirdropInfo from "@/components/airdrop/AirdropInfo";
 import AirdropTimer from "@/components/airdrop/AirdropTimer";
 import AirdropClaim from "@/components/airdrop/AirdropClaim";
 import { useAirdropData } from "@/utils/airdrop/airdropHooks";
+import { useWallet } from "@/contexts/WalletContext";
+import { toast } from "@/hooks/use-toast";
 
 const Airdrop = () => {
   const airdropData = useAirdropData();
+  const { isConnected } = useWallet();
+  
+  const [tasks, setTasks] = useState({
+    twitter: false,
+    telegram: false,
+    newsletter: false,
+    share: false
+  });
+
+  const handleTaskComplete = (task: 'twitter' | 'telegram' | 'newsletter' | 'share') => {
+    setTasks(prev => ({ ...prev, [task]: true }));
+    toast({
+      title: "Task Completed",
+      description: `${task.charAt(0).toUpperCase() + task.slice(1)} task verified successfully.`
+    });
+  };
 
   return (
     <Layout>
@@ -22,7 +41,11 @@ const Airdrop = () => {
           
           <div className="max-w-3xl mx-auto bg-bitaccess-black-light rounded-xl p-8 border border-bitaccess-gold/20">
             <AirdropInfo airdropData={airdropData} />
-            <AirdropTasks />
+            <AirdropTasks 
+              tasks={tasks}
+              handleTaskComplete={handleTaskComplete}
+              isConnected={isConnected}
+            />
             <AirdropClaim />
             
             <div className="mt-6 text-center text-sm text-gray-400">
