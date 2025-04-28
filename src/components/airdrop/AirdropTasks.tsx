@@ -1,7 +1,6 @@
-
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/card";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check } from "lucide-react";
+import { Check, ArrowUpRight } from "lucide-react";
 
 interface AirdropTasksProps {
   tasks: {
@@ -14,7 +13,18 @@ interface AirdropTasksProps {
   isConnected: boolean;
 }
 
+const taskLinks = {
+  twitter: "https://twitter.com/BitAccessOfficial",
+  telegram: "https://t.me/BitAccessOfficial",
+  newsletter: "https://bitaccess.com/newsletter",
+  share: "https://twitter.com/intent/tweet?text=Join%20the%20BitAccess%20Airdrop%20now!%20%23BitAccess%20%23Airdrop"
+};
+
 const AirdropTasks = ({ tasks, handleTaskComplete, isConnected }: AirdropTasksProps) => {
+  const handleTaskClick = (task: keyof typeof taskLinks) => {
+    window.open(taskLinks[task], '_blank');
+  };
+
   return (
     <div className="space-y-6 mb-8">
       <div>
@@ -50,25 +60,29 @@ const AirdropTasks = ({ tasks, handleTaskComplete, isConnected }: AirdropTasksPr
               <VerificationButton 
                 task="twitter"
                 completed={tasks.twitter}
-                onClick={() => handleTaskComplete('twitter')}
+                onClick={() => handleTaskClick('twitter')}
+                onVerify={() => handleTaskComplete('twitter')}
               />
               
               <VerificationButton 
                 task="telegram"
                 completed={tasks.telegram}
-                onClick={() => handleTaskComplete('telegram')}
+                onClick={() => handleTaskClick('telegram')}
+                onVerify={() => handleTaskComplete('telegram')}
               />
               
               <VerificationButton 
                 task="newsletter"
                 completed={tasks.newsletter}
-                onClick={() => handleTaskComplete('newsletter')}
+                onClick={() => handleTaskClick('newsletter')}
+                onVerify={() => handleTaskComplete('newsletter')}
               />
               
               <VerificationButton 
                 task="share"
                 completed={tasks.share}
-                onClick={() => handleTaskComplete('share')}
+                onClick={() => handleTaskClick('share')}
+                onVerify={() => handleTaskComplete('share')}
               />
             </div>
           )}
@@ -104,16 +118,26 @@ interface VerificationButtonProps {
   task: string;
   completed: boolean;
   onClick: () => void;
+  onVerify: () => void;
 }
 
-const VerificationButton = ({ task, completed, onClick }: VerificationButtonProps) => (
-  <Button 
-    onClick={onClick}
-    disabled={completed}
-    className="bg-transparent border border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
-  >
-    {completed ? `${task.charAt(0).toUpperCase() + task.slice(1)} Verified` : `Verify ${task.charAt(0).toUpperCase() + task.slice(1)}`}
-  </Button>
+const VerificationButton = ({ task, completed, onClick, onVerify }: VerificationButtonProps) => (
+  <div className="flex flex-col gap-2">
+    <Button 
+      onClick={onClick}
+      className="bg-transparent border border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
+    >
+      Visit {task.charAt(0).toUpperCase() + task.slice(1)}
+      <ArrowUpRight className="ml-1 h-4 w-4" />
+    </Button>
+    <Button 
+      onClick={onVerify}
+      disabled={completed}
+      className="bg-transparent border border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
+    >
+      {completed ? `${task.charAt(0).toUpperCase() + task.slice(1)} Verified` : `Verify ${task.charAt(0).toUpperCase() + task.slice(1)}`}
+    </Button>
+  </div>
 );
 
 export default AirdropTasks;
