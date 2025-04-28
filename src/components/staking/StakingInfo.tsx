@@ -1,13 +1,15 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingUp, Award } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { contractService } from "@/services/ContractService";
+import { useContractEvents } from "@/hooks/useContractEvents";
 import { ethers } from "ethers";
+import { toast } from "@/hooks/use-toast";
 
 const StakingInfo = () => {
   const { isConnected, address } = useWallet();
+  const { latestStakingEvent } = useContractEvents();
   const [stakingInfo, setStakingInfo] = useState({
     totalStaked: "0",
     userStaked: "0",
@@ -24,10 +26,16 @@ const StakingInfo = () => {
         setStakingInfo(prev => ({
           ...prev,
           userStaked: ethers.utils.formatEther(info.stakedBalance),
-          rewards: ethers.utils.formatEther(info.rewards)
+          rewards: ethers.utils.formatEther(info.rewards),
+          apy: info.apy.toNumber()
         }));
       } catch (error) {
         console.error("Error fetching staking info:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch staking information",
+          variant: "destructive"
+        });
       }
     };
 
@@ -36,6 +44,17 @@ const StakingInfo = () => {
     
     return () => clearInterval(interval);
   }, [isConnected, address]);
+
+  // Update UI when new staking events are received
+  useEffect(() => {
+    if (latestStakingEvent) {
+      fetchStakingInfo();
+      toast({
+        title: "Staking Update",
+        description: `New ${latestStakingEvent.type} event received`,
+      });
+    }
+  }, [latestStakingEvent]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">

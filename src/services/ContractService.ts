@@ -1,6 +1,5 @@
-
 import { ethers } from 'ethers';
-import { contractAddresses } from '@/constants/contracts';
+import { contractAddresses, networkInfo } from '@/constants/contracts';
 import { TokenABI } from '@/contracts/abis/TokenABI';
 import { AirdropABI } from '@/contracts/abis/AirdropABI';
 import { PresaleABI } from '@/contracts/abis/PresaleABI';
@@ -13,31 +12,59 @@ import { EducationABI } from '@/contracts/abis/EducationABI';
 export class ContractService {
   private provider: ethers.providers.Web3Provider;
   private signer: ethers.Signer;
+  private eventSubscriptions: Map<string, ethers.Contract>;
 
   constructor() {
     if (typeof window.ethereum !== 'undefined') {
       this.provider = new ethers.providers.Web3Provider(window.ethereum);
       this.signer = this.provider.getSigner();
+      this.eventSubscriptions = new Map();
+      this.initializeProviderEvents();
     } else {
       throw new Error('No Ethereum provider found');
     }
   }
 
-  // Get contract instances
-  private async getTokenContract() {
-    return new ethers.Contract(contractAddresses.token, TokenABI, this.signer);
+  private initializeProviderEvents() {
+    window.ethereum.on('chainChanged', () => {
+      window.location.reload();
+    });
+
+    window.ethereum.on('accountsChanged', () => {
+      window.location.reload();
+    });
   }
 
-  private async getAirdropContract() {
-    return new ethers.Contract(contractAddresses.airdrop, AirdropABI, this.signer);
+  // Enhanced contract instances with event support
+  private async getTokenContract(withEvents = false) {
+    const contract = new ethers.Contract(contractAddresses.token, TokenABI, this.signer);
+    if (withEvents && !this.eventSubscriptions.has('token')) {
+      this.eventSubscriptions.set('token', contract);
+      console.log('Subscribed to Token events');
+    }
+    return contract;
+  }
+
+  private async getAirdropContract(withEvents = false) {
+    const contract = new ethers.Contract(contractAddresses.airdrop, AirdropABI, this.signer);
+    if (withEvents && !this.eventSubscriptions.has('airdrop')) {
+      this.eventSubscriptions.set('airdrop', contract);
+      console.log('Subscribed to Airdrop events');
+    }
+    return contract;
+  }
+
+  private async getStakingContract(withEvents = false) {
+    const contract = new ethers.Contract(contractAddresses.staking, StakingABI, this.signer);
+    if (withEvents && !this.eventSubscriptions.has('staking')) {
+      this.eventSubscriptions.set('staking', contract);
+      console.log('Subscribed to Staking events');
+    }
+    return contract;
   }
 
   private async getPresaleContract() {
     return new ethers.Contract(contractAddresses.presale, PresaleABI, this.signer);
-  }
-
-  private async getStakingContract() {
-    return new ethers.Contract(contractAddresses.staking, StakingABI, this.signer);
   }
 
   private async getSwapContract() {
@@ -110,19 +137,6 @@ export class ContractService {
     return tx.wait();
   }
 
-  async getStakingInfo(address: string) {
-    const contract = await this.getStakingContract();
-    const stakedBalance = await contract.getStakedBalance(address);
-    const rewards = await contract.getRewards(address);
-    return { stakedBalance, rewards };
-  }
-
-  async claimStakingRewards() {
-    const contract = await this.getStakingContract();
-    const tx = await contract.claimRewards();
-    return tx.wait();
-  }
-
   // Swap methods
   async getSwapQuote(tokenIn: string, tokenOut: string, amountIn: string) {
     const contract = await this.getSwapContract();
@@ -171,6 +185,67 @@ export class ContractService {
   async getCourseStatus(courseId: string, address: string) {
     const contract = await this.getEducationContract();
     return contract.getCourseStatus(courseId, address);
+  }
+
+  // Real-time data methods
+  async subscribeToTokenTransfers(callback: (from: string, to: string, amount: ethers.BigNumber) => void) {
+    const contract = await this.getTokenContract(true);
+    contract.on('Transfer', callback);
+    console.log('Subscribed to Token transfers');
+  }
+
+  async subscribeToStakingEvents(callback: (event: any) => void) {
+    const contract = await this.getStakingContract(true);
+    contract.on('Staked', callback);
+    contract.on('Unstaked', callback);
+    contract.on('RewardsClaimed', callback);
+    console.log('Subscribed to Staking events');
+  }
+
+  async subscribeToAirdropEvents(callback: (event: any) => void) {
+    const contract = await this.getAirdropContract(true);
+    contract.on('TokensClaimed', callback);
+    contract.on('TaskCompleted', callback);
+    console.log('Subscribed to Airdrop events');
+  }
+
+  // Enhanced real-time data fetching methods
+  async getStakingInfo(address: string) {
+    const contract = await this.getStakingContract();
+    try {
+      const [stakedBalance, rewards, totalStaked, apy] = await Promise.all([
+        contract.getStakedBalance(address),
+        contract.getRewards(address),
+        contract.getTotalStaked(),
+        contract.getAPY()
+      ]);
+      
+      console.log('Fetched staking info:', {
+        stakedBalance: ethers.utils.formatEther(stakedBalance),
+        rewards: ethers.utils.formatEther(rewards),
+        totalStaked: ethers.utils.formatEther(totalStaked),
+        apy: apy.toString()
+      });
+
+      return {
+        stakedBalance,
+        rewards,
+        totalStaked,
+        apy
+      };
+    } catch (error) {
+      console.error('Error fetching staking info:', error);
+      throw error;
+    }
+  }
+
+  // Cleanup method
+  cleanup() {
+    this.eventSubscriptions.forEach(contract => {
+      contract.removeAllListeners();
+    });
+    this.eventSubscriptions.clear();
+    console.log('Cleaned up all contract event subscriptions');
   }
 }
 
