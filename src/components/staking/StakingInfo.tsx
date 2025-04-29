@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingUp, Award } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
-import { contractService } from "@/services/ContractService";
+import { stakingService } from "@/services/StakingService";
 import { useContractEvents } from "@/hooks/useContractEvents";
 import { ethers } from "ethers";
 import { toast } from "@/hooks/use-toast";
@@ -23,7 +23,7 @@ const StakingInfo = () => {
     if (!isConnected || !address) return;
     
     try {
-      const info = await contractService.getStakingInfo(address);
+      const info = await stakingService.getStakingInfo(address);
       setStakingInfo(prev => ({
         ...prev,
         userStaked: ethers.utils.formatEther(info.stakedBalance),

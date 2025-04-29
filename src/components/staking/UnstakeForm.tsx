@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Clock } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { contractService } from "@/services/ContractService";
+import { stakingService } from "@/services/StakingService";
 
 interface UnstakeFormProps {
   isConnected: boolean;
@@ -33,7 +33,7 @@ const UnstakeForm = ({ isConnected, connectWallet }: UnstakeFormProps) => {
 
     setIsLoading(true);
     try {
-      await contractService.unstake(unstakeAmount);
+      await stakingService.unstake(unstakeAmount);
       toast({
         title: "Unstake Successful",
         description: `You have successfully unstaked ${unstakeAmount} BIT.`,

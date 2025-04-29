@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { TrendingUp } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { contractService } from "@/services/ContractService";
+import { stakingService } from "@/services/StakingService";
 
 interface StakeFormProps {
   isConnected: boolean;
@@ -34,7 +34,7 @@ const StakeForm = ({ isConnected, connectWallet }: StakeFormProps) => {
 
     setIsLoading(true);
     try {
-      await contractService.stake(stakeAmount);
+      await stakingService.stake(stakeAmount);
       toast({
         title: "Stake Successful",
         description: `You have successfully staked ${stakeAmount} BIT for ${selectedDuration} days.`,
