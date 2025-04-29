@@ -8,27 +8,51 @@ import { toast } from '@/hooks/use-toast';
 
 export class MerchantService extends BaseContractService {
   async getMerchantContract() {
+    await this.ensureSigner();
     return new ethers.Contract(contractAddresses.merchants, MerchantABI, this.signer);
   }
 
+  async getReadOnlyMerchantContract() {
+    return new ethers.Contract(contractAddresses.merchants, MerchantABI, this.provider);
+  }
+
   async subscribeMerchant(planId: number, duration: number) {
-    const contract = await this.getMerchantContract();
-    const tx = await contract.subscribe(planId, duration);
-    return tx.wait();
+    try {
+      await this.ensureSigner();
+      const contract = await this.getMerchantContract();
+      const tx = await contract.subscribe(planId, duration);
+      return tx.wait();
+    } catch (error) {
+      console.error("Error subscribing merchant:", error);
+      throw error;
+    }
   }
 
   async getMerchantStatus(address: string) {
-    const contract = await this.getMerchantContract();
-    return contract.getMerchantStatus(address);
+    try {
+      const contract = await this.getReadOnlyMerchantContract();
+      return contract.getMerchantStatus(address);
+    } catch (error) {
+      console.error("Error getting merchant status:", error);
+      return 0; // Default to not a merchant
+    }
   }
 
   async getSubscriptionEnd(address: string) {
-    const contract = await this.getMerchantContract();
-    return contract.getSubscriptionEnd(address);
+    try {
+      const contract = await this.getReadOnlyMerchantContract();
+      return contract.getSubscriptionEnd(address);
+    } catch (error) {
+      console.error("Error getting subscription end:", error);
+      return 0; // Default to no subscription
+    }
   }
 
   async payWithToken(planName: string, duration: number, tokenType: 'BIT' | 'USDT') {
     try {
+      // Ensure we have a connected wallet
+      await this.ensureSigner();
+      
       // Convert plan name to ID
       const planMap: Record<string, number> = {
         "Basic": 1,
@@ -54,10 +78,21 @@ export class MerchantService extends BaseContractService {
       
       // Approve tokens for spending
       const tokenContract = await tokenService.getTokenContract();
+      
+      toast({
+        title: "Approving Token Spend",
+        description: "Please confirm the token approval transaction in your wallet",
+      });
+      
       const approveTx = await tokenContract.approve(contractAddresses.merchants, totalPrice);
       await approveTx.wait();
       
       // Subscribe to the plan
+      toast({
+        title: "Subscription Transaction",
+        description: "Please confirm the subscription transaction in your wallet",
+      });
+      
       const tx = await merchantContract.subscribe(planId, duration);
       const receipt = await tx.wait();
       
@@ -67,9 +102,24 @@ export class MerchantService extends BaseContractService {
       };
     } catch (error) {
       console.error("Payment error:", error);
+      let errorMessage = "Unknown error";
+      
+      if (error.code === 4001) {
+        errorMessage = "Transaction rejected by user";
+      } else if (error.message) {
+        errorMessage = error.message;
+        
+        // Simplify common MetaMask errors
+        if (errorMessage.includes("user rejected")) {
+          errorMessage = "Transaction rejected";
+        } else if (errorMessage.includes("insufficient funds")) {
+          errorMessage = "Insufficient funds for transaction";
+        }
+      }
+      
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: errorMessage
       };
     }
   }

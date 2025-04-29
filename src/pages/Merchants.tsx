@@ -4,7 +4,7 @@ import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Store, Check, Wallet, CreditCard } from "lucide-react";
+import { Store, Check, Wallet, CreditCard, Loader2 } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { toast } from "@/hooks/use-toast";
 import { useMerchantData, subscribeMerchant } from "@/hooks/useMerchants";
@@ -15,17 +15,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const Merchants = () => {
-  const { isConnected, address, connectWallet } = useWallet();
+  const { isConnected, address, connectWallet, isConnecting } = useWallet();
   const merchantData = useMerchantData();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [selectedToken, setSelectedToken] = useState<'BIT' | 'USDT'>('BIT');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [showWalletDialog, setShowWalletDialog] = useState<boolean>(false);
+
+  const handleWalletConnect = async () => {
+    try {
+      await connectWallet();
+      setShowWalletDialog(false);
+    } catch (error) {
+      console.error("Wallet connection error:", error);
+    }
+  };
 
   const handleSubscribe = async (plan: string) => {
     if (!isConnected) {
-      connectWallet();
+      setShowWalletDialog(true);
       return;
     }
 
@@ -164,7 +175,13 @@ const Merchants = () => {
                       onClick={() => handleSubscribe(plan.name)}
                       disabled={selectedPlan === plan.name || isProcessing}
                     >
-                      {isProcessing ? "Processing..." : selectedPlan === plan.name ? "Subscribed" : `Pay with ${selectedToken}`}
+                      {isProcessing ? (
+                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...</>
+                      ) : selectedPlan === plan.name ? (
+                        "Subscribed"
+                      ) : (
+                        `Pay with ${selectedToken}`
+                      )}
                     </Button>
                   </div>
                 </CardContent>
@@ -173,6 +190,30 @@ const Merchants = () => {
           </div>
         </div>
       </div>
+
+      <Dialog open={showWalletDialog} onOpenChange={setShowWalletDialog}>
+        <DialogContent className="bg-bitaccess-black border border-bitaccess-gold/20">
+          <DialogHeader>
+            <DialogTitle className="text-bitaccess-gold">Connect Wallet</DialogTitle>
+            <DialogDescription>
+              You need to connect your wallet to subscribe to a merchant plan.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center mt-4">
+            <Button
+              onClick={handleWalletConnect}
+              className="bg-bitaccess-gold text-black hover:bg-bitaccess-gold/90"
+              disabled={isConnecting}
+            >
+              {isConnecting ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Connecting...</>
+              ) : (
+                <><Wallet className="mr-2 h-4 w-4" /> Connect Wallet</>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };

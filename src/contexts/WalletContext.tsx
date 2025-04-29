@@ -175,32 +175,41 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
 
     setIsConnecting(true);
     try {
-      // Check if we're on the correct network
-      const isCorrectNetwork = await checkNetwork();
-      if (!isCorrectNetwork) {
-        // Ask user to switch network
+      // Request accounts first to ensure user interaction
+      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+      const accounts = await web3Provider.send('eth_requestAccounts', []);
+      
+      if (!accounts || accounts.length === 0) {
+        throw new Error("No accounts returned from wallet");
+      }
+      
+      const walletAddress = accounts[0];
+      const web3Signer = web3Provider.getSigner();
+      
+      // Check if we're on the correct network after connection
+      const network = await web3Provider.getNetwork();
+      setChainId(network.chainId);
+      
+      if (network.chainId !== networkInfo.chainId) {
         toast({
           title: "Wrong Network",
           description: `Switching to ${networkInfo.name}...`,
         });
+        
         const switched = await switchNetwork();
         if (!switched) {
-          throw new Error(`Unable to switch to ${networkInfo.name}. Please switch manually.`);
+          toast({
+            title: "Network Switch Required",
+            description: `Please switch to ${networkInfo.name} manually in your wallet.`,
+            variant: "destructive",
+          });
         }
       }
       
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-      const accounts = await web3Provider.send('eth_requestAccounts', []);
-      const walletAddress = accounts[0];
-      const web3Signer = web3Provider.getSigner();
-      
-      // Get network info
-      const network = await web3Provider.getNetwork();
-      
+      // Set wallet details
       setAddress(walletAddress);
       setProvider(web3Provider);
       setSigner(web3Signer);
-      setChainId(network.chainId);
       
       // Get token balance
       try {

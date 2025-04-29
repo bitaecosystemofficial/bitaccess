@@ -17,7 +17,7 @@ export const mockTransaction = async (): Promise<string> => {
 
 // Check if the network is correct
 export const checkNetwork = async (): Promise<boolean> => {
-  if (typeof window.ethereum === 'undefined') {
+  if (typeof window === 'undefined' || typeof window.ethereum === 'undefined') {
     console.error("No Ethereum provider detected");
     return false;
   }
@@ -40,19 +40,54 @@ export const checkNetwork = async (): Promise<boolean> => {
 
 // Switch to the correct network
 export const switchNetwork = async (): Promise<boolean> => {
-  if (typeof window.ethereum === 'undefined') {
+  if (typeof window === 'undefined' || typeof window.ethereum === 'undefined') {
     console.error("No Ethereum provider detected");
     return false;
   }
   
   try {
-    await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: `0x${networkInfo.chainId.toString(16)}` }],
-    });
-    return true;
+    // Format chainId as hex
+    const chainIdHex = `0x${networkInfo.chainId.toString(16)}`;
+    
+    try {
+      // First try to switch to the network
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: chainIdHex }],
+      });
+      return true;
+    } catch (switchError: any) {
+      // This error code indicates that the chain has not been added to MetaMask
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: chainIdHex,
+                chainName: networkInfo.name,
+                nativeCurrency: {
+                  name: networkInfo.currency,
+                  symbol: networkInfo.currency,
+                  decimals: 18,
+                },
+                rpcUrls: [networkInfo.rpcUrl],
+                blockExplorerUrls: [networkInfo.blockExplorerUrl],
+              },
+            ],
+          });
+          return true;
+        } catch (addError) {
+          console.error("Error adding chain:", addError);
+          return false;
+        }
+      }
+      // User rejected the request
+      console.error("Error switching network:", switchError);
+      return false;
+    }
   } catch (error) {
-    console.error("Error switching network:", error);
+    console.error("General error switching network:", error);
     return false;
   }
 };
