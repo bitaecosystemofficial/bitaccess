@@ -1,7 +1,9 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { ethers } from 'ethers';
-import { contractService } from '@/services/ContractService';
+import { tokenService } from '@/services/TokenService';
+import { stakingService } from '@/services/StakingService';
+import { airdropService } from '@/services/AirdropService';
 import { useWallet } from '@/contexts/WalletContext';
 
 export const useContractEvents = () => {
@@ -16,7 +18,7 @@ export const useContractEvents = () => {
     const setupEventListeners = async () => {
       try {
         // Subscribe to Token transfers
-        await contractService.subscribeToTokenTransfers((from, to, amount) => {
+        await tokenService.subscribeToTokenTransfers((from, to, amount) => {
           setLatestTransfer({
             from,
             to,
@@ -27,7 +29,7 @@ export const useContractEvents = () => {
         });
 
         // Subscribe to Staking events
-        await contractService.subscribeToStakingEvents((event) => {
+        await stakingService.subscribeToStakingEvents((event) => {
           setLatestStakingEvent({
             type: event.event,
             data: event.args,
@@ -37,7 +39,7 @@ export const useContractEvents = () => {
         });
 
         // Subscribe to Airdrop events
-        await contractService.subscribeToAirdropEvents((event) => {
+        await airdropService.subscribeToAirdropEvents((event) => {
           setLatestAirdropEvent({
             type: event.event,
             data: event.args,
@@ -54,7 +56,9 @@ export const useContractEvents = () => {
 
     // Cleanup on unmount
     return () => {
-      contractService.cleanup();
+      tokenService.cleanup();
+      stakingService.cleanup();
+      airdropService.cleanup();
     };
   }, [isConnected, address]);
 

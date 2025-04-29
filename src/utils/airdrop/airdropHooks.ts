@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { contractAddresses } from '@/constants/contracts';
-import { contractService } from '@/services/ContractService';
+import { airdropService } from '@/services/AirdropService';
 
 export interface AirdropData {
   phase: number;
@@ -53,7 +53,7 @@ export const useAirdropData = () => {
 export const claimAirdrop = async () => {
   try {
     console.log("Claiming airdrop");
-    const tx = await contractService.claimAirdrop();
+    const tx = await airdropService.claimAirdrop();
     
     return { 
       success: true, 

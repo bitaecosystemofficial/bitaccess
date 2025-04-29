@@ -1,4 +1,5 @@
-import { contractService } from '@/services/ContractService';
+
+import { swapService } from '@/services/SwapService';
 import { ContractResult } from '@/types/contracts';
 import { toast } from '@/hooks/use-toast';
 import { useWallet } from '@/contexts/WalletContext';
@@ -9,9 +10,9 @@ export const swapTokens = async (
   amount: string
 ): Promise<ContractResult> => {
   try {
-    const quote = await contractService.getSwapQuote(fromToken, toToken, amount);
+    const quote = await swapService.getSwapQuote(fromToken, toToken, amount);
     const minAmount = quote.mul(95).div(100); // 5% slippage
-    const tx = await contractService.executeSwap(fromToken, toToken, amount, minAmount);
+    const tx = await swapService.executeSwap(fromToken, toToken, amount, minAmount);
     
     return { 
       success: true, 
