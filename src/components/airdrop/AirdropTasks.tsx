@@ -1,6 +1,11 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, ArrowUpRight } from "lucide-react";
+import { useState } from "react";
+import { useWallet } from "@/contexts/WalletContext";
+import { contractService } from "@/services/ContractService";
+import { toast } from "@/hooks/use-toast";
 
 interface AirdropTasksProps {
   tasks: {
@@ -20,9 +25,53 @@ const taskLinks = {
   share: "https://twitter.com/intent/tweet?text=Join%20the%20BitAccess%20Airdrop%20now!%20%23BitAccess%20%23Airdrop"
 };
 
+const taskIds = {
+  twitter: 0,
+  telegram: 1,
+  newsletter: 2,
+  share: 3
+};
+
 const AirdropTasks = ({ tasks, handleTaskComplete, isConnected }: AirdropTasksProps) => {
+  const { address, connectWallet } = useWallet();
+  const [verifying, setVerifying] = useState<string | null>(null);
+
   const handleTaskClick = (task: keyof typeof taskLinks) => {
     window.open(taskLinks[task], '_blank');
+  };
+
+  const handleVerifyClick = async (task: keyof typeof taskLinks) => {
+    if (!isConnected) {
+      connectWallet();
+      return;
+    }
+    
+    setVerifying(task);
+    try {
+      // Verify task on the blockchain
+      const taskId = taskIds[task];
+      if (address) {
+        const result = await contractService.verifyAirdropTask(address, taskId);
+        console.log(`Task ${task} verification transaction:`, result);
+        
+        // Call the local state update handler
+        handleTaskComplete(task);
+        
+        toast({
+          title: "Task Verified",
+          description: `${task.charAt(0).toUpperCase() + task.slice(1)} task successfully verified on the blockchain.`,
+        });
+      }
+    } catch (error) {
+      console.error(`Error verifying ${task} task:`, error);
+      toast({
+        title: "Verification Failed",
+        description: error instanceof Error ? error.message : `Failed to verify ${task} task.`,
+        variant: "destructive",
+      });
+    } finally {
+      setVerifying(null);
+    }
   };
 
   return (
@@ -61,28 +110,32 @@ const AirdropTasks = ({ tasks, handleTaskComplete, isConnected }: AirdropTasksPr
                 task="twitter"
                 completed={tasks.twitter}
                 onClick={() => handleTaskClick('twitter')}
-                onVerify={() => handleTaskComplete('twitter')}
+                onVerify={() => handleVerifyClick('twitter')}
+                isVerifying={verifying === "twitter"}
               />
               
               <VerificationButton 
                 task="telegram"
                 completed={tasks.telegram}
                 onClick={() => handleTaskClick('telegram')}
-                onVerify={() => handleTaskComplete('telegram')}
+                onVerify={() => handleVerifyClick('telegram')}
+                isVerifying={verifying === "telegram"}
               />
               
               <VerificationButton 
                 task="newsletter"
                 completed={tasks.newsletter}
                 onClick={() => handleTaskClick('newsletter')}
-                onVerify={() => handleTaskComplete('newsletter')}
+                onVerify={() => handleVerifyClick('newsletter')}
+                isVerifying={verifying === "newsletter"}
               />
               
               <VerificationButton 
                 task="share"
                 completed={tasks.share}
                 onClick={() => handleTaskClick('share')}
-                onVerify={() => handleTaskComplete('share')}
+                onVerify={() => handleVerifyClick('share')}
+                isVerifying={verifying === "share"}
               />
             </div>
           )}
@@ -119,9 +172,10 @@ interface VerificationButtonProps {
   completed: boolean;
   onClick: () => void;
   onVerify: () => void;
+  isVerifying: boolean;
 }
 
-const VerificationButton = ({ task, completed, onClick, onVerify }: VerificationButtonProps) => (
+const VerificationButton = ({ task, completed, onClick, onVerify, isVerifying }: VerificationButtonProps) => (
   <div className="flex flex-col gap-2">
     <Button 
       onClick={onClick}
@@ -132,10 +186,17 @@ const VerificationButton = ({ task, completed, onClick, onVerify }: Verification
     </Button>
     <Button 
       onClick={onVerify}
-      disabled={completed}
+      disabled={completed || isVerifying}
       className="bg-transparent border border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
     >
-      {completed ? `${task.charAt(0).toUpperCase() + task.slice(1)} Verified` : `Verify ${task.charAt(0).toUpperCase() + task.slice(1)}`}
+      {completed ? (
+        `${task.charAt(0).toUpperCase() + task.slice(1)} Verified`
+      ) : isVerifying ? (
+        "Verifying..."
+      ) : (
+        `Verify ${task.charAt(0).toUpperCase() + task.slice(1)}`
+      )}
+      {completed && <Check className="ml-1 h-4 w-4" />}
     </Button>
   </div>
 );
