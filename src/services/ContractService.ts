@@ -1,3 +1,4 @@
+
 import { ethers } from 'ethers';
 import { contractAddresses, networkInfo } from '@/constants/contracts';
 import { TokenABI } from '@/contracts/abis/TokenABI';
@@ -45,7 +46,8 @@ export class ContractService {
     return contract;
   }
 
-  private async getAirdropContract(withEvents = false) {
+  // Changed from private to public to allow access from outside the class
+  async getAirdropContract(withEvents = false) {
     const contract = new ethers.Contract(contractAddresses.airdrop, AirdropABI, this.signer);
     if (withEvents && !this.eventSubscriptions.has('airdrop')) {
       this.eventSubscriptions.set('airdrop', contract);

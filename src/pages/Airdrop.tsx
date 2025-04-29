@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
@@ -32,22 +31,15 @@ const Airdrop = () => {
       setIsLoading(true);
       try {
         // In a real implementation, these would be actual contract calls
-        // Simulate fetching task statuses from blockchain with a delay
+        // Using the now-public getAirdropContract method
         setTimeout(async () => {
           try {
+            const contract = await contractService.getAirdropContract();
             const taskStatuses = {
-              twitter: await contractService.getAirdropContract().then(
-                contract => contract.getTaskStatus(address, 0)
-              ).catch(() => false),
-              telegram: await contractService.getAirdropContract().then(
-                contract => contract.getTaskStatus(address, 1)
-              ).catch(() => false),
-              newsletter: await contractService.getAirdropContract().then(
-                contract => contract.getTaskStatus(address, 2)
-              ).catch(() => false),
-              share: await contractService.getAirdropContract().then(
-                contract => contract.getTaskStatus(address, 3)
-              ).catch(() => false)
+              twitter: await contract.getTaskStatus(address, 0).catch(() => false),
+              telegram: await contract.getTaskStatus(address, 1).catch(() => false),
+              newsletter: await contract.getTaskStatus(address, 2).catch(() => false),
+              share: await contract.getTaskStatus(address, 3).catch(() => false)
             };
             
             setTasks(taskStatuses);
