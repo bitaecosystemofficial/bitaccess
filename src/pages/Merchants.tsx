@@ -1,17 +1,27 @@
+
 import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Store, Check } from "lucide-react";
+import { Store, Check, Wallet, CreditCard } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { toast } from "@/hooks/use-toast";
 import { useMerchantData, subscribeMerchant } from "@/hooks/useMerchants";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Merchants = () => {
   const { isConnected, address, connectWallet } = useWallet();
   const merchantData = useMerchantData();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [selectedToken, setSelectedToken] = useState<'BIT' | 'USDT'>('BIT');
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   const handleSubscribe = async (plan: string) => {
     if (!isConnected) {
@@ -19,13 +29,24 @@ const Merchants = () => {
       return;
     }
 
+    if (isProcessing) return;
+
     try {
-      const result = await subscribeMerchant(plan, 30, address as string);
+      setIsProcessing(true);
+      
+      toast({
+        title: "Processing Payment",
+        description: `Initiating payment for ${plan} subscription with ${selectedToken}...`,
+      });
+
+      const result = await subscribeMerchant(plan, 30, address as string, selectedToken);
+      
       if (result.success) {
         toast({
           title: "Subscription Successful",
-          description: `You have successfully subscribed to the ${plan} plan!`,
+          description: `You have successfully subscribed to the ${plan} plan with ${selectedToken}!`,
         });
+        setSelectedPlan(plan);
       } else {
         toast({
           title: "Subscription Failed",
@@ -39,6 +60,8 @@ const Merchants = () => {
         description: "An unexpected error occurred",
         variant: "destructive",
       });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -52,7 +75,39 @@ const Merchants = () => {
             centered
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+          <div className="flex justify-center mb-8">
+            <Card className="bg-bitaccess-black-light border border-bitaccess-gold/20 w-full max-w-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <Store className="text-bitaccess-gold h-6 w-6" />
+                  <span>Payment Options</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-300 mb-4">Select your preferred payment token:</p>
+                <div className="flex items-center space-x-4">
+                  <Button 
+                    variant={selectedToken === 'BIT' ? "default" : "outline"}
+                    onClick={() => setSelectedToken('BIT')}
+                    className={selectedToken === 'BIT' ? "bg-bitaccess-gold text-black" : "border-bitaccess-gold/50 text-gray-300"}
+                  >
+                    <Wallet className="mr-2 h-4 w-4" />
+                    BIT Token
+                  </Button>
+                  <Button 
+                    variant={selectedToken === 'USDT' ? "default" : "outline"}
+                    onClick={() => setSelectedToken('USDT')}
+                    className={selectedToken === 'USDT' ? "bg-bitaccess-gold text-black" : "border-bitaccess-gold/50 text-gray-300"}
+                  >
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    USDT
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Card className="bg-bitaccess-black-light border border-bitaccess-gold/20">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -101,15 +156,15 @@ const Merchants = () => {
                     ))}
                   </ul>
                   <div className="mt-4">
+                    <p className="mb-2 text-bitaccess-gold font-semibold text-center">
+                      {selectedToken === 'BIT' ? `${plan.price} BIT` : `${Math.round(Number(plan.price) / 5)} USDT`} / month
+                    </p>
                     <Button
                       className={`w-full ${selectedPlan === plan.name ? 'bg-green-500 hover:bg-green-600' : 'bg-bitaccess-gold hover:bg-bitaccess-gold/90'} text-black`}
-                      onClick={() => {
-                        handleSubscribe(plan.name);
-                        setSelectedPlan(plan.name);
-                      }}
-                      disabled={selectedPlan === plan.name}
+                      onClick={() => handleSubscribe(plan.name)}
+                      disabled={selectedPlan === plan.name || isProcessing}
                     >
-                      {selectedPlan === plan.name ? "Subscribed" : `Subscribe for $${plan.price}`}
+                      {isProcessing ? "Processing..." : selectedPlan === plan.name ? "Subscribed" : `Pay with ${selectedToken}`}
                     </Button>
                   </div>
                 </CardContent>

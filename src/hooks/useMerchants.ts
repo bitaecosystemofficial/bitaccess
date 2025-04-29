@@ -1,8 +1,9 @@
 
 import { useState, useEffect } from 'react';
 import { ContractResult } from '@/types/contracts';
-import { contractService } from '@/services/ContractService';
+import { merchantService } from '@/services/MerchantService';
 import { contractAddresses } from '@/constants/contracts';
+import { ethers } from 'ethers';
 
 export const useMerchantData = () => {
   const [merchantData, setMerchantData] = useState({
@@ -67,7 +68,7 @@ export const useMerchantData = () => {
           
           // This will be replaced with actual contract calls in a production environment
           // For demo purposes, we're using simulated data
-          const merchantContract = await contractService.getMerchantContract();
+          const merchantContract = await merchantService.getMerchantContract();
           
           // In a real implementation, you would call contract methods like:
           // const totalMerchants = await merchantContract.getTotalMerchants();
@@ -96,27 +97,14 @@ export const useMerchantData = () => {
 export const subscribeMerchant = async (
   plan: string, 
   duration: number, 
-  walletAddress: string
+  walletAddress: string,
+  paymentToken: 'BIT' | 'USDT' = 'BIT'
 ): Promise<ContractResult> => {
   try {
-    console.log("Subscribing merchant plan:", plan, "for address:", walletAddress);
+    console.log("Subscribing merchant plan:", plan, "for address:", walletAddress, "using token:", paymentToken);
     
-    // Convert plan name to ID (in a real implementation, this would be handled differently)
-    const planMap: Record<string, number> = {
-      "Basic": 1,
-      "Premium": 2,
-      "Enterprise": 3
-    };
-    const planId = planMap[plan] || 1;
-    
-    const merchantContract = await contractService.getMerchantContract();
-    const tx = await merchantContract.subscribe(planId, duration);
-    const receipt = await tx.wait();
-    
-    return { 
-      success: true, 
-      hash: receipt.transactionHash 
-    };
+    const result = await merchantService.payWithToken(plan, duration, paymentToken);
+    return result;
   } catch (error) {
     return { 
       success: false, 
