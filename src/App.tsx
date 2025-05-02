@@ -10,7 +10,6 @@ import Airdrop from "./pages/Airdrop";
 import Presale from "./pages/Presale";
 import Staking from "./pages/Staking";
 import Swap from "./pages/Swap";
-import Store from "./pages/Store";
 import Docs from "./pages/Docs";
 import Contact from "./pages/Contact";
 import SpinWheel from "./pages/SpinWheel";
@@ -34,7 +33,6 @@ const App = () => (
             <Route path="/presale" element={<Presale />} />
             <Route path="/staking" element={<Staking />} />
             <Route path="/swap" element={<Swap />} />
-            <Route path="/store" element={<Store />} />
             <Route path="/spin-wheel" element={<SpinWheel />} />
             <Route path="/docs" element={<Docs />} />
             <Route path="/education" element={<Education />} />
