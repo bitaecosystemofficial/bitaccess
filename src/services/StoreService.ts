@@ -163,6 +163,16 @@ export class StoreService extends BaseContractService {
       };
     }
   }
+  
+  // Alias method to ensure compatibility with ContractService
+  async subscribeMerchant(planId: number, duration: number) {
+    return this.subscribeToStore(planId, duration);
+  }
+
+  // Alias method to ensure compatibility with ContractService
+  async getMerchantContract() {
+    return this.getStoreContract();
+  }
 }
 
 export const storeService = new StoreService();

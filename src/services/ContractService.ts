@@ -8,7 +8,7 @@ import { airdropService } from './AirdropService';
 import { stakingService } from './StakingService';
 import { presaleService } from './PresaleService';
 import { swapService } from './SwapService';
-import { merchantService } from './MerchantService';
+import { storeService } from './StoreService'; // Updated import
 import { spinWheelService } from './SpinWheelService';
 import { educationService } from './EducationService';
 
@@ -83,17 +83,17 @@ export class ContractService extends BaseContractService {
     return swapService.executeSwap(tokenIn, tokenOut, amountIn, minAmountOut);
   }
 
-  // Merchant methods
+  // Store methods (renamed from Merchant)
   async getMerchantContract() {
-    return merchantService.getMerchantContract();
+    return storeService.getStoreContract();
   }
 
   async subscribeMerchant(planId: number, duration: number) {
-    return merchantService.subscribeMerchant(planId, duration);
+    return storeService.subscribeToStore(planId, duration);
   }
 
   async getMerchantStatus(address: string) {
-    return merchantService.getMerchantStatus(address);
+    return storeService.getStoreStatus(address);
   }
 
   // SpinWheel methods
@@ -140,7 +140,7 @@ export class ContractService extends BaseContractService {
     tokenService.cleanup();
     airdropService.cleanup();
     stakingService.cleanup();
-    merchantService.cleanup();
+    storeService.cleanup(); // Updated to use storeService
     spinWheelService.cleanup();
     educationService.cleanup();
     presaleService.cleanup();
