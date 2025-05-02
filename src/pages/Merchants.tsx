@@ -4,7 +4,7 @@ import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Store, Check, Wallet, CreditCard, Loader2 } from "lucide-react";
+import { ShoppingCart, Check, Wallet, CreditCard, Loader2, Store, ShoppingBag } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { toast } from "@/hooks/use-toast";
 import { useMerchantData, subscribeMerchant } from "@/hooks/useMerchants";
@@ -81,8 +81,8 @@ const Merchants = () => {
       <div className="py-16 md:py-24">
         <div className="container px-4 md:px-8">
           <SectionHeading
-            title="Merchant Program"
-            subtitle="Accept BIT tokens at your business and join our growing ecosystem"
+            title="E-commerce Store Program"
+            subtitle="Accept BIT tokens in your online store and join our growing ecosystem"
             centered
           />
 
@@ -90,7 +90,7 @@ const Merchants = () => {
             <Card className="bg-bitaccess-black-light border border-bitaccess-gold/20 w-full max-w-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
-                  <Store className="text-bitaccess-gold h-6 w-6" />
+                  <ShoppingCart className="text-bitaccess-gold h-6 w-6" />
                   <span>Payment Options</span>
                 </CardTitle>
               </CardHeader>
@@ -123,22 +123,22 @@ const Merchants = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Store className="text-bitaccess-gold" />
-                  <span>Statistics</span>
+                  <span>E-commerce Statistics</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-400">Total Merchants</p>
+                    <p className="text-sm text-gray-400">Total Stores</p>
                     <p className="text-2xl font-semibold text-white">{merchantData.totalMerchants}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Active Merchants</p>
+                    <p className="text-sm text-gray-400">Active Stores</p>
                     <p className="text-2xl font-semibold text-white">{merchantData.activeMerchants}</p>
                   </div>
                 </div>
                 <div className="mt-4">
-                  <p className="text-sm text-gray-400">Categories</p>
+                  <p className="text-sm text-gray-400">Store Categories</p>
                   <ul className="space-y-1">
                     {merchantData.categories.map((category) => (
                       <li key={category.name} className="flex justify-between text-gray-300">
@@ -196,7 +196,7 @@ const Merchants = () => {
           <DialogHeader>
             <DialogTitle className="text-bitaccess-gold">Connect Wallet</DialogTitle>
             <DialogDescription>
-              You need to connect your wallet to subscribe to a merchant plan.
+              You need to connect your wallet to subscribe to an e-commerce store plan.
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-center mt-4">

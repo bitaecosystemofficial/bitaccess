@@ -2,7 +2,7 @@
 import { ethers } from 'ethers';
 
 export class BaseContractService {
-  protected provider: ethers.providers.Web3Provider;
+  protected provider: ethers.providers.Provider;
   protected signer: ethers.Signer;
   protected eventSubscriptions: Map<string, ethers.Contract>;
 
@@ -56,14 +56,15 @@ export class BaseContractService {
     }
 
     try {
+      const web3Provider = this.provider as ethers.providers.Web3Provider;
       // Check if we already have accounts
-      const accounts = await this.provider.listAccounts();
+      const accounts = await web3Provider.listAccounts();
       
       if (!accounts || accounts.length === 0) {
         // If no accounts, request them
-        await this.provider.send('eth_requestAccounts', []);
+        await web3Provider.send('eth_requestAccounts', []);
         // Get the signer again to ensure it's updated
-        this.signer = this.provider.getSigner();
+        this.signer = web3Provider.getSigner();
       }
       
       return this.signer;

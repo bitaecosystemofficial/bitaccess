@@ -10,49 +10,54 @@ export const useMerchantData = () => {
     totalMerchants: 385,
     activeMerchants: 312,
     categories: [
-      { name: "Retail", count: 124 },
-      { name: "Services", count: 96 },
-      { name: "Food & Dining", count: 67 },
-      { name: "Travel", count: 25 }
+      { name: "Fashion & Apparel", count: 124 },
+      { name: "Electronics", count: 96 },
+      { name: "Home & Garden", count: 67 },
+      { name: "Beauty & Health", count: 45 },
+      { name: "Toys & Games", count: 25 },
+      { name: "Digital Goods", count: 28 }
     ],
     plans: [
       {
         name: "Basic",
         price: "99",
-        description: "Perfect for small businesses new to crypto",
+        description: "Perfect for small e-commerce businesses",
         features: [
           "Accept BIT Token payments",
-          "Basic customer analytics",
+          "Basic sales analytics",
           "Email support",
-          "Transaction dashboard",
-          "Basic API access"
+          "Product dashboard",
+          "Basic API access",
+          "10 product listings"
         ]
       },
       {
         name: "Premium",
         price: "299",
-        description: "For established businesses seeking growth",
+        description: "For established online stores seeking growth",
         features: [
           "All Basic features",
           "Priority transaction processing",
-          "Advanced analytics and reports",
+          "Advanced sales analytics",
           "Priority customer support",
-          "Custom integration assistance",
-          "Marketing promotion in ecosystem"
+          "Inventory management",
+          "Marketing promotion in ecosystem",
+          "100 product listings"
         ],
         highlighted: true
       },
       {
         name: "Enterprise",
         price: "599",
-        description: "Comprehensive solution for large businesses",
+        description: "Comprehensive solution for large online stores",
         features: [
           "All Premium features",
           "Dedicated account manager",
-          "Custom development solutions",
-          "Branded payment portal",
+          "Custom store development",
+          "Branded checkout portal",
           "Advanced API capabilities",
-          "Exclusive networking events",
+          "Multi-currency support",
+          "Unlimited product listings",
           "Strategic partnership opportunities"
         ]
       }
@@ -66,19 +71,37 @@ export const useMerchantData = () => {
         if (typeof window.ethereum !== 'undefined') {
           console.log("Fetching merchant data from contract:", contractAddresses.merchants);
           
-          // This will be replaced with actual contract calls in a production environment
-          // For demo purposes, we're using simulated data
+          // This will be replaced with actual contract calls
           const merchantContract = await merchantService.getMerchantContract();
           
-          // In a real implementation, you would call contract methods like:
-          // const totalMerchants = await merchantContract.getTotalMerchants();
-          // const activeMerchants = await merchantContract.getActiveMerchants();
-          
-          setMerchantData(prev => ({
-            ...prev,
-            totalMerchants: prev.totalMerchants + Math.floor(Math.random() * 2),
-            activeMerchants: Math.min(prev.activeMerchants + Math.floor(Math.random() * 2), prev.totalMerchants + Math.floor(Math.random() * 2))
-          }));
+          try {
+            // Attempt to call actual contract methods
+            const totalMerchants = await merchantContract.getTotalMerchants();
+            const activeMerchants = await merchantContract.getActiveMerchants();
+            
+            if (totalMerchants && activeMerchants) {
+              setMerchantData(prev => ({
+                ...prev,
+                totalMerchants: parseInt(totalMerchants.toString()),
+                activeMerchants: parseInt(activeMerchants.toString())
+              }));
+            } else {
+              // Fallback if contract methods don't return expected values
+              setMerchantData(prev => ({
+                ...prev,
+                totalMerchants: prev.totalMerchants + Math.floor(Math.random() * 2),
+                activeMerchants: Math.min(prev.activeMerchants + Math.floor(Math.random() * 2), prev.totalMerchants + Math.floor(Math.random() * 2))
+              }));
+            }
+          } catch (error) {
+            console.error("Error calling contract methods:", error);
+            // Use fallback behavior
+            setMerchantData(prev => ({
+              ...prev,
+              totalMerchants: prev.totalMerchants + Math.floor(Math.random() * 2),
+              activeMerchants: Math.min(prev.activeMerchants + Math.floor(Math.random() * 2), prev.totalMerchants + Math.floor(Math.random() * 2))
+            }));
+          }
         }
       } catch (error) {
         console.error("Error fetching merchant data:", error);
