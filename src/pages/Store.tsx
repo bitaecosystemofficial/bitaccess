@@ -4,10 +4,10 @@ import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ShoppingCart, Check, Wallet, CreditCard, Loader2, Store, ShoppingBag } from "lucide-react";
+import { ShoppingBag, Check, Wallet, CreditCard, Loader2, Store } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { toast } from "@/hooks/use-toast";
-import { useMerchantData, subscribeMerchant } from "@/hooks/useMerchants";
+import { useStoreData, subscribeStore } from "@/hooks/useStores";
 import {
   Select,
   SelectContent,
@@ -17,9 +17,9 @@ import {
 } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
-const Merchants = () => {
+const StorePage = () => {
   const { isConnected, address, connectWallet, isConnecting } = useWallet();
-  const merchantData = useMerchantData();
+  const storeData = useStoreData();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [selectedToken, setSelectedToken] = useState<'BIT' | 'USDT'>('BIT');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -50,7 +50,7 @@ const Merchants = () => {
         description: `Initiating payment for ${plan} subscription with ${selectedToken}...`,
       });
 
-      const result = await subscribeMerchant(plan, 30, address as string, selectedToken);
+      const result = await subscribeStore(plan, 30, address as string, selectedToken);
       
       if (result.success) {
         toast({
@@ -90,7 +90,7 @@ const Merchants = () => {
             <Card className="bg-bitaccess-black-light border border-bitaccess-gold/20 w-full max-w-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
-                  <ShoppingCart className="text-bitaccess-gold h-6 w-6" />
+                  <ShoppingBag className="text-bitaccess-gold h-6 w-6" />
                   <span>Payment Options</span>
                 </CardTitle>
               </CardHeader>
@@ -130,17 +130,17 @@ const Merchants = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-gray-400">Total Stores</p>
-                    <p className="text-2xl font-semibold text-white">{merchantData.totalMerchants}</p>
+                    <p className="text-2xl font-semibold text-white">{storeData.totalStores}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Active Stores</p>
-                    <p className="text-2xl font-semibold text-white">{merchantData.activeMerchants}</p>
+                    <p className="text-2xl font-semibold text-white">{storeData.activeStores}</p>
                   </div>
                 </div>
                 <div className="mt-4">
                   <p className="text-sm text-gray-400">Store Categories</p>
                   <ul className="space-y-1">
-                    {merchantData.categories.map((category) => (
+                    {storeData.categories.map((category) => (
                       <li key={category.name} className="flex justify-between text-gray-300">
                         <span>{category.name}</span>
                         <span>{category.count}</span>
@@ -151,7 +151,7 @@ const Merchants = () => {
               </CardContent>
             </Card>
 
-            {merchantData.plans.map((plan) => (
+            {storeData.plans.map((plan) => (
               <Card key={plan.name} className={`bg-bitaccess-black-light border border-bitaccess-gold/20 ${plan.highlighted ? 'border-2 border-bitaccess-gold' : ''}`}>
                 <CardHeader>
                   <CardTitle className="text-2xl font-bold text-white">{plan.name}</CardTitle>
@@ -218,4 +218,4 @@ const Merchants = () => {
   );
 };
 
-export default Merchants;
+export default StorePage;

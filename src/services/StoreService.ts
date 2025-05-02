@@ -6,85 +6,85 @@ import { BaseContractService } from './BaseContractService';
 import { tokenService } from './TokenService';
 import { toast } from '@/hooks/use-toast';
 
-export class MerchantService extends BaseContractService {
-  async getMerchantContract() {
+export class StoreService extends BaseContractService {
+  async getStoreContract() {
     await this.ensureSigner();
     return new ethers.Contract(contractAddresses.merchants, MerchantABI, this.signer);
   }
 
-  async getReadOnlyMerchantContract() {
+  async getReadOnlyStoreContract() {
     return new ethers.Contract(contractAddresses.merchants, MerchantABI, this.provider);
   }
 
-  async subscribeMerchant(planId: number, duration: number) {
+  async subscribeToStore(planId: number, duration: number) {
     try {
       await this.ensureSigner();
-      const contract = await this.getMerchantContract();
+      const contract = await this.getStoreContract();
       const tx = await contract.subscribe(planId, duration);
       return tx.wait();
     } catch (error) {
-      console.error("Error subscribing merchant:", error);
+      console.error("Error subscribing to store:", error);
       throw error;
     }
   }
 
-  async getMerchantStatus(address: string) {
+  async getStoreStatus(address: string) {
     try {
-      const contract = await this.getReadOnlyMerchantContract();
+      const contract = await this.getReadOnlyStoreContract();
       return contract.getMerchantStatus(address);
     } catch (error) {
-      console.error("Error getting merchant status:", error);
-      return 0; // Default to not a merchant
+      console.error("Error getting store status:", error);
+      return 0;
     }
   }
 
   async getSubscriptionEnd(address: string) {
     try {
-      const contract = await this.getReadOnlyMerchantContract();
+      const contract = await this.getReadOnlyStoreContract();
       return contract.getSubscriptionEnd(address);
     } catch (error) {
       console.error("Error getting subscription end:", error);
-      return 0; // Default to no subscription
+      return 0;
     }
   }
 
-  async getTotalMerchants() {
+  async getTotalStores() {
     try {
-      const contract = await this.getReadOnlyMerchantContract();
+      const contract = await this.getReadOnlyStoreContract();
       return contract.getTotalMerchants();
     } catch (error) {
-      console.error("Error getting total merchants:", error);
-      return 385; // Default value
+      console.error("Error getting total stores:", error);
+      return 385;
     }
   }
 
-  async getActiveMerchants() {
+  async getActiveStores() {
     try {
-      const contract = await this.getReadOnlyMerchantContract();
+      const contract = await this.getReadOnlyStoreContract();
       return contract.getActiveMerchants();
     } catch (error) {
-      console.error("Error getting active merchants:", error);
-      return 312; // Default value
+      console.error("Error getting active stores:", error);
+      return 312;
     }
   }
 
-  async getMerchantsByCategory(category: string) {
+  async getStoresByCategory(category: string) {
     try {
-      const contract = await this.getReadOnlyMerchantContract();
+      const contract = await this.getReadOnlyStoreContract();
       return contract.getMerchantsByCategory(category);
     } catch (error) {
-      console.error(`Error getting merchants by category ${category}:`, error);
-      return []; // Default to empty array
+      console.error(`Error getting stores by category ${category}:`, error);
+      return [];
     }
   }
 
   async getRecentStores() {
     try {
-      const contract = await this.getReadOnlyMerchantContract();
+      const contract = await this.getReadOnlyStoreContract();
       return contract.getRecentStores();
     } catch (error) {
       console.error("Error getting recent stores:", error);
-      return []; // Default to empty array
+      return [];
     }
   }
 
@@ -101,11 +101,11 @@ export class MerchantService extends BaseContractService {
       };
       const planId = planMap[planName] || 1;
       
-      // Get merchant contract
-      const merchantContract = await this.getMerchantContract();
+      // Get store contract
+      const storeContract = await this.getStoreContract();
       
       // Get plan details to determine price
-      const planDetails = await merchantContract.getPlanDetails(planId);
+      const planDetails = await storeContract.getPlanDetails(planId);
       const planPrice = planDetails.price;
       
       // Calculate total price based on duration
@@ -133,7 +133,7 @@ export class MerchantService extends BaseContractService {
         description: "Please confirm the subscription transaction in your wallet",
       });
       
-      const tx = await merchantContract.subscribe(planId, duration);
+      const tx = await storeContract.subscribe(planId, duration);
       const receipt = await tx.wait();
       
       return {
@@ -165,4 +165,4 @@ export class MerchantService extends BaseContractService {
   }
 }
 
-export const merchantService = new MerchantService();
+export const storeService = new StoreService();

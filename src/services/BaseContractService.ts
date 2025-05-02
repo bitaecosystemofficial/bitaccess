@@ -11,8 +11,10 @@ export class BaseContractService {
     
     if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
       try {
+        // Fix the TypeScript error by using the correct provider type
         this.provider = new ethers.providers.Web3Provider(window.ethereum);
-        this.signer = this.provider.getSigner();
+        // Now we can safely call getSigner() on the Web3Provider
+        this.signer = (this.provider as ethers.providers.Web3Provider).getSigner();
         this.initializeProviderEvents();
       } catch (error) {
         console.error('Error initializing Ethereum provider:', error);

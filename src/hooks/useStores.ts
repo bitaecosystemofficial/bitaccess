@@ -1,14 +1,14 @@
 
 import { useState, useEffect } from 'react';
 import { ContractResult } from '@/types/contracts';
-import { merchantService } from '@/services/MerchantService';
+import { storeService } from '@/services/StoreService';
 import { contractAddresses } from '@/constants/contracts';
 import { ethers } from 'ethers';
 
-export const useMerchantData = () => {
-  const [merchantData, setMerchantData] = useState({
-    totalMerchants: 385,
-    activeMerchants: 312,
+export const useStoreData = () => {
+  const [storeData, setStoreData] = useState({
+    totalStores: 385,
+    activeStores: 312,
     categories: [
       { name: "Fashion & Apparel", count: 124 },
       { name: "Electronics", count: 96 },
@@ -65,68 +65,68 @@ export const useMerchantData = () => {
   });
 
   useEffect(() => {
-    // Fetch merchant data from the blockchain
-    const fetchMerchantData = async () => {
+    // Fetch store data from the blockchain
+    const fetchStoreData = async () => {
       try {
         if (typeof window.ethereum !== 'undefined') {
-          console.log("Fetching merchant data from contract:", contractAddresses.merchants);
+          console.log("Fetching store data from contract:", contractAddresses.merchants);
           
           // This will be replaced with actual contract calls
-          const merchantContract = await merchantService.getMerchantContract();
+          const storeContract = await storeService.getStoreContract();
           
           try {
             // Attempt to call actual contract methods
-            const totalMerchants = await merchantContract.getTotalMerchants();
-            const activeMerchants = await merchantContract.getActiveMerchants();
+            const totalStores = await storeContract.getTotalMerchants();
+            const activeStores = await storeContract.getActiveMerchants();
             
-            if (totalMerchants && activeMerchants) {
-              setMerchantData(prev => ({
+            if (totalStores && activeStores) {
+              setStoreData(prev => ({
                 ...prev,
-                totalMerchants: parseInt(totalMerchants.toString()),
-                activeMerchants: parseInt(activeMerchants.toString())
+                totalStores: parseInt(totalStores.toString()),
+                activeStores: parseInt(activeStores.toString())
               }));
             } else {
               // Fallback if contract methods don't return expected values
-              setMerchantData(prev => ({
+              setStoreData(prev => ({
                 ...prev,
-                totalMerchants: prev.totalMerchants + Math.floor(Math.random() * 2),
-                activeMerchants: Math.min(prev.activeMerchants + Math.floor(Math.random() * 2), prev.totalMerchants + Math.floor(Math.random() * 2))
+                totalStores: prev.totalStores + Math.floor(Math.random() * 2),
+                activeStores: Math.min(prev.activeStores + Math.floor(Math.random() * 2), prev.totalStores + Math.floor(Math.random() * 2))
               }));
             }
           } catch (error) {
             console.error("Error calling contract methods:", error);
             // Use fallback behavior
-            setMerchantData(prev => ({
+            setStoreData(prev => ({
               ...prev,
-              totalMerchants: prev.totalMerchants + Math.floor(Math.random() * 2),
-              activeMerchants: Math.min(prev.activeMerchants + Math.floor(Math.random() * 2), prev.totalMerchants + Math.floor(Math.random() * 2))
+              totalStores: prev.totalStores + Math.floor(Math.random() * 2),
+              activeStores: Math.min(prev.activeStores + Math.floor(Math.random() * 2), prev.totalStores + Math.floor(Math.random() * 2))
             }));
           }
         }
       } catch (error) {
-        console.error("Error fetching merchant data:", error);
+        console.error("Error fetching store data:", error);
       }
     };
 
-    fetchMerchantData();
-    const interval = setInterval(fetchMerchantData, 30000);
+    fetchStoreData();
+    const interval = setInterval(fetchStoreData, 30000);
     
     return () => clearInterval(interval);
   }, []);
 
-  return merchantData;
+  return storeData;
 };
 
-export const subscribeMerchant = async (
+export const subscribeStore = async (
   plan: string, 
   duration: number, 
   walletAddress: string,
   paymentToken: 'BIT' | 'USDT' = 'BIT'
 ): Promise<ContractResult> => {
   try {
-    console.log("Subscribing merchant plan:", plan, "for address:", walletAddress, "using token:", paymentToken);
+    console.log("Subscribing store plan:", plan, "for address:", walletAddress, "using token:", paymentToken);
     
-    const result = await merchantService.payWithToken(plan, duration, paymentToken);
+    const result = await storeService.payWithToken(plan, duration, paymentToken);
     return result;
   } catch (error) {
     return { 
