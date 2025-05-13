@@ -80,6 +80,17 @@ const TokenSection = () => {
               <p className="text-gray-400 mb-6">
                 <span className="text-bitaccess-gold font-semibold">Main Applications:</span> Business, E-commerce, Education & Merchant Services
               </p>
+              
+              <div className="bg-bitaccess-black-dark p-4 rounded-lg border border-bitaccess-gold/10 mb-6">
+                <h4 className="text-lg font-semibold text-bitaccess-gold mb-2">Token Usage</h4>
+                <ul className="list-disc pl-5 text-gray-400 space-y-2">
+                  <li><span className="text-white font-medium">Financial Services:</span> Decentralized payments, cross-border transactions, and rewards</li>
+                  <li><span className="text-white font-medium">Educational Platform:</span> Access to courses, certifications, and learning materials</li>
+                  <li><span className="text-white font-medium">Merchant Solutions:</span> Integration with retail and e-commerce businesses</li>
+                  <li><span className="text-white font-medium">Governance:</span> Participation in ecosystem decisions and development</li>
+                </ul>
+              </div>
+              
               <Button className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium">
                 View Whitepaper
               </Button>
@@ -102,10 +113,20 @@ const TokenSection = () => {
                   <div>
                     <div className="flex justify-between mb-1">
                       <span className="text-sm text-gray-400">Company Reserved</span>
-                      <span className="text-sm text-bitaccess-gold">15.0%</span>
+                      <span className="text-sm text-bitaccess-gold">5.0%</span>
                     </div>
                     <div className="w-full bg-gray-700 rounded-full h-2">
-                      <div className="bg-bitaccess-gold h-2 rounded-full" style={{ width: '15%' }}></div>
+                      <div className="bg-bitaccess-gold h-2 rounded-full" style={{ width: '5%' }}></div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm text-gray-400">Token Burned</span>
+                      <span className="text-sm text-bitaccess-gold">10.0%</span>
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div className="bg-bitaccess-gold h-2 rounded-full" style={{ width: '10%' }}></div>
                     </div>
                   </div>
                   

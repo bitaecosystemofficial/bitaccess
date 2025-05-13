@@ -1,63 +1,69 @@
 
 import SectionHeading from "@/components/ui/section-heading";
-import { Building, Handshake, Users, GraduationCap, Coins, Book } from "lucide-react";
+import { AspectRatio } from "../ui/aspect-ratio";
+
+const partners = [
+  {
+    name: "FitTracker",
+    logo: "/placeholder.svg",
+    description: "Fitness tracking ecosystem partner for health-oriented blockchain applications.",
+    website: "#"
+  },
+  {
+    name: "CryptoSphere",
+    logo: "/placeholder.svg",
+    description: "Leading crypto payment solution provider for enterprise and retail integration.",
+    website: "#"
+  },
+  {
+    name: "CITFEE",
+    logo: "/placeholder.svg",
+    description: "Center for Innovative Technology in Financial and Educational Excellence, focusing on money training and education.",
+    website: "#"
+  },
+  {
+    name: "BITCORP",
+    logo: "/placeholder.svg",
+    description: "Blockchain Innovation and Technology Corporation specializing in blockchain education and development.",
+    website: "#"
+  },
+  {
+    name: "APCPI",
+    logo: "/placeholder.svg",
+    description: "Association of Professional Competencies and Performance Improvement, delivering professional training competencies.",
+    website: "#"
+  }
+];
 
 const StrategicPartnersSection = () => {
-  const partners = [
-    {
-      name: "BitPay Solutions",
-      description: "Leading crypto payment processor enabling seamless transactions for businesses worldwide",
-      icon: <Building className="h-6 w-6" />
-    },
-    {
-      name: "Blockchain Education Alliance",
-      description: "Consortium of educational institutions promoting blockchain technology learning",
-      icon: <Users className="h-6 w-6" />
-    },
-    {
-      name: "Global Merchant Network",
-      description: "Worldwide network of 10,000+ merchants accepting cryptocurrency payments",
-      icon: <Handshake className="h-6 w-6" />
-    },
-    {
-      name: "CITFEE",
-      description: "Specialized in Money Training Education and financial literacy for the digital economy",
-      icon: <Coins className="h-6 w-6" />
-    },
-    {
-      name: "BITCORP",
-      description: "Leading provider of Blockchain Education and distributed ledger technology training",
-      icon: <Book className="h-6 w-6" />
-    },
-    {
-      name: "APCPI",
-      description: "Focused on Professional Training Competencies and blockchain certification programs",
-      icon: <GraduationCap className="h-6 w-6" />
-    }
-  ];
-
   return (
-    <section className="py-16 md:py-24 bg-bitaccess-black">
-      <div className="container px-4 md:px-8">
+    <section className="py-16 px-4 md:py-24 bg-bitaccess-black">
+      <div className="container mx-auto">
         <SectionHeading
           title="Strategic Partners"
-          subtitle="We've partnered with industry leaders to accelerate adoption and create value within the ecosystem"
+          subtitle="Collaborating with industry leaders to build a sustainable blockchain ecosystem"
           centered
         />
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
           {partners.map((partner, index) => (
             <div 
               key={index} 
-              className="bg-bitaccess-black-light rounded-xl p-6 border border-bitaccess-gold/20 hover:border-bitaccess-gold/40 transition-all duration-300"
+              className="bg-bitaccess-black-light border border-bitaccess-gold/20 rounded-xl p-6 hover:border-bitaccess-gold/50 transition-colors"
             >
-              <div className="flex items-center mb-4">
-                <div className="p-3 bg-bitaccess-gold/10 rounded-full mr-4">
-                  {partner.icon}
+              <div className="mb-4 h-16 flex items-center justify-center">
+                <div className="w-14 h-14">
+                  <AspectRatio ratio={1/1}>
+                    <img 
+                      src={partner.logo} 
+                      alt={`${partner.name} logo`} 
+                      className="object-contain rounded-md"
+                    />
+                  </AspectRatio>
                 </div>
-                <h3 className="text-xl font-semibold text-white">{partner.name}</h3>
               </div>
-              <p className="text-gray-400">{partner.description}</p>
+              <h3 className="text-xl font-bold text-center text-white mb-3">{partner.name}</h3>
+              <p className="text-gray-400 text-center">{partner.description}</p>
             </div>
           ))}
         </div>

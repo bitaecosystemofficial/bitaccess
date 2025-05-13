@@ -12,6 +12,7 @@ import { TokenABI } from "@/contracts/abis/TokenABI";
 import { contractAddresses } from "@/constants/contracts";
 import { useContractEvents } from "@/hooks/useContractEvents";
 import { useToast } from "@/components/ui/use-toast";
+import { bscscanService, TokenTransaction } from "@/services/BscscanService";
 
 const DexChartAnalytics = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +25,7 @@ const DexChartAnalytics = () => {
     marketCap: 2750000,
   });
   const [tokenHolders, setTokenHolders] = useState(4872);
+  const [recentTransactions, setRecentTransactions] = useState<TokenTransaction[]>([]);
   const { latestTransfer } = useContractEvents();
   const { toast } = useToast();
   
@@ -33,11 +35,29 @@ const DexChartAnalytics = () => {
       try {
         setIsLoading(true);
         
-        // In a real implementation, we would fetch actual data from blockchain APIs
-        // For now, we'll simulate loading with a timeout
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // Fetch data from BSCScan
+        const tokenInfo = await bscscanService.getTokenInfo();
+        const transactions = await bscscanService.getTokenTransactions();
+        const holdersCount = await bscscanService.getTokenHolders();
         
-        // Try to get some basic token info
+        // Update state with real data
+        if (tokenInfo) {
+          setTokenMetrics(prev => ({
+            ...prev,
+            price: tokenInfo.price || prev.price,
+            marketCap: tokenInfo.marketCap || prev.marketCap,
+          }));
+        }
+        
+        if (transactions && transactions.length > 0) {
+          setRecentTransactions(transactions);
+        }
+        
+        if (holdersCount) {
+          setTokenHolders(holdersCount);
+        }
+        
+        // Also fetch data from contract if possible
         if (window.ethereum) {
           const provider = new ethers.providers.Web3Provider(window.ethereum);
           const tokenContract = new ethers.Contract(
@@ -54,12 +74,26 @@ const DexChartAnalytics = () => {
             // Get token decimals
             const decimals = await tokenContract.decimals();
             console.log("Token decimals:", decimals);
+            
+            // Get total supply
+            const totalSupply = await tokenContract.totalSupply();
+            console.log("Total supply:", totalSupply.toString());
+            
+            // Try to get additional tokenomics data if available
+            try {
+              const tokenomicsData = await tokenContract.getTokenomicsData();
+              console.log("Tokenomics data:", tokenomicsData);
+            } catch (err) {
+              // Function might not exist on contract
+              console.log("getTokenomicsData not available on contract");
+            }
           } catch (err) {
             console.error("Error fetching token data from contract:", err);
           }
         }
         
         setIsLoading(false);
+        setLastUpdate(new Date());
       } catch (error) {
         console.error("Failed to fetch token data:", error);
         setIsLoading(false);
@@ -71,9 +105,30 @@ const DexChartAnalytics = () => {
   
   // Real-time updates
   useEffect(() => {
-    const updateInterval = setInterval(() => {
-      setLastUpdate(new Date());
-      // In a real implementation, we would fetch updated data here
+    const updateInterval = setInterval(async () => {
+      console.log("Fetching latest token data...");
+      try {
+        // Fetch new data from BSCScan
+        const tokenInfo = await bscscanService.getTokenInfo();
+        const transactions = await bscscanService.getTokenTransactions();
+        
+        // Update state with new data
+        if (tokenInfo) {
+          setTokenMetrics(prev => ({
+            ...prev,
+            price: tokenInfo.price || prev.price,
+            marketCap: tokenInfo.marketCap || prev.marketCap,
+          }));
+        }
+        
+        if (transactions && transactions.length > 0) {
+          setRecentTransactions(transactions);
+        }
+        
+        setLastUpdate(new Date());
+      } catch (error) {
+        console.error("Failed to update token data:", error);
+      }
     }, 3600000); // 1 hour in milliseconds
     
     return () => clearInterval(updateInterval);
@@ -91,7 +146,12 @@ const DexChartAnalytics = () => {
         duration: 5000,
       });
       
-      // In a real implementation, we would update our data based on transfer
+      // Refresh transaction data
+      bscscanService.getTokenTransactions().then(transactions => {
+        if (transactions && transactions.length > 0) {
+          setRecentTransactions(transactions);
+        }
+      });
     }
   }, [latestTransfer, toast]);
   
@@ -201,7 +261,7 @@ const DexChartAnalytics = () => {
                 <HoldersDistribution />
               </TabsContent>
               <TabsContent value="transactions">
-                <TransactionAnalytics />
+                <TransactionAnalytics transactions={recentTransactions} />
               </TabsContent>
             </Tabs>
           </>

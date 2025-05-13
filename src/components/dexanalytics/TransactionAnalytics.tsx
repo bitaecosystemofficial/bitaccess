@@ -14,6 +14,8 @@ import {
 } from 'recharts';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Database, TrendingUp } from "lucide-react";
+import { TokenTransaction } from "@/services/BscscanService";
+import { useMemo } from "react";
 
 const transactionData = [
   { date: '05-06', buys: 145, sells: 87, volume: 5600 },
@@ -26,15 +28,60 @@ const transactionData = [
   { date: '05-13', buys: 210, sells: 109, volume: 8200 },
 ];
 
-const recentTransactions = [
-  { hash: "0x3a2f4e26b7a3f17...", type: "Buy", amount: "120,000,000", value: "$2,340", time: "10 mins ago" },
-  { hash: "0x7b8c9d0e1f2a3b4...", type: "Sell", amount: "87,500,000", value: "$1,706", time: "23 mins ago" },
-  { hash: "0xc5d6e7f8a9b0c1d...", type: "Buy", amount: "56,300,000", value: "$1,097", time: "37 mins ago" },
-  { hash: "0x1a2b3c4d5e6f7g8...", type: "Buy", amount: "98,200,000", value: "$1,914", time: "42 mins ago" },
-  { hash: "0x9h8g7f6e5d4c3b...", type: "Sell", amount: "35,700,000", value: "$696", time: "55 mins ago" },
-];
+interface TransactionAnalyticsProps {
+  transactions?: TokenTransaction[];
+}
 
-const TransactionAnalytics = () => {
+const TransactionAnalytics = ({ transactions = [] }: TransactionAnalyticsProps) => {
+  // Process BSCScan transactions for display
+  const formattedTransactions = useMemo(() => {
+    return transactions.slice(0, 5).map(tx => {
+      // Convert Wei to Token value (assuming 9 decimals)
+      const valueBN = BigInt(tx.value);
+      const decimals = BigInt(10 ** 9);
+      const tokenAmount = Number(valueBN) / Number(decimals);
+      const formattedAmount = tokenAmount.toLocaleString(undefined, { maximumFractionDigits: 0 });
+      
+      // Estimate USD value (using placeholder price)
+      const estimatedUSD = (tokenAmount * 0.00000275).toLocaleString(undefined, {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+      
+      // Format timestamp
+      const date = new Date(Number(tx.timeStamp) * 1000);
+      const timeAgo = getTimeAgo(date);
+      
+      // Determine if it's a buy or sell (simplified logic)
+      // In a real app, you'd compare with known exchange addresses
+      const type = tx.to === '0x7a42F1196271B5A68A36FA0D6A61F85A6cFA7E12' ? "Sell" : "Buy";
+      
+      return {
+        hash: tx.hash,
+        type,
+        amount: formattedAmount,
+        value: estimatedUSD,
+        time: timeAgo
+      };
+    });
+  }, [transactions]);
+  
+  const getTimeAgo = (date: Date) => {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.round(diffMs / 60000);
+    
+    if (diffMins < 60) {
+      return `${diffMins} mins ago`;
+    } else if (diffMins < 1440) {
+      return `${Math.floor(diffMins / 60)} hours ago`;
+    } else {
+      return `${Math.floor(diffMins / 1440)} days ago`;
+    }
+  };
+  
   return (
     <div className="space-y-6">
       <div className="bg-bitaccess-black-light p-6 rounded-xl border border-bitaccess-gold/20">
@@ -113,26 +160,34 @@ const TransactionAnalytics = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {recentTransactions.map((tx, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-mono">
-                    <a 
-                      href={`https://bscscan.com/tx/${tx.hash}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="hover:text-bitaccess-gold hover:underline"
-                    >
-                      {tx.hash}
-                    </a>
+              {formattedTransactions.length > 0 ? (
+                formattedTransactions.map((tx, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-mono">
+                      <a 
+                        href={`https://bscscan.com/tx/${tx.hash}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="hover:text-bitaccess-gold hover:underline"
+                      >
+                        {tx.hash.substring(0, 18) + '...'}
+                      </a>
+                    </TableCell>
+                    <TableCell className={tx.type === "Buy" ? "text-green-500" : "text-red-500"}>
+                      {tx.type}
+                    </TableCell>
+                    <TableCell>{tx.amount}</TableCell>
+                    <TableCell>{tx.value}</TableCell>
+                    <TableCell className="text-gray-400">{tx.time}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center text-gray-400 py-4">
+                    No transaction data available
                   </TableCell>
-                  <TableCell className={tx.type === "Buy" ? "text-green-500" : "text-red-500"}>
-                    {tx.type}
-                  </TableCell>
-                  <TableCell>{tx.amount}</TableCell>
-                  <TableCell>{tx.value}</TableCell>
-                  <TableCell className="text-gray-400">{tx.time}</TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </div>
