@@ -1,8 +1,8 @@
 
 import { useState } from "react";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { ChartContainer } from "@/components/ui/chart";
 import { Button } from "@/components/ui/button";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from "recharts";
 
 const mockPriceData = [
   { date: "2023-01-01", price: 0.000020 },
@@ -68,6 +68,21 @@ const PriceChart = () => {
   const previousPrice = mockPriceData[mockPriceData.length - 2].price;
   const priceChange = ((currentPrice - previousPrice) / previousPrice) * 100;
   const isPriceUp = priceChange >= 0;
+
+  // Custom tooltip component for the chart
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const date = new Date(label);
+      const formattedDate = `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}, ${date.getFullYear()}`;
+      return (
+        <div className="bg-bitaccess-black p-2 border border-bitaccess-gold/30 rounded-md">
+          <p className="text-gray-400 text-xs">{formattedDate}</p>
+          <p className="text-white font-medium">${payload[0].value.toFixed(9)}</p>
+        </div>
+      );
+    }
+    return null;
+  };
   
   return (
     <div className="bg-bitaccess-black-light p-6 rounded-xl border border-bitaccess-gold/20">
@@ -144,9 +159,7 @@ const PriceChart = () => {
                 <stop offset="100%" stopColor="#F9D975" stopOpacity={0.8}/>
               </linearGradient>
             </defs>
-            <ChartTooltip 
-              content={props => <ChartTooltipContent {...props} />} 
-            />
+            <Tooltip content={<CustomTooltip />} />
           </LineChart>
         </ResponsiveContainer>
       </ChartContainer>
