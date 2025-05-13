@@ -11,11 +11,12 @@ export const contractAddresses = {
 };
 
 export const networkInfo = {
-  name: "BSC Testnet",
-  chainId: 97, // BSC Testnet chain ID
-  currency: "tBNB",
-  rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-  blockExplorerUrl: "https://testnet.bscscan.com/",
-  testnet: true
+  name: "BSC Mainnet",
+  chainId: 56, // BSC Mainnet chain ID
+  currency: "BNB",
+  rpcUrl: "https://bsc-dataseed.binance.org/",
+  blockExplorerUrl: "https://bscscan.com/",
+  testnet: false
 };
+
 
