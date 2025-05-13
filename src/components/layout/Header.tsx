@@ -33,7 +33,7 @@ const Header = () => {
       <div className="container flex items-center justify-between py-4 px-4 md:px-8">
         <Link to="/" className="flex items-center gap-2">
           <Logo />
-          <span className="text-xl md:text-2xl font-bold bg-gold-gradient text-transparent bg-clip-text">BitAccess</span>
+          <span className="text-xl md:text-2xl font-bold bg-gold-gradient text-transparent bg-clip-text">Bit Access Ecosystem</span>
         </Link>
 
         {/* Desktop Navigation */}

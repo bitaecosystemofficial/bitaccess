@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TokenInfoCard from "./TokenInfoCard";
@@ -13,6 +12,7 @@ import { contractAddresses } from "@/constants/contracts";
 import { useContractEvents } from "@/hooks/useContractEvents";
 import { useToast } from "@/components/ui/use-toast";
 import { bscscanService, TokenTransaction } from "@/services/BscscanService";
+import { getMockData, mockTokenTransactions } from "@/services/MockDataService";
 
 const DexChartAnalytics = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -25,7 +25,7 @@ const DexChartAnalytics = () => {
     marketCap: 2750000,
   });
   const [tokenHolders, setTokenHolders] = useState(4872);
-  const [recentTransactions, setRecentTransactions] = useState<TokenTransaction[]>([]);
+  const [recentTransactions, setRecentTransactions] = useState<TokenTransaction[]>(mockTokenTransactions);
   const { latestTransfer } = useContractEvents();
   const { toast } = useToast();
   
@@ -40,21 +40,38 @@ const DexChartAnalytics = () => {
         const transactions = await bscscanService.getTokenTransactions();
         const holdersCount = await bscscanService.getTokenHolders();
         
-        // Update state with real data
+        // Update state with real data if available, otherwise use mock data
         if (tokenInfo) {
           setTokenMetrics(prev => ({
             ...prev,
             price: tokenInfo.price || prev.price,
             marketCap: tokenInfo.marketCap || prev.marketCap,
           }));
+        } else {
+          console.log("Using mock token info data");
+          const mockData = getMockData();
+          setTokenMetrics(prev => ({
+            ...prev,
+            price: mockData.tokenInfo.price,
+            priceChange24h: mockData.tokenInfo.priceChange24h,
+            priceChange7d: mockData.tokenInfo.priceChange7d,
+            volume24h: mockData.tokenInfo.volume24h,
+            marketCap: mockData.tokenInfo.marketCap,
+          }));
         }
         
         if (transactions && transactions.length > 0) {
           setRecentTransactions(transactions);
+        } else {
+          console.log("Using mock transaction data");
+          setRecentTransactions(mockTokenTransactions);
         }
         
         if (holdersCount) {
           setTokenHolders(holdersCount);
+        } else {
+          console.log("Using mock holders count data");
+          setTokenHolders(getMockData().tokenInfo.holders);
         }
         
         // Also fetch data from contract if possible
@@ -89,6 +106,7 @@ const DexChartAnalytics = () => {
             }
           } catch (err) {
             console.error("Error fetching token data from contract:", err);
+            console.log("Falling back to mock data for contract values");
           }
         }
         
@@ -96,6 +114,20 @@ const DexChartAnalytics = () => {
         setLastUpdate(new Date());
       } catch (error) {
         console.error("Failed to fetch token data:", error);
+        console.log("Using mock data due to fetch error");
+        
+        // Use mock data as fallback
+        const mockData = getMockData();
+        setTokenMetrics({
+          price: mockData.tokenInfo.price,
+          priceChange24h: mockData.tokenInfo.priceChange24h,
+          priceChange7d: mockData.tokenInfo.priceChange7d,
+          volume24h: mockData.tokenInfo.volume24h,
+          marketCap: mockData.tokenInfo.marketCap,
+        });
+        setRecentTransactions(mockData.transactions);
+        setTokenHolders(mockData.tokenInfo.holders);
+        
         setIsLoading(false);
       }
     };
@@ -128,6 +160,7 @@ const DexChartAnalytics = () => {
         setLastUpdate(new Date());
       } catch (error) {
         console.error("Failed to update token data:", error);
+        // Keep using existing data, no need to fallback to mock here
       }
     }, 3600000); // 1 hour in milliseconds
     
@@ -150,7 +183,12 @@ const DexChartAnalytics = () => {
       bscscanService.getTokenTransactions().then(transactions => {
         if (transactions && transactions.length > 0) {
           setRecentTransactions(transactions);
+        } else {
+          // If API fails, keep existing data, no need to fallback to mock
+          console.log("Failed to get new transactions");
         }
+      }).catch(err => {
+        console.error("Error fetching transaction data:", err);
       });
     }
   }, [latestTransfer, toast]);
