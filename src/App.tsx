@@ -17,6 +17,7 @@ import NotFound from "./pages/NotFound";
 import Education from "./pages/Education";
 import Community from "./pages/Community";
 import CourseDetails from "./pages/CourseDetails";
+import DexAnalyticsPage from "./pages/DexAnalytics";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/education/:courseId" element={<CourseDetails />} />
             <Route path="/community" element={<Community />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/dex-analytics" element={<DexAnalyticsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
