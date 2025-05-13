@@ -7,35 +7,98 @@ import HoldersDistribution from "./HoldersDistribution";
 import TransactionAnalytics from "./TransactionAnalytics";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowUp, ArrowDown, ChartLine } from "lucide-react";
+import { ethers } from "ethers";
+import { TokenABI } from "@/contracts/abis/TokenABI";
+import { contractAddresses } from "@/constants/contracts";
+import { useContractEvents } from "@/hooks/useContractEvents";
+import { useToast } from "@/components/ui/use-toast";
 
 const DexChartAnalytics = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const [tokenMetrics, setTokenMetrics] = useState({
+    price: 0.00000275,
+    priceChange24h: 2.14,
+    priceChange7d: -1.27,
+    volume24h: 124357,
+    marketCap: 2750000,
+  });
+  const [tokenHolders, setTokenHolders] = useState(4872);
+  const { latestTransfer } = useContractEvents();
+  const { toast } = useToast();
   
-  // Simulate data loading
+  // Initial data loading
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
+    const fetchTokenData = async () => {
+      try {
+        setIsLoading(true);
+        
+        // In a real implementation, we would fetch actual data from blockchain APIs
+        // For now, we'll simulate loading with a timeout
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Try to get some basic token info
+        if (window.ethereum) {
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const tokenContract = new ethers.Contract(
+            contractAddresses.token,
+            TokenABI,
+            provider
+          );
+          
+          try {
+            // Get token symbol
+            const symbol = await tokenContract.symbol();
+            console.log("Token symbol:", symbol);
+            
+            // Get token decimals
+            const decimals = await tokenContract.decimals();
+            console.log("Token decimals:", decimals);
+          } catch (err) {
+            console.error("Error fetching token data from contract:", err);
+          }
+        }
+        
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch token data:", error);
+        setIsLoading(false);
+      }
+    };
     
-    return () => clearTimeout(timer);
+    fetchTokenData();
   }, []);
   
-  // Simulate hourly updates
+  // Real-time updates
   useEffect(() => {
     const updateInterval = setInterval(() => {
       setLastUpdate(new Date());
-      console.log("Updating analytics data...");
-      // Would fetch new data here in a real implementation
+      // In a real implementation, we would fetch updated data here
     }, 3600000); // 1 hour in milliseconds
     
     return () => clearInterval(updateInterval);
   }, []);
-
+  
+  // React to transfer events
+  useEffect(() => {
+    if (latestTransfer) {
+      console.log("New transfer detected:", latestTransfer);
+      
+      // Update UI with a toast notification
+      toast({
+        title: "New Transaction Detected",
+        description: `${latestTransfer.from.substring(0, 6)}...${latestTransfer.from.substring(latestTransfer.from.length - 4)} → ${latestTransfer.to.substring(0, 6)}...${latestTransfer.to.substring(latestTransfer.to.length - 4)}: ${Number(latestTransfer.amount).toFixed(2)} BIT`,
+        duration: 5000,
+      });
+      
+      // In a real implementation, we would update our data based on transfer
+    }
+  }, [latestTransfer, toast]);
+  
   const tokenInfo = {
     name: "BIT ACCESS",
     symbol: "BIT",
-    contractAddress: "0xd3bde17ebd27739cf5505cd58ecf31cb628e469c",
+    contractAddress: contractAddresses.token,
     network: "Binance Smart Chain (BSC)",
     decimal: 9,
     standard: "BEP20",
@@ -79,22 +142,22 @@ const DexChartAnalytics = () => {
                   <div className="p-3 bg-bitaccess-black rounded-lg">
                     <p className="text-gray-400 text-sm">24h Change</p>
                     <p className="font-bold text-green-500 flex items-center">
-                      +2.14% <ArrowUp size={16} className="ml-1" />
+                      +{tokenMetrics.priceChange24h}% <ArrowUp size={16} className="ml-1" />
                     </p>
                   </div>
                   <div className="p-3 bg-bitaccess-black rounded-lg">
                     <p className="text-gray-400 text-sm">7d Change</p>
                     <p className="font-bold text-red-500 flex items-center">
-                      -1.27% <ArrowDown size={16} className="ml-1" />
+                      {tokenMetrics.priceChange7d}% <ArrowDown size={16} className="ml-1" />
                     </p>
                   </div>
                   <div className="p-3 bg-bitaccess-black rounded-lg">
                     <p className="text-gray-400 text-sm">Volume 24h</p>
-                    <p className="font-bold text-white">$124,357</p>
+                    <p className="font-bold text-white">${tokenMetrics.volume24h.toLocaleString()}</p>
                   </div>
                   <div className="p-3 bg-bitaccess-black rounded-lg">
                     <p className="text-gray-400 text-sm">Market Cap</p>
-                    <p className="font-bold text-white">$2.75M</p>
+                    <p className="font-bold text-white">${tokenMetrics.marketCap.toLocaleString()}</p>
                   </div>
                 </div>
               </div>
@@ -103,7 +166,7 @@ const DexChartAnalytics = () => {
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-semibold text-white">Token Holders</h3>
                   <div className="bg-bitaccess-gold/20 rounded-full px-3 py-1 text-sm text-bitaccess-gold">
-                    4,872 holders
+                    {tokenHolders.toLocaleString()} holders
                   </div>
                 </div>
                 <div className="space-y-3">

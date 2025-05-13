@@ -1,6 +1,6 @@
 
 import SectionHeading from "@/components/ui/section-heading";
-import { Building, Handshake, Users } from "lucide-react";
+import { Building, Handshake, Users, GraduationCap, Coins, Book } from "lucide-react";
 
 const StrategicPartnersSection = () => {
   const partners = [
@@ -18,6 +18,21 @@ const StrategicPartnersSection = () => {
       name: "Global Merchant Network",
       description: "Worldwide network of 10,000+ merchants accepting cryptocurrency payments",
       icon: <Handshake className="h-6 w-6" />
+    },
+    {
+      name: "CITFEE",
+      description: "Specialized in Money Training Education and financial literacy for the digital economy",
+      icon: <Coins className="h-6 w-6" />
+    },
+    {
+      name: "BITCORP",
+      description: "Leading provider of Blockchain Education and distributed ledger technology training",
+      icon: <Book className="h-6 w-6" />
+    },
+    {
+      name: "APCPI",
+      description: "Focused on Professional Training Competencies and blockchain certification programs",
+      icon: <GraduationCap className="h-6 w-6" />
     }
   ];
 

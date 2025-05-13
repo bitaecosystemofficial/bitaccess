@@ -48,7 +48,14 @@ const TokenInfoCard = ({ tokenInfo }: TokenInfoProps) => {
         <div>
           <p className="text-gray-400 mb-1">Contract Address</p>
           <p className="bg-bitaccess-black p-2 rounded text-sm font-mono overflow-hidden text-ellipsis">
-            {truncateAddress(tokenInfo.contractAddress)}
+            <a 
+              href={`https://bscscan.com/address/${tokenInfo.contractAddress}`} 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-bitaccess-gold"
+            >
+              {truncateAddress(tokenInfo.contractAddress)}
+            </a>
           </p>
         </div>
         <div>

@@ -18,6 +18,28 @@ export class TokenService extends BaseContractService {
     const contract = await this.getTokenContract();
     return contract.balanceOf(address);
   }
+  
+  async getTotalSupply() {
+    const contract = await this.getTokenContract();
+    return contract.totalSupply();
+  }
+  
+  async getTokenDetails() {
+    const contract = await this.getTokenContract();
+    try {
+      const [name, symbol, decimals, totalSupply] = await Promise.all([
+        contract.name(),
+        contract.symbol(),
+        contract.decimals(),
+        contract.totalSupply()
+      ]);
+      
+      return { name, symbol, decimals, totalSupply };
+    } catch (error) {
+      console.error("Error getting token details:", error);
+      throw error;
+    }
+  }
 
   async subscribeToTokenTransfers(callback: (from: string, to: string, amount: ethers.BigNumber) => void) {
     const contract = await this.getTokenContract(true);

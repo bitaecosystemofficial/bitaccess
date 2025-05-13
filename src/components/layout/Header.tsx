@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ const navItems = [
   { label: "Swap", path: "/swap" },
   { label: "Spin Wheel", path: "/spin-wheel" },
   { label: "Education", path: "/education" },
+  { label: "Analytics", path: "/dex-analytics" },
   { label: "Docs", path: "/docs" },
   { label: "Contact", path: "/contact" },
 ];
