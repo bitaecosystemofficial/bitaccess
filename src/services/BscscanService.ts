@@ -1,7 +1,7 @@
 
 import axios from 'axios';
 
-const API_KEY = 'DKMYBYMX2GJNT2H8QR62JAP6212EMW97G9'; // BSCScan free API key
+const API_KEY = 'MQ5CDPMX7M77EVMH9BNGVXGG9N4AVV2P77'; // BSCScan free API key
 const BASE_URL = 'https://api.bscscan.com/api';
 const TOKEN_ADDRESS = '0xd3bde17ebd27739cf5505cd58ecf31cb628e469c';
 
