@@ -10,10 +10,10 @@ const Footer = () => {
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
               <Logo />
-              <span className="text-xl font-bold bg-gold-gradient text-transparent bg-clip-text">BitAccess</span>
+              <span className="text-xl font-bold bg-gold-gradient text-transparent bg-clip-text">Bit Access Ecosystem</span>
             </div>
             <p className="text-sm text-gray-400 mt-2">
-              Empowering blockchain education and merchant adoption through the BitAccess ecosystem.
+              Empowering blockchain education and merchant adoption through the Bit Access Ecosystem.
             </p>
             <div className="flex gap-4 mt-4">
               <a href="#" className="text-bitaccess-gold hover:text-bitaccess-gold-light">
