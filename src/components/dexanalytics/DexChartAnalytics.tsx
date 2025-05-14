@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TokenInfoCard from "./TokenInfoCard";
@@ -14,10 +15,19 @@ import { useToast } from "@/components/ui/use-toast";
 import { bscscanService, TokenTransaction } from "@/services/BscscanService";
 import { getMockData, mockTokenTransactions } from "@/services/MockDataService";
 
+// Extract TokenMetrics type to make the code more maintainable
+interface TokenMetrics {
+  price: number;
+  priceChange24h: number;
+  priceChange7d: number;
+  volume24h: number;
+  marketCap: number;
+}
+
 const DexChartAnalytics = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
-  const [tokenMetrics, setTokenMetrics] = useState({
+  const [tokenMetrics, setTokenMetrics] = useState<TokenMetrics>({
     price: 0.00000275,
     priceChange24h: 2.14,
     priceChange7d: -1.27,
@@ -29,94 +39,103 @@ const DexChartAnalytics = () => {
   const { latestTransfer } = useContractEvents();
   const { toast } = useToast();
   
-  // Initial data loading
+  // Fetch data from smart contract and BSCScan
   useEffect(() => {
     const fetchTokenData = async () => {
       try {
+        console.log("Fetching token data...");
         setIsLoading(true);
         
-        // Fetch data from BSCScan
-        const tokenInfo = await bscscanService.getTokenInfo();
-        const transactions = await bscscanService.getTokenTransactions();
-        const holdersCount = await bscscanService.getTokenHolders();
-        
-        // Update state with real data if available, otherwise use mock data
-        if (tokenInfo) {
-          setTokenMetrics(prev => ({
-            ...prev,
-            price: tokenInfo.price || prev.price,
-            marketCap: tokenInfo.marketCap || prev.marketCap,
-          }));
-        } else {
-          console.log("Using mock token info data");
-          const mockData = getMockData();
-          setTokenMetrics(prev => ({
-            ...prev,
-            price: mockData.tokenInfo.price,
-            priceChange24h: mockData.tokenInfo.priceChange24h,
-            priceChange7d: mockData.tokenInfo.priceChange7d,
-            volume24h: mockData.tokenInfo.volume24h,
-            marketCap: mockData.tokenInfo.marketCap,
-          }));
-        }
-        
-        if (transactions && transactions.length > 0) {
-          setRecentTransactions(transactions);
-        } else {
-          console.log("Using mock transaction data");
-          setRecentTransactions(mockTokenTransactions);
-        }
-        
-        if (holdersCount) {
-          setTokenHolders(holdersCount);
-        } else {
-          console.log("Using mock holders count data");
-          setTokenHolders(getMockData().tokenInfo.holders);
-        }
-        
-        // Also fetch data from contract if possible
-        if (window.ethereum) {
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
-          const tokenContract = new ethers.Contract(
-            contractAddresses.token,
-            TokenABI,
-            provider
-          );
+        // Attempt to fetch live data from BSCScan
+        try {
+          console.log("Fetching from BSCScan...");
+          const tokenInfo = await bscscanService.getTokenInfo();
+          const transactions = await bscscanService.getTokenTransactions();
+          const holdersCount = await bscscanService.getTokenHolders();
           
-          try {
-            // Get token symbol
-            const symbol = await tokenContract.symbol();
-            console.log("Token symbol:", symbol);
+          if (tokenInfo) {
+            setTokenMetrics(prev => ({
+              ...prev,
+              price: tokenInfo.price || prev.price,
+              marketCap: tokenInfo.marketCap || prev.marketCap,
+            }));
+          }
+          
+          if (transactions && transactions.length > 0) {
+            setRecentTransactions(transactions);
+          }
+          
+          if (holdersCount) {
+            setTokenHolders(holdersCount);
+          }
+          
+          console.log("BSCScan data fetched successfully");
+        } catch (apiError) {
+          console.warn("BSCScan API failed, using fallback data:", apiError);
+          // If BSCScan API fails, continue with contract data or fallback to mock data
+        }
+        
+        // Try to fetch data from contract if possible
+        try {
+          if (window.ethereum) {
+            console.log("Fetching from smart contract...");
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const tokenContract = new ethers.Contract(
+              contractAddresses.token,
+              TokenABI,
+              provider
+            );
             
-            // Get token decimals
-            const decimals = await tokenContract.decimals();
-            console.log("Token decimals:", decimals);
+            // Get basic token info
+            const [symbol, decimals, totalSupply] = await Promise.all([
+              tokenContract.symbol(),
+              tokenContract.decimals(),
+              tokenContract.totalSupply()
+            ]);
             
-            // Get total supply
-            const totalSupply = await tokenContract.totalSupply();
-            console.log("Total supply:", totalSupply.toString());
+            console.log("Token data from contract:", {
+              symbol,
+              decimals: decimals.toString(),
+              totalSupply: totalSupply.toString()
+            });
             
             // Try to get additional tokenomics data if available
             try {
               const tokenomicsData = await tokenContract.getTokenomicsData();
               console.log("Tokenomics data:", tokenomicsData);
             } catch (err) {
-              // Function might not exist on contract
               console.log("getTokenomicsData not available on contract");
             }
-          } catch (err) {
-            console.error("Error fetching token data from contract:", err);
-            console.log("Falling back to mock data for contract values");
           }
+        } catch (contractError) {
+          console.warn("Contract interaction failed:", contractError);
         }
+        
+        // Fallback to mock data if needed
+        if (recentTransactions.length === 0) {
+          console.log("Using mock transaction data");
+          setRecentTransactions(mockTokenTransactions);
+        }
+        
+        // Always ensure we have some data to show
+        const mockData = getMockData();
+        setTokenMetrics(prev => {
+          // Only use mock data if we don't have real values
+          return {
+            price: prev.price || mockData.tokenInfo.price,
+            priceChange24h: prev.priceChange24h || mockData.tokenInfo.priceChange24h,
+            priceChange7d: prev.priceChange7d || mockData.tokenInfo.priceChange7d,
+            volume24h: prev.volume24h || mockData.tokenInfo.volume24h,
+            marketCap: prev.marketCap || mockData.tokenInfo.marketCap,
+          };
+        });
         
         setIsLoading(false);
         setLastUpdate(new Date());
       } catch (error) {
         console.error("Failed to fetch token data:", error);
-        console.log("Using mock data due to fetch error");
         
-        // Use mock data as fallback
+        // Use mock data as ultimate fallback
         const mockData = getMockData();
         setTokenMetrics({
           price: mockData.tokenInfo.price,
@@ -135,16 +154,15 @@ const DexChartAnalytics = () => {
     fetchTokenData();
   }, []);
   
-  // Real-time updates
+  // Real-time updates (run every hour)
   useEffect(() => {
     const updateInterval = setInterval(async () => {
-      console.log("Fetching latest token data...");
+      console.log("Updating token data...");
       try {
-        // Fetch new data from BSCScan
+        // Try to fetch new data from BSCScan
         const tokenInfo = await bscscanService.getTokenInfo();
         const transactions = await bscscanService.getTokenTransactions();
         
-        // Update state with new data
         if (tokenInfo) {
           setTokenMetrics(prev => ({
             ...prev,
@@ -160,7 +178,6 @@ const DexChartAnalytics = () => {
         setLastUpdate(new Date());
       } catch (error) {
         console.error("Failed to update token data:", error);
-        // Keep using existing data, no need to fallback to mock here
       }
     }, 3600000); // 1 hour in milliseconds
     
@@ -172,7 +189,6 @@ const DexChartAnalytics = () => {
     if (latestTransfer) {
       console.log("New transfer detected:", latestTransfer);
       
-      // Update UI with a toast notification
       toast({
         title: "New Transaction Detected",
         description: `${latestTransfer.from.substring(0, 6)}...${latestTransfer.from.substring(latestTransfer.from.length - 4)} → ${latestTransfer.to.substring(0, 6)}...${latestTransfer.to.substring(latestTransfer.to.length - 4)}: ${Number(latestTransfer.amount).toFixed(2)} BIT`,
@@ -183,9 +199,6 @@ const DexChartAnalytics = () => {
       bscscanService.getTokenTransactions().then(transactions => {
         if (transactions && transactions.length > 0) {
           setRecentTransactions(transactions);
-        } else {
-          // If API fails, keep existing data, no need to fallback to mock
-          console.log("Failed to get new transactions");
         }
       }).catch(err => {
         console.error("Error fetching transaction data:", err);
@@ -239,14 +252,16 @@ const DexChartAnalytics = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 bg-bitaccess-black rounded-lg">
                     <p className="text-gray-400 text-sm">24h Change</p>
-                    <p className="font-bold text-green-500 flex items-center">
-                      +{tokenMetrics.priceChange24h}% <ArrowUp size={16} className="ml-1" />
+                    <p className={`font-bold ${tokenMetrics.priceChange24h >= 0 ? 'text-green-500' : 'text-red-500'} flex items-center`}>
+                      {tokenMetrics.priceChange24h >= 0 ? '+' : ''}{tokenMetrics.priceChange24h}% 
+                      {tokenMetrics.priceChange24h >= 0 ? <ArrowUp size={16} className="ml-1" /> : <ArrowDown size={16} className="ml-1" />}
                     </p>
                   </div>
                   <div className="p-3 bg-bitaccess-black rounded-lg">
                     <p className="text-gray-400 text-sm">7d Change</p>
-                    <p className="font-bold text-red-500 flex items-center">
-                      {tokenMetrics.priceChange7d}% <ArrowDown size={16} className="ml-1" />
+                    <p className={`font-bold ${tokenMetrics.priceChange7d >= 0 ? 'text-green-500' : 'text-red-500'} flex items-center`}>
+                      {tokenMetrics.priceChange7d >= 0 ? '+' : ''}{tokenMetrics.priceChange7d}% 
+                      {tokenMetrics.priceChange7d >= 0 ? <ArrowUp size={16} className="ml-1" /> : <ArrowDown size={16} className="ml-1" />}
                     </p>
                   </div>
                   <div className="p-3 bg-bitaccess-black rounded-lg">
