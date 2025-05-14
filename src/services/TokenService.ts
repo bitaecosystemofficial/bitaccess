@@ -5,8 +5,15 @@ import { TokenABI } from '@/contracts/abis/TokenABI';
 import { BaseContractService } from './BaseContractService';
 
 export class TokenService extends BaseContractService {
+  public contractAddress: string;
+  
+  constructor() {
+    super();
+    this.contractAddress = contractAddresses.token;
+  }
+  
   async getTokenContract(withEvents = false) {
-    const contract = new ethers.Contract(contractAddresses.token, TokenABI, this.signer);
+    const contract = new ethers.Contract(this.contractAddress, TokenABI, this.signer);
     if (withEvents && !this.eventSubscriptions.has('token')) {
       this.eventSubscriptions.set('token', contract);
       console.log('Subscribed to Token events');
