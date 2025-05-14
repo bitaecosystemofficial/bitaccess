@@ -101,7 +101,7 @@ const Docs = () => {
                     </div>
                     <div>
                       <h3 className="text-xl font-bold text-white">BitAccess Whitepaper</h3>
-                      <p className="text-gray-400">Version 1.2 | Last updated: March 15, 2023</p>
+                      <p className="text-gray-400">Version 1.6 | Last updated: May 14, 2025</p>
                     </div>
                   </div>
                   
