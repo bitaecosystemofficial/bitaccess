@@ -1,6 +1,6 @@
-
 import SectionHeading from "@/components/ui/section-heading";
 import TokenStatCard from "@/components/ui/token-stat-card";
+import FeatureCard from "@/components/ui/feature-card";
 import { Button } from "@/components/ui/button";
 import { 
   Coins, 
@@ -9,11 +9,44 @@ import {
   ChartPie,
   Bitcoin,
   DollarSign,
-  Percent
+  Percent,
+  Trophy,
+  Users,
+  BookOpen,
+  Link,
+  MessageCircle
 } from "lucide-react";
 import { AspectRatio } from "../ui/aspect-ratio";
 
 const TokenSection = () => {
+  const features = [
+    {
+      title: "Rewards System",
+      description: "Earn BIT tokens through community participation, staking, and ecosystem activities.",
+      icon: <Trophy size={24} />
+    },
+    {
+      title: "Community Governance",
+      description: "Token holders can vote on important ecosystem decisions and proposals.",
+      icon: <Users size={24} />
+    },
+    {
+      title: "Educational Incentives",
+      description: "Learn about blockchain and earn rewards through our educational platform.",
+      icon: <BookOpen size={24} />
+    },
+    {
+      title: "Cross-Chain Compatibility",
+      description: "Utilize BIT tokens across multiple blockchain networks seamlessly.",
+      icon: <Link size={24} />
+    },
+    {
+      title: "Community Engagement",
+      description: "Participate in community events, challenges and earn rewards.",
+      icon: <MessageCircle size={24} />
+    }
+  ];
+
   return (
     <section className="py-16 md:py-24 bg-bitaccess-black-dark">
       <div className="container px-4 md:px-8">
@@ -93,39 +126,38 @@ const TokenSection = () => {
                 </ul>
               </div>
 
-     
-                    <div className="container px-4 md:px-8">
-                      <SectionHeading
-                        title="Ecosystem Features"
-                        subtitle="Discover the full range of features and services available within the BitAccess ecosystem on Binance Smart Chain"
-                        centered
-                      />
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {features.map((feature, index) => (
-                          <FeatureCard
-                            key={index}
-                            title={feature.title}
-                            description={feature.description}
-                            icon={feature.icon}
-                          />
-                        ))}
-                      </div>
-              
-                      <div className="mt-12 bg-bitaccess-black-light p-6 rounded-xl border border-bitaccess-gold/20 max-w-3xl mx-auto">
-                        <h3 className="text-lg font-medium text-bitaccess-gold mb-2">Powered by Binance Smart Chain</h3>
-                        <p className="text-gray-300 mb-4">
-                          BitAccess is built on Binance Smart Chain (BSC), offering users:
-                        </p>
-                        <ul className="list-disc list-inside space-y-1 text-gray-300">
-                          <li>Fast transaction speeds (5 second block times)</li>
-                          <li>Low gas fees compared to Ethereum</li>
-                          <li>Compatibility with BNB and BEP-20 tokens</li>
-                          <li>Access to DeFi protocols in the BSC ecosystem</li>
-                          <li>Cross-chain functionality with other blockchains</li>
-                        </ul>
-                      </div>
-                    </div>
+              <div className="container px-4 md:px-8">
+                <SectionHeading
+                  title="Ecosystem Features"
+                  subtitle="Discover the full range of features and services available within the BitAccess ecosystem on Binance Smart Chain"
+                  centered
+                />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                  {features.map((feature, index) => (
+                    <FeatureCard
+                      key={index}
+                      title={feature.title}
+                      description={feature.description}
+                      icon={feature.icon}
+                    />
+                  ))}
+                </div>
+        
+                <div className="mt-12 bg-bitaccess-black-light p-6 rounded-xl border border-bitaccess-gold/20 max-w-3xl mx-auto">
+                  <h3 className="text-lg font-medium text-bitaccess-gold mb-2">Powered by Binance Smart Chain</h3>
+                  <p className="text-gray-300 mb-4">
+                    BitAccess is built on Binance Smart Chain (BSC), offering users:
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-gray-300">
+                    <li>Fast transaction speeds (5 second block times)</li>
+                    <li>Low gas fees compared to Ethereum</li>
+                    <li>Compatibility with BNB and BEP-20 tokens</li>
+                    <li>Access to DeFi protocols in the BSC ecosystem</li>
+                    <li>Cross-chain functionality with other blockchains</li>
+                  </ul>
+                </div>
+              </div>
               
               <Button className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium">
                 View Whitepaper
