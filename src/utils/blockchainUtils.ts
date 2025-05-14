@@ -1,21 +1,27 @@
 
+import { toast } from "@/hooks/use-toast";
 import { contractAddresses, networkInfo } from "@/constants/contracts";
 
-// Mock transaction function - in a real app, this would use web3.js or ethers.js
+// Enhanced transaction function with better error handling
 export const mockTransaction = async (): Promise<string> => {
-  // Simulate network delay (0.5-2 seconds)
-  const delay = 500 + Math.random() * 1500;
-  await new Promise(resolve => setTimeout(resolve, delay));
-  
-  // Generate a random transaction hash
-  const txHash = '0x' + Array(64).fill(0).map(() => 
-    Math.floor(Math.random() * 16).toString(16)).join('');
-  
-  console.log(`Transaction submitted: ${txHash}`);
-  return txHash;
+  try {
+    // Simulate network delay (0.5-2 seconds)
+    const delay = 500 + Math.random() * 1500;
+    await new Promise(resolve => setTimeout(resolve, delay));
+    
+    // Generate a random transaction hash
+    const txHash = '0x' + Array(64).fill(0).map(() => 
+      Math.floor(Math.random() * 16).toString(16)).join('');
+    
+    console.log(`Transaction submitted: ${txHash}`);
+    return txHash;
+  } catch (error) {
+    console.error("Transaction error:", error);
+    throw error;
+  }
 };
 
-// Check if the network is correct
+// Check if the network is correct with enhanced error handling
 export const checkNetwork = async (): Promise<boolean> => {
   if (typeof window === 'undefined' || typeof window.ethereum === 'undefined') {
     console.error("No Ethereum provider detected");
@@ -27,7 +33,7 @@ export const checkNetwork = async (): Promise<boolean> => {
     const currentChainId = parseInt(chainId, 16);
     
     if (currentChainId !== networkInfo.chainId) {
-      console.warn(`Wrong network detected. Expected ${networkInfo.chainId}, got ${currentChainId}`);
+      console.warn(`Wrong network detected. Expected ${networkInfo.chainId} (${networkInfo.name}), got ${currentChainId}`);
       return false;
     }
     
@@ -38,10 +44,14 @@ export const checkNetwork = async (): Promise<boolean> => {
   }
 };
 
-// Switch to the correct network
+// Switch to the correct network with enhanced user feedback
 export const switchNetwork = async (): Promise<boolean> => {
   if (typeof window === 'undefined' || typeof window.ethereum === 'undefined') {
-    console.error("No Ethereum provider detected");
+    toast({
+      title: "Wallet Not Found",
+      description: "No Ethereum provider detected. Please install a wallet extension like MetaMask.",
+      variant: "destructive",
+    });
     return false;
   }
   
@@ -55,6 +65,12 @@ export const switchNetwork = async (): Promise<boolean> => {
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: chainIdHex }],
       });
+      
+      toast({
+        title: "Network Changed",
+        description: `Successfully connected to ${networkInfo.name}.`,
+      });
+      
       return true;
     } catch (switchError: any) {
       // This error code indicates that the chain has not been added to MetaMask
@@ -76,18 +92,49 @@ export const switchNetwork = async (): Promise<boolean> => {
               },
             ],
           });
+          
+          toast({
+            title: "Network Added",
+            description: `${networkInfo.name} has been added to your wallet.`,
+          });
+          
           return true;
         } catch (addError) {
           console.error("Error adding chain:", addError);
+          toast({
+            title: "Network Addition Failed",
+            description: "Failed to add network to your wallet.",
+            variant: "destructive",
+          });
           return false;
         }
       }
+      
       // User rejected the request
+      if (switchError.code === 4001) {
+        toast({
+          title: "Network Switch Rejected",
+          description: "You rejected the request to switch networks.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Network Switch Failed",
+          description: "Failed to switch networks in your wallet.",
+          variant: "destructive",
+        });
+      }
+      
       console.error("Error switching network:", switchError);
       return false;
     }
   } catch (error) {
     console.error("General error switching network:", error);
+    toast({
+      title: "Network Error",
+      description: "An unexpected error occurred while switching networks.",
+      variant: "destructive",
+    });
     return false;
   }
 };

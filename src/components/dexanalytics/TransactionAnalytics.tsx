@@ -1,4 +1,5 @@
 
+import { useMemo, useState } from "react";
 import { ChartContainer } from "@/components/ui/chart";
 import { 
   BarChart, 
@@ -15,7 +16,7 @@ import {
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Database, TrendingUp } from "lucide-react";
 import { TokenTransaction } from "@/services/BscscanService";
-import { useMemo } from "react";
+import TransactionFilters, { FilterOptions } from "./TransactionFilters";
 
 const transactionData = [
   { date: '05-06', buys: 145, sells: 87, volume: 5600 },
@@ -32,7 +33,7 @@ interface TransactionAnalyticsProps {
   transactions?: TokenTransaction[];
 }
 
-// Move the getTimeAgo helper function above where it's used
+// Helper function to format time ago
 const getTimeAgo = (date: Date) => {
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
@@ -48,42 +49,101 @@ const getTimeAgo = (date: Date) => {
 };
 
 const TransactionAnalytics = ({ transactions = [] }: TransactionAnalyticsProps) => {
-  // Process BSCScan transactions for display
-  const formattedTransactions = useMemo(() => {
-    return transactions.slice(0, 5).map(tx => {
-      // Convert Wei to Token value (assuming 9 decimals)
-      const valueBN = BigInt(tx.value);
-      const decimals = BigInt(10 ** 9);
-      const tokenAmount = Number(valueBN) / Number(decimals);
-      const formattedAmount = tokenAmount.toLocaleString(undefined, { maximumFractionDigits: 0 });
-      
-      // Estimate USD value (using placeholder price)
-      const estimatedUSD = (tokenAmount * 0.00000275).toLocaleString(undefined, {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-      
-      // Format timestamp
-      const date = new Date(Number(tx.timeStamp) * 1000);
-      const timeAgo = getTimeAgo(date);
-      
-      // Determine if it's a buy or sell (simplified logic)
-      // In a real app, you'd compare with known exchange addresses
-      const type = tx.to === '0x7a42F1196271B5A68A36FA0D6A61F85A6cFA7E12' ? "Sell" : "Buy";
-      
-      return {
-        hash: tx.hash,
-        type,
-        amount: formattedAmount,
-        value: estimatedUSD,
-        time: timeAgo
-      };
-    });
-  }, [transactions]);
+  const [filters, setFilters] = useState<FilterOptions>({
+    type: "all",
+    timeRange: "24h",
+    minAmount: "",
+  });
   
-  // Removed duplicate getTimeAgo function since it's now defined above
+  // Process BSCScan transactions for display with filters
+  const formattedTransactions = useMemo(() => {
+    return transactions
+      .filter(tx => {
+        // Apply filters
+        if (filters.type !== "all") {
+          const txType = tx.to === '0x7a42F1196271B5A68A36FA0D6A61F85A6cFA7E12' ? "Sell" : "Buy";
+          if (txType.toLowerCase() !== filters.type) {
+            return false;
+          }
+        }
+        
+        if (filters.minAmount) {
+          const valueBN = BigInt(tx.value);
+          const decimals = BigInt(10 ** 9);
+          const tokenAmount = Number(valueBN) / Number(decimals);
+          if (tokenAmount < Number(filters.minAmount)) {
+            return false;
+          }
+        }
+        
+        if (filters.timeRange !== "all") {
+          const txDate = new Date(Number(tx.timeStamp) * 1000);
+          const now = new Date();
+          let timeLimit;
+          
+          switch (filters.timeRange) {
+            case "1h":
+              timeLimit = now.getTime() - 60 * 60 * 1000;
+              break;
+            case "24h":
+              timeLimit = now.getTime() - 24 * 60 * 60 * 1000;
+              break;
+            case "7d":
+              timeLimit = now.getTime() - 7 * 24 * 60 * 60 * 1000;
+              break;
+            case "30d":
+              timeLimit = now.getTime() - 30 * 24 * 60 * 60 * 1000;
+              break;
+            default:
+              timeLimit = 0;
+          }
+          
+          if (txDate.getTime() < timeLimit) {
+            return false;
+          }
+        }
+        
+        return true;
+      })
+      .slice(0, 5)
+      .map(tx => {
+        // Convert Wei to Token value (assuming 9 decimals)
+        const valueBN = BigInt(tx.value);
+        const decimals = BigInt(10 ** 9);
+        const tokenAmount = Number(valueBN) / Number(decimals);
+        const formattedAmount = tokenAmount.toLocaleString(undefined, { maximumFractionDigits: 0 });
+        
+        // Estimate USD value (using placeholder price)
+        const estimatedUSD = (tokenAmount * 0.00000275).toLocaleString(undefined, {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+        
+        // Format timestamp
+        const date = new Date(Number(tx.timeStamp) * 1000);
+        const timeAgo = getTimeAgo(date);
+        
+        // Determine if it's a buy or sell (simplified logic)
+        // In a real app, you'd compare with known exchange addresses
+        const type = tx.to === '0x7a42F1196271B5A68A36FA0D6A61F85A6cFA7E12' ? "Sell" : "Buy";
+        
+        return {
+          hash: tx.hash,
+          type,
+          amount: formattedAmount,
+          value: estimatedUSD,
+          time: timeAgo
+        };
+      });
+  }, [transactions, filters]);
+  
+  // Filter chart data based on time range
+  const filteredChartData = useMemo(() => {
+    // In a real implementation, we would filter chart data based on the time range
+    return transactionData;
+  }, [filters.timeRange]);
   
   return (
     <div className="space-y-6">
@@ -95,6 +155,8 @@ const TransactionAnalytics = ({ transactions = [] }: TransactionAnalyticsProps) 
             <span className="text-white text-sm">+23.4% this week</span>
           </div>
         </div>
+        
+        <TransactionFilters onFilterChange={setFilters} />
         
         <ChartContainer
           className="h-80"
@@ -114,7 +176,7 @@ const TransactionAnalytics = ({ transactions = [] }: TransactionAnalyticsProps) 
           }}
         >
           <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={transactionData}>
+            <ComposedChart data={filteredChartData}>
               <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
               <XAxis dataKey="date" tick={{ fill: "#A0AEC0" }} />
               <YAxis yAxisId="left" tick={{ fill: "#A0AEC0" }} />
