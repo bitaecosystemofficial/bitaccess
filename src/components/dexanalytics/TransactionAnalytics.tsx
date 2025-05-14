@@ -32,6 +32,21 @@ interface TransactionAnalyticsProps {
   transactions?: TokenTransaction[];
 }
 
+// Move the getTimeAgo helper function above where it's used
+const getTimeAgo = (date: Date) => {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.round(diffMs / 60000);
+  
+  if (diffMins < 60) {
+    return `${diffMins} mins ago`;
+  } else if (diffMins < 1440) {
+    return `${Math.floor(diffMins / 60)} hours ago`;
+  } else {
+    return `${Math.floor(diffMins / 1440)} days ago`;
+  }
+};
+
 const TransactionAnalytics = ({ transactions = [] }: TransactionAnalyticsProps) => {
   // Process BSCScan transactions for display
   const formattedTransactions = useMemo(() => {
@@ -68,19 +83,7 @@ const TransactionAnalytics = ({ transactions = [] }: TransactionAnalyticsProps) 
     });
   }, [transactions]);
   
-  const getTimeAgo = (date: Date) => {
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.round(diffMs / 60000);
-    
-    if (diffMins < 60) {
-      return `${diffMins} mins ago`;
-    } else if (diffMins < 1440) {
-      return `${Math.floor(diffMins / 60)} hours ago`;
-    } else {
-      return `${Math.floor(diffMins / 1440)} days ago`;
-    }
-  };
+  // Removed duplicate getTimeAgo function since it's now defined above
   
   return (
     <div className="space-y-6">
