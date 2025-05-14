@@ -105,8 +105,8 @@ const TokenSection = () => {
         </div>
         
         <div className="bg-bitaccess-black-light border border-bitaccess-gold/20 rounded-xl p-6 md:p-10 mb-12">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="lg:col-span-1">
               <h3 className="text-2xl font-bold mb-4 text-bitaccess-gold">Token Distribution & Allocation</h3>
               <p className="text-gray-400 mb-6">
                 The BIT Token Distribution and Allocation outlines the planned distribution of the BIT tokens to ensure a balanced, fair, and sustainable ecosystem.
@@ -144,7 +144,7 @@ const TokenSection = () => {
               </Button>
             </div>
             
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-1">
               <h4 className="text-lg font-bold mb-4 text-white">Token Distribution</h4>
               <div className="bg-bitaccess-black p-6 rounded-lg border border-bitaccess-gold/10 mb-6">
                 <div className="space-y-4">
