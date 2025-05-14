@@ -124,26 +124,7 @@ const TokenSection = () => {
                   <li><span className="text-white font-medium">Ecosystem Growth:</span> Support for platform development and expansion</li>
                   <li><span className="text-white font-medium">Cross-Border Payments:</span> Enabling international transactions without traditional banking barriers</li>
                 </ul>
-              </div>
-
-              <div className="container px-4 md:px-8">
-                <SectionHeading
-                  title="Ecosystem Features"
-                  subtitle="Discover the full range of features and services available within the BitAccess ecosystem on Binance Smart Chain"
-                  centered
-                />
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                  {features.map((feature, index) => (
-                    <FeatureCard
-                      key={index}
-                      title={feature.title}
-                      description={feature.description}
-                      icon={feature.icon}
-                    />
-                  ))}
-                </div>
-        
+              </div>    
                 <div className="mt-12 bg-bitaccess-black-light p-6 rounded-xl border border-bitaccess-gold/20 max-w-3xl mx-auto">
                   <h3 className="text-lg font-medium text-bitaccess-gold mb-2">Powered by Binance Smart Chain</h3>
                   <p className="text-gray-300 mb-4">
