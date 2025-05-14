@@ -1,26 +1,16 @@
 
 import { useState, useEffect } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import TokenInfoCard from "./TokenInfoCard";
-import PriceChart from "./PriceChart";
-import HoldersDistribution from "./HoldersDistribution";
-import TransactionAnalytics from "./TransactionAnalytics";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowUp, ArrowDown, ChartLine } from "lucide-react";
 import { contractAddresses } from "@/constants/contracts";
 import { useContractEvents } from "@/hooks/useContractEvents";
 import { useToast } from "@/components/ui/use-toast";
 import { TokenTransaction } from "@/services/BscscanService";
 import { getMockData, mockTokenTransactions } from "@/services/MockDataService";
-
-// Extract TokenMetrics type to make the code more maintainable
-interface TokenMetrics {
-  price: number;
-  priceChange24h: number;
-  priceChange7d: number;
-  volume24h: number;
-  marketCap: number;
-}
+import TokenInfoCard from "./TokenInfoCard";
+import TokenMetricsCard from "./TokenMetricsCard";
+import TokenHoldersCard from "./TokenHoldersCard";
+import AnalyticsTabs from "./AnalyticsTabs";
+import { TokenMetrics } from "@/types/analytics";
 
 const DexChartAnalytics = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -151,79 +141,11 @@ const DexChartAnalytics = () => {
             <TokenInfoCard tokenInfo={tokenInfo} />
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-              <div className="bg-bitaccess-black-light p-6 rounded-xl border border-bitaccess-gold/20">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold text-white">Price Statistics</h3>
-                  <ChartLine className="text-bitaccess-gold" size={24} />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 bg-bitaccess-black rounded-lg">
-                    <p className="text-gray-400 text-sm">24h Change</p>
-                    <p className={`font-bold ${tokenMetrics.priceChange24h >= 0 ? 'text-green-500' : 'text-red-500'} flex items-center`}>
-                      {tokenMetrics.priceChange24h >= 0 ? '+' : ''}{tokenMetrics.priceChange24h.toFixed(2)}% 
-                      {tokenMetrics.priceChange24h >= 0 ? <ArrowUp size={16} className="ml-1" /> : <ArrowDown size={16} className="ml-1" />}
-                    </p>
-                  </div>
-                  <div className="p-3 bg-bitaccess-black rounded-lg">
-                    <p className="text-gray-400 text-sm">7d Change</p>
-                    <p className={`font-bold ${tokenMetrics.priceChange7d >= 0 ? 'text-green-500' : 'text-red-500'} flex items-center`}>
-                      {tokenMetrics.priceChange7d >= 0 ? '+' : ''}{tokenMetrics.priceChange7d.toFixed(2)}% 
-                      {tokenMetrics.priceChange7d >= 0 ? <ArrowUp size={16} className="ml-1" /> : <ArrowDown size={16} className="ml-1" />}
-                    </p>
-                  </div>
-                  <div className="p-3 bg-bitaccess-black rounded-lg">
-                    <p className="text-gray-400 text-sm">Volume 24h</p>
-                    <p className="font-bold text-white">${tokenMetrics.volume24h.toLocaleString()}</p>
-                  </div>
-                  <div className="p-3 bg-bitaccess-black rounded-lg">
-                    <p className="text-gray-400 text-sm">Market Cap</p>
-                    <p className="font-bold text-white">${tokenMetrics.marketCap.toLocaleString()}</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-bitaccess-black-light p-6 rounded-xl border border-bitaccess-gold/20">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold text-white">Token Holders</h3>
-                  <div className="bg-bitaccess-gold/20 rounded-full px-3 py-1 text-sm text-bitaccess-gold">
-                    {tokenHolders.toLocaleString()} holders
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Top 10 holders</span>
-                    <span className="text-white">68.5%</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2.5">
-                    <div className="bg-bitaccess-gold h-2.5 rounded-full" style={{ width: "68.5%" }}></div>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Top 50 holders</span>
-                    <span className="text-white">84.3%</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2.5">
-                    <div className="bg-bitaccess-gold h-2.5 rounded-full" style={{ width: "84.3%" }}></div>
-                  </div>
-                </div>
-              </div>
+              <TokenMetricsCard metrics={tokenMetrics} />
+              <TokenHoldersCard holdersCount={tokenHolders} />
             </div>
             
-            <Tabs defaultValue="price" className="mt-8">
-              <TabsList className="grid w-full grid-cols-3 mb-6">
-                <TabsTrigger value="price">Price History</TabsTrigger>
-                <TabsTrigger value="holders">Holders Distribution</TabsTrigger>
-                <TabsTrigger value="transactions">Transaction Analytics</TabsTrigger>
-              </TabsList>
-              <TabsContent value="price">
-                <PriceChart />
-              </TabsContent>
-              <TabsContent value="holders">
-                <HoldersDistribution />
-              </TabsContent>
-              <TabsContent value="transactions">
-                <TransactionAnalytics transactions={recentTransactions} />
-              </TabsContent>
-            </Tabs>
+            <AnalyticsTabs transactions={recentTransactions} />
           </>
         )}
       </div>

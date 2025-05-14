@@ -69,10 +69,18 @@ const HoldersDistribution = () => {
               </Pie>
               <Tooltip content={<CustomTooltip />} />
               <Legend 
-                layout="vertical" 
-                verticalAlign="middle" 
-                align="right" 
-                formatter={(value) => <span className="text-white">{value}</span>}
+                layout="horizontal"
+                verticalAlign="bottom"
+                align="center"
+                wrapperStyle={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                  paddingTop: '20px'
+                }}
+                formatter={(value) => (
+                  <span className="text-white text-xs">{value}</span>
+                )}
               />
             </PieChart>
           </ResponsiveContainer>
