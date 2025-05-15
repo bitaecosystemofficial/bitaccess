@@ -10,31 +10,37 @@ import { Link as RouterLink } from "react-router-dom";
 const Docs = () => {
   const guides = [
     {
+      id: "getting-started",
       title: "Getting Started with BitAccess",
       description: "Learn the basics of the BitAccess ecosystem and how to get started.",
       icon: <FileText size={24} />
     },
     {
+      id: "airdrops",
       title: "How to Participate in Airdrops",
       description: "Step-by-step guide to participating in BitAccess token airdrops.",
       icon: <FileText size={24} />
     },
     {
+      id: "staking-guide",
       title: "Staking Guide for Beginners",
       description: "Everything you need to know about staking BIT tokens.",
       icon: <FileText size={24} />
     },
     {
+      id: "token-swap",
       title: "Using the BIT Token Swap",
       description: "How to exchange BIT tokens for other cryptocurrencies.",
       icon: <FileText size={24} />
     },
     {
+      id: "merchant-account",
       title: "Setting Up a Merchant Account",
       description: "Guide for businesses looking to accept BIT token payments.",
       icon: <FileText size={24} />
     },
     {
+      id: "security-practices",
       title: "BIT Token Security Best Practices",
       description: "How to secure your BIT tokens and wallet.",
       icon: <FileText size={24} />
@@ -81,13 +87,15 @@ const Docs = () => {
                       </CardHeader>
                       <CardContent>
                         <p className="text-gray-400 text-sm mb-4">{guide.description}</p>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full border-bitaccess-gold/30 text-bitaccess-gold hover:bg-bitaccess-gold/10"
-                        >
-                          Read Guide <ArrowRight size={14} className="ml-2" />
-                        </Button>
+                        <RouterLink to={`/guides/${guide.id}`}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full border-bitaccess-gold/30 text-bitaccess-gold hover:bg-bitaccess-gold/10"
+                          >
+                            Read Guide <ArrowRight size={14} className="ml-2" />
+                          </Button>
+                        </RouterLink>
                       </CardContent>
                     </Card>
                   ))}

@@ -11,6 +11,7 @@ import Presale from "./pages/Presale";
 import Staking from "./pages/Staking";
 import Swap from "./pages/Swap";
 import Docs from "./pages/Docs";
+import GuideDetails from "./pages/GuideDetails";
 import Contact from "./pages/Contact";
 import SpinWheel from "./pages/SpinWheel";
 import NotFound from "./pages/NotFound";
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/swap" element={<Swap />} />
             <Route path="/spin-wheel" element={<SpinWheel />} />
             <Route path="/docs" element={<Docs />} />
+            <Route path="/guides/:guideId" element={<GuideDetails />} />
             <Route path="/whitepaper" element={<WhitepaperDetails />} />
             <Route path="/education" element={<Education />} />
             <Route path="/education/:courseId" element={<CourseDetails />} />
