@@ -1,28 +1,34 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Wallet } from "lucide-react";
 import Logo from "@/components/layout/Logo";
 import { useWallet } from "@/contexts/WalletContext";
-
-const navItems = [
-  { label: "Home", path: "/" },
-  { label: "Airdrop", path: "/airdrop" },
-  { label: "Presale", path: "/presale" },
-  { label: "Staking", path: "/staking" },
-  { label: "Swap", path: "/swap" },
-  { label: "Spin Wheel", path: "/spin-wheel" },
-  { label: "Education", path: "/education" },
-  { label: "Analytics", path: "/dex-analytics" },
-  { label: "Docs", path: "/docs" },
-  { label: "Contact", path: "/contact" },
-];
+import { useMembership } from "@/contexts/MembershipContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { address, isConnected, isConnecting, balance, connectWallet, disconnectWallet } = useWallet();
+  const { membershipData } = useMembership();
   const location = useLocation();
+
+  // Show limited navigation when connected with membership
+  const navItems = isConnected ? [
+    { label: "Home", path: "/" },
+    { label: "Dashboard", path: "/dashboard" },
+  ] : [
+    { label: "Home", path: "/" },
+    { label: "Airdrop", path: "/airdrop" },
+    { label: "Presale", path: "/presale" },
+    { label: "Staking", path: "/staking" },
+    { label: "Swap", path: "/swap" },
+    { label: "Spin Wheel", path: "/spin-wheel" },
+    { label: "Education", path: "/education" },
+    { label: "Analytics", path: "/dex-analytics" },
+    { label: "Docs", path: "/docs" },
+    { label: "Contact", path: "/contact" },
+  ];
 
   const truncateAddress = (address: string) => {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;

@@ -12,15 +12,15 @@ import {
 import { Check } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { toast } from "@/hooks/use-toast";
-import { subscribeStore } from "@/hooks/useStores";
-import { switchNetwork } from "@/utils/blockchainUtils";
+import { useMemberSubscription, SubscriptionPlan } from "@/hooks/useMemberSubscription";
 
 const MerchantSection = () => {
   const { isConnected, address, connectWallet, disconnectWallet } = useWallet();
+  const { subscribeToMembership, isProcessing } = useMemberSubscription();
   
   const plans = [
     {
-      name: "Membership",
+      name: "Membership" as SubscriptionPlan,
       price: "20",
       currency: "USDT",
       duration: "365 days",
@@ -36,7 +36,7 @@ const MerchantSection = () => {
       ]
     },
     {
-      name: "Merchant",
+      name: "Merchant" as SubscriptionPlan,
       price: "100",
       currency: "USDT",
       duration: "365 days",
@@ -55,7 +55,7 @@ const MerchantSection = () => {
     }
   ];
 
-  const handleSubscribe = async (plan: string) => {
+  const handleSubscribe = async (plan: SubscriptionPlan) => {
     if (!isConnected) {
       toast({
         title: "Wallet not connected",
@@ -66,19 +66,7 @@ const MerchantSection = () => {
     }
     
     try {
-      // First ensure we're on BSC Network
-      const networkSwitched = await switchNetwork();
-      if (!networkSwitched) return;
-      
-      // Set duration to 365 days (1 year)
-      const duration = 365;
-      
-      toast({
-        title: "Processing Subscription",
-        description: `Subscribing to ${plan} plan for ${duration} days...`,
-      });
-      
-      const result = await subscribeStore(plan, duration, address!, 'USDT');
+      const result = await subscribeToMembership(plan);
       
       if (result.success) {
         toast({
@@ -165,8 +153,9 @@ const MerchantSection = () => {
                     ? 'bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black' 
                     : 'bg-transparent border border-gray-600 hover:border-bitaccess-gold text-gray-300 hover:text-bitaccess-gold'}`}
                   onClick={() => handleSubscribe(plan.name)}
+                  disabled={isProcessing}
                 >
-                  Subscribe Now
+                  {isProcessing ? "Processing..." : "Subscribe Now"}
                 </Button>
               </CardFooter>
             </Card>
