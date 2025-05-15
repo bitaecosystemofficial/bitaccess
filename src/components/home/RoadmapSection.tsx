@@ -27,7 +27,7 @@ const RoadmapSection = () => {
       quarter: "Q4 2025",
       title: "Market Expansion",
       items: [
-        "CEX Listings",
+        "DEX Listings",
         "Cross-chain Bridge",
         "Merchant Network Launch",
         "Educational Portal Beta"
@@ -37,7 +37,7 @@ const RoadmapSection = () => {
       quarter: "Q1 2026",
       title: "Platform Evolution",
       items: [
-        "NFT Marketplace",
+        "DeFi Marketplace",
         "Governance System",
         "DeFi Products Launch",
         "Enhanced Security Features"
