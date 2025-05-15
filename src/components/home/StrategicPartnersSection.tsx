@@ -5,34 +5,94 @@ import { ExternalLink } from "lucide-react";
 
 const partners = [
   {
-    name: "FitTracker",
+    name: "BIT Corp",
     logo: "/placeholder.svg",
-    description: "Fitness tracking ecosystem partner for health-oriented blockchain applications.",
+    description: "Blockchain Innovation and Technology Corporation specializing in comprehensive blockchain education and development.",
     website: "#"
   },
   {
-    name: "CryptoSphere",
+    name: "APCPI, Inc.",
     logo: "/placeholder.svg",
-    description: "Leading crypto payment solution provider for enterprise and retail integration.",
+    description: "Association of Professional Competencies and Performance Improvement, delivering advanced professional education programs.",
+    website: "#"
+  },
+  {
+    name: "BIT Merchant",
+    logo: "/placeholder.svg",
+    description: "Specialized platform for merchants integrating blockchain payment solutions across various industries.",
     website: "#"
   },
   {
     name: "CITFEE",
     logo: "/placeholder.svg",
-    description: "Center for Innovative Technology in Financial and Educational Excellence, focusing on money training and education.",
+    description: "Center for Innovative Technology in Financial and Educational Excellence, focusing on financial education and literacy.",
     website: "#"
   },
   {
-    name: "BITCORP",
+    name: "Bscscan",
     logo: "/placeholder.svg",
-    description: "Blockchain Innovation and Technology Corporation specializing in blockchain education and development.",
+    description: "Official block explorer for Binance Smart Chain, providing comprehensive transaction validation and verification.",
+    website: "https://bscscan.com"
+  },
+  {
+    name: "Solscan",
+    logo: "/placeholder.svg",
+    description: "Leading block explorer for Solana blockchain, offering detailed transaction data and verification services.",
+    website: "https://solscan.io"
+  },
+  {
+    name: "Suiscan",
+    logo: "/placeholder.svg",
+    description: "Primary block explorer for the SUI blockchain network, providing transaction verification and validation.",
     website: "#"
   },
   {
-    name: "APCPI",
+    name: "Dexscreener",
     logo: "/placeholder.svg",
-    description: "Association of Professional Competencies and Performance Improvement, delivering professional training competencies.",
+    description: "Advanced token analytics platform offering real-time market data across multiple blockchain networks.",
+    website: "https://dexscreener.com"
+  },
+  {
+    name: "Dextools",
+    logo: "/placeholder.svg",
+    description: "Comprehensive trading platform with advanced analytics and real-time data for decentralized exchanges.",
+    website: "https://www.dextools.io"
+  },
+  {
+    name: "Pancakeswap",
+    logo: "/placeholder.svg",
+    description: "Leading decentralized exchange platform on Binance Smart Chain with extensive trading and liquidity features.",
+    website: "https://pancakeswap.finance"
+  },
+  {
+    name: "Raydium",
+    logo: "/placeholder.svg",
+    description: "Premier automated market maker and liquidity provider on the Solana blockchain ecosystem.",
+    website: "https://raydium.io"
+  },
+  {
+    name: "Orca",
+    logo: "/placeholder.svg",
+    description: "User-friendly decentralized exchange focused on simplifying trading experience on Solana network.",
+    website: "https://www.orca.so"
+  },
+  {
+    name: "Cetus",
+    logo: "/placeholder.svg",
+    description: "Innovative decentralized exchange platform built for the SUI blockchain ecosystem.",
     website: "#"
+  },
+  {
+    name: "CoinmarketCap",
+    logo: "/placeholder.svg",
+    description: "World's leading cryptocurrency price-tracking website with comprehensive market data and analytics.",
+    website: "https://coinmarketcap.com"
+  },
+  {
+    name: "Coingecko",
+    logo: "/placeholder.svg",
+    description: "Trusted source for cryptocurrency rankings and market data with extensive coin information.",
+    website: "https://www.coingecko.com"
   }
 ];
 

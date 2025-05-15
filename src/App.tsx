@@ -18,6 +18,7 @@ import Education from "./pages/Education";
 import Community from "./pages/Community";
 import CourseDetails from "./pages/CourseDetails";
 import DexAnalyticsPage from "./pages/DexAnalytics";
+import WhitepaperDetails from "./pages/WhitepaperDetails";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/swap" element={<Swap />} />
             <Route path="/spin-wheel" element={<SpinWheel />} />
             <Route path="/docs" element={<Docs />} />
+            <Route path="/whitepaper" element={<WhitepaperDetails />} />
             <Route path="/education" element={<Education />} />
             <Route path="/education/:courseId" element={<CourseDetails />} />
             <Route path="/community" element={<Community />} />

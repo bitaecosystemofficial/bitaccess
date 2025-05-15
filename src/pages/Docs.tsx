@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, FileText } from "lucide-react";
+import { Link as RouterLink } from "react-router-dom";
 
 const Docs = () => {
   const guides = [
@@ -131,9 +132,11 @@ const Docs = () => {
                     <Button className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium">
                       Download PDF
                     </Button>
-                    <Button variant="outline" className="border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10">
-                      View Online
-                    </Button>
+                    <RouterLink to="/whitepaper">
+                      <Button variant="outline" className="border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10 w-full sm:w-auto">
+                        View Complete Whitepaper
+                      </Button>
+                    </RouterLink>
                   </div>
                 </div>
               </TabsContent>
