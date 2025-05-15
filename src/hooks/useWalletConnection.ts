@@ -48,7 +48,7 @@ export const useWalletConnection = (): WalletConnectionResult => {
               toast({
                 title: "Wrong Network Detected",
                 description: `Please switch to ${networkInfo.name} to use all features.`,
-                variant: "warning",
+                variant: "destructive",  // Changed from "warning" to "destructive"
               });
             }
           } else {
