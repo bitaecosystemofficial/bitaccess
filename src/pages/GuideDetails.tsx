@@ -1,20 +1,15 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { guidesContent } from "@/data/guidesContent";
-import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 
-interface GuideParams {
-  guideId: string;
-}
-
+// Remove the separate interface and use Record<string, string> type directly
 const GuideDetails = () => {
-  const { guideId } = useParams<GuideParams>();
+  const { guideId } = useParams<{ guideId: string }>();
   const navigate = useNavigate();
   
   const guide = guideId ? guidesContent[guideId] : undefined;
