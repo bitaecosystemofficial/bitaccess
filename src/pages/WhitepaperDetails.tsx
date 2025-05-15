@@ -7,39 +7,119 @@ import { Link as RouterLink } from "react-router-dom";
 const WhitepaperDetails = () => {
   const sections = [
     {
-      title: "The History",
-      content: "The foundation of how Bit Access was created, tracing our origins and development journey."
+      title: "The Evolution of Blockchain and the Rise of BIT Access",
+      content: (
+        <>
+          <p className="text-gray-300 mb-4">
+            As the blockchain ecosystem continued to evolve, so did the vision of BIT Access. The project set out to bridge the gap between traditional industries and blockchain technology, exploring the advantages of using cryptocurrencies and decentralized applications (DApps) in areas such as:
+          </p>
+          <ul className="list-disc pl-6 mb-4 space-y-2 text-gray-300">
+            <li>
+              <strong>E-commerce:</strong> Revolutionizing online shopping by offering new payment methods, loyalty rewards, and rebate systems based on cryptocurrency.
+            </li>
+            <li>
+              <strong>Business:</strong> Providing businesses with more efficient, secure, and transparent systems for transactions, supply chain management, and customer engagement.
+            </li>
+            <li>
+              <strong>Education:</strong> Enabling educators and learners to interact in decentralized environments, tokenize learning content, and offer incentive-driven rewards using BIT tokens.
+            </li>
+            <li>
+              <strong>Merchant Services:</strong> Empowering merchants to adopt decentralized payment systems, gain access to global markets, and benefit from lower transaction fees.
+            </li>
+          </ul>
+          <p className="text-gray-300 mb-4">
+            With the introduction of BIT Access, Dr. Duaso sought to create an ecosystem that provided individuals and businesses with the access and tools needed to thrive in an ever-changing digital landscape. The project aimed to tokenize assets and incentivize participation in the decentralized economy, creating a network of active users, consumers, educators, and merchants all contributing to a robust and dynamic ecosystem.
+          </p>
+          <h3 className="text-xl font-semibold text-white my-4">The Road Ahead: BIT Access as a Leading Digital Asset</h3>
+          <p className="text-gray-300 mb-4">
+            The concept of BIT Access goes beyond just cryptocurrency—it represents a shift in how digital assets and blockchain technologies will shape the future. By offering access to information, rewarding participants with tokens, and providing tools to foster innovation, BIT Access is positioned to become a leading force in the cryptocurrency and blockchain space.
+          </p>
+          <p className="text-gray-300 mb-4">
+            BIT Access is not just about the future of decentralized finance (DeFi); it is about a larger vision of the future of digital assets in the next generation. Dr. Duaso and the team at BIT Access believe that BIT tokens will one day be recognized as one of the top digital assets in the cryptocurrency world.
+          </p>
+          <ul className="list-disc pl-6 space-y-2 text-gray-300">
+            <li>
+              <strong>Tokenized Assets:</strong> Through its Tokenomics, BIT Access will continue to grow in value as more users and businesses participate in the ecosystem.
+            </li>
+            <li>
+              <strong>Global Expansion:</strong> As blockchain adoption accelerates, BIT Access is expanding into global markets, promoting the token's use in e-commerce, education, business services, and merchant solutions.
+            </li>
+            <li>
+              <strong>Decentralized Economy:</strong> BIT Access envisions a world where traditional intermediaries are replaced by peer-to-peer transactions that ensure more equity, security, and transparency in all sectors.
+            </li>
+          </ul>
+          <p className="text-gray-300 mt-4">
+            With its focus on decentralization, transparency, and innovation, BIT Access is set to lead the way in the evolution of digital currencies and blockchain applications.
+          </p>
+        </>
+      )
     },
     {
       title: "1.0 Introduction",
       subsections: [
-        { title: "1.1 Overview of BIT Access", content: "Comprehensive introduction to the BIT Access ecosystem and its core components." },
-        { title: "1.2 Industry Challenges and Opportunities", content: "Analysis of the current blockchain industry landscape and the opportunities BIT Access addresses." },
-        { title: "1.3 The BIT Access Solution", content: "How BIT Access offers innovative solutions to existing market challenges." }
+        { 
+          title: "1.1 Overview of BIT Access", 
+          content: "The BIT Access Ecosystem is an innovative, decentralized platform designed to bridge the gaps across industries such as e-commerce, education, and merchant services, offering a seamless, tokenized, and efficient way for users to interact with digital content, engage in transactions, and access services. The ecosystem is powered by BIT tokens, the native utility token, and is underpinned by blockchain technology, ensuring that all transactions, interactions, and data exchanges are transparent, secure, and verifiable." 
+        },
+        { 
+          title: "1.2 Industry Challenges and Opportunities", 
+          content: "BIT Access addresses key challenges in e-commerce (fragmented payment systems, customer loyalty issues), education (high costs, lack of personalized learning), and merchant services (high operational costs, limited financial inclusion). The ecosystem offers opportunities through tokenized rewards, cross-border low-cost payments, decentralized marketplaces, tokenized learning, and financial inclusion solutions." 
+        },
+        { 
+          title: "1.3 The BIT Access Solution", 
+          content: "The BIT Access Ecosystem provides solutions through decentralized finance, tokenized education, and decentralized e-commerce. By eliminating intermediaries and leveraging blockchain technology, BIT Access creates a more efficient, user-centric digital ecosystem that empowers individuals and businesses alike." 
+        }
       ]
     },
     {
       title: "2.0 Mission, Vision, and Values",
       subsections: [
-        { title: "2.1 Mission Statement", content: "Our core mission and purpose in the blockchain ecosystem." },
-        { title: "2.2 Vision Statement", content: "The long-term vision and aspirations of the BIT Access project." },
-        { title: "2.3 Core Values", content: "The fundamental principles and values that guide our operations and development." }
+        { 
+          title: "2.1 Mission Statement", 
+          content: "To create a decentralized ecosystem that empowers individuals, businesses, and educators by leveraging blockchain technology to enhance digital transactions and value exchange." 
+        },
+        { 
+          title: "2.2 Vision Statement", 
+          content: "To become a global leader in digital transformation across industries, creating a transparent, secure, and decentralized digital economy." 
+        },
+        { 
+          title: "2.3 Core Values", 
+          content: "Innovation: Commitment to continuous technological advancements. Decentralization: Empowering users by removing centralized control. Integrity: Maintaining transparency and ethical standards. Empowerment: Supporting users, educators, and businesses with decentralized financial tools. Sustainability: Building solutions that support long-term growth and have a positive social impact." 
+        }
       ]
     },
     {
       title: "3.0 The BIT Access Ecosystem",
       subsections: [
-        { title: "3.1 Decentralized E-Commerce Integration", content: "How BIT Access revolutionizes e-commerce through blockchain technology." },
-        { title: "3.2 Education and Professional Development", content: "Our approach to blockchain education and professional skill development." },
-        { title: "3.3 Tokenized Incentive and Rewards System", content: "The innovative reward mechanisms built into the BIT Access ecosystem." },
-        { title: "3.4 Cross-Industry Innovation", content: "How BIT Access bridges multiple industries through blockchain technology." }
+        { 
+          title: "3.1 Decentralized E-Commerce Integration", 
+          content: "BIT Access enables secure, transparent transactions through blockchain, eliminating intermediaries and reducing costs. Merchants benefit from payment systems with lower fees, tokenized loyalty programs that increase customer retention, and the ability to tap into global markets without currency conversion challenges." 
+        },
+        { 
+          title: "3.2 Education and Professional Development", 
+          content: "The ecosystem offers decentralized learning platforms where educators can create and sell courses while students access materials without traditional constraints. Blockchain credentialing ensures achievements are verified and secure, while tokenized rewards incentivize both learners and educators to engage and perform at their best." 
+        },
+        { 
+          title: "3.3 Tokenized Incentive and Rewards System", 
+          content: "BIT tokens function as the primary incentive within the ecosystem, rewarding consumers for purchases and engagement, educators for quality content, and merchants for driving traffic and transactions. Rebate programs, loyalty rewards, and community incentives promote ecosystem growth and participation." 
+        },
+        { 
+          title: "3.4 Cross-Industry Innovation", 
+          content: "The ecosystem facilitates cross-industry collaboration through interoperable blockchain solutions, enabling value exchange across e-commerce, education, healthcare, entertainment, and more. BIT tokens serve as a universal medium for transactions between different sectors, creating new business models and opportunities." 
+        }
       ]
     },
     {
       title: "4.0 The BIT Token",
       subsections: [
-        { title: "4.1 Overview of BIT Token", content: "Technical specifications and features of the BIT token." },
-        { title: "4.2 Token Use Cases and Utility", content: "The practical applications and utility of BIT tokens within the ecosystem." }
+        { 
+          title: "4.1 Overview of BIT Token", 
+          content: "BIT token is a BEP-20 standard token on the Binance Smart Chain, with a maximum supply of 100,000,000,000 tokens. The token's smart contract address is 0xd3bde17ebd27739cf5505cd58ecf31cb628e469c, with a 3% tax applied to both buy and sell transactions to support ecosystem sustainability and growth." 
+        },
+        { 
+          title: "4.2 Token Use Cases and Utility", 
+          content: "BIT tokens enable e-commerce purchases and access to educational content with lower fees than traditional payment methods. Token holders can participate in staking programs and liquidity provision to earn rewards, while merchants can implement loyalty programs and rebates using BIT tokens to incentivize customer engagement." 
+        }
       ]
     },
     {
@@ -154,7 +234,11 @@ const WhitepaperDetails = () => {
                 {sections.map((section, index) => (
                   <div key={index} id={`section-${index}`} className="mb-10">
                     <h2 className="text-2xl font-bold text-white mb-4">{section.title}</h2>
-                    {section.content && <p className="text-gray-300 mb-4">{section.content}</p>}
+                    {section.content && (
+                      typeof section.content === 'string' 
+                        ? <p className="text-gray-300 mb-4">{section.content}</p>
+                        : section.content
+                    )}
                     
                     {section.subsections && (
                       <div className="space-y-6 mt-4 pl-4 border-l-2 border-bitaccess-gold/20">

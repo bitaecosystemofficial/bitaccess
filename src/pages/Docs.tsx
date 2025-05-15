@@ -114,16 +114,17 @@ const Docs = () => {
                     <div className="bg-bitaccess-black p-4 rounded-lg border border-bitaccess-gold/10">
                       <h4 className="font-medium text-white mb-3">Table of Contents:</h4>
                       <ol className="list-decimal list-inside space-y-1 text-gray-400">
-                        <li>Executive Summary</li>
-                        <li>Market Analysis</li>
+                        <li>Introduction</li>
+                        <li>Mission, Vision, and Core Values</li>
                         <li>The BitAccess Ecosystem</li>
-                        <li>Technology Architecture</li>
-                        <li>BIT Token Utility</li>
-                        <li>Tokenomics</li>
-                        <li>Roadmap</li>
-                        <li>Team & Advisors</li>
+                        <li>BIT Token</li>
+                        <li>Roadmap and Milestones</li>
+                        <li>Technology Infrastructure</li>
+                        <li>Market Strategy and Growth</li>
+                        <li>Token Distribution</li>
                         <li>Legal & Compliance</li>
-                        <li>References</li>
+                        <li>Team & Advisors</li>
+                        <li>Final Statements</li>
                       </ol>
                     </div>
                   </div>
