@@ -138,39 +138,78 @@ const WhitepaperDetails = () => {
     {
       title: "5.0 Roadmap and Milestones",
       subsections: [
-        { title: "5.1 Phases of Ecosystem Development", content: "Detailed timeline of BIT Access development phases and milestones." },
-        { title: "5.2 Key Partnerships and Strategic Alliances", content: "Overview of critical partnerships advancing the BIT Access ecosystem." }
+        { 
+          title: "5.1 Phases of Ecosystem Development", 
+          content: "The BIT Access Ecosystem will evolve through multiple phases starting with the Foundation & Initial Launch (Dec 2024-Jan 2025), followed by User Base Expansion (Feb-Apr 2025), Platform Feature Refinement (May-Jul 2025), Advanced Technology Integration (Aug-Oct 2025), Global Outreach (Nov-Dec 2025), and Ecosystem Maturity (2026). Each phase focuses on specific aspects of growth and development to ensure sustainable progress." 
+        },
+        { 
+          title: "5.2 Key Partnerships and Strategic Alliances", 
+          content: "BIT Access will forge strategic partnerships with blockchain projects for interoperability, financial institutions for merchant adoption, education providers for tokenized learning, and key industry players like global e-commerce platforms and corporations to drive mainstream adoption of BIT tokens across various sectors." 
+        }
       ]
     },
     {
       title: "6.0 Technology Infrastructure",
       subsections: [
-        { title: "6.1 Blockchain Platform and Security", content: "Technical details of the underlying blockchain technology and security measures." },
-        { title: "6.2 Smart Contracts and Decentralized Applications (DApps)", content: "Overview of smart contract implementation and DApp architecture." },
-        { title: "6.3 Scalability and Performance", content: "How BIT Access addresses scalability challenges for widespread adoption." }
+        { 
+          title: "6.1 Blockchain Platform and Security", 
+          content: "BIT Access operates on the Binance Smart Chain (BSC) for its speed, low transaction costs, and EVM compatibility. Security measures include end-to-end encryption, multi-signature wallets, cryptographic hashing, decentralized consensus mechanism (DPoS), and regular third-party security audits to ensure user data and transactions remain protected." 
+        },
+        { 
+          title: "6.2 Smart Contracts and Decentralized Applications (DApps)", 
+          content: "Smart contracts automate transactions, escrow services, rebate programs, and staking rewards with transparency and security. DApps enable peer-to-peer transactions for e-commerce, tokenized educational content delivery, and decentralized marketplaces where users can trade goods and services directly." 
+        },
+        { 
+          title: "6.3 Scalability and Performance", 
+          content: "The platform features layered architecture for modular expansion, with plans to implement sharding and Layer-2 solutions for improved throughput. Cross-chain compatibility ensures interoperability across different blockchains, while performance optimizations include low latency transactions, optimized smart contracts, dynamic fee structures, and redundancy systems." 
+        }
       ]
     },
     {
       title: "7.0 Market Strategy and Growth",
       subsections: [
-        { title: "7.1 Marketing and User Acquisition", content: "Strategies for market penetration and user acquisition." },
-        { title: "7.2 Global Expansion and Strategic Partnerships", content: "Plans for international expansion and key strategic partnerships." },
-        { title: "7.3 Community Engagement and Incentives", content: "Approach to building and maintaining an active community." }
+        { 
+          title: "7.1 Marketing and User Acquisition", 
+          content: "BIT Access employs airdrops, token incentives, referral programs, and influencer partnerships to attract early adopters. Marketing strategies include social media advertising, SEO/PPC campaigns, and content marketing, while conversion is optimized through user education and continuous UX improvements." 
+        },
+        { 
+          title: "7.2 Global Expansion and Strategic Partnerships", 
+          content: "The ecosystem will expand internationally through localized marketing campaigns and establishing presence in key blockchain markets. Strategic partnerships with global corporations, educational institutions, and cross-industry collaborations will drive token integration across diverse sectors and use cases." 
+        },
+        { 
+          title: "7.3 Community Engagement and Incentives", 
+          content: "Community growth is fostered through tokenized loyalty programs, regular airdrops, bounty campaigns, active social media interaction, community events, and engagement with DeFi communities. User feedback loops ensure the platform evolves based on community needs and preferences." 
+        }
       ]
     },
     {
       title: "8.0 Token Distribution and Fund Allocation",
       subsections: [
-        { title: "8.1 Token Distribution Overview", content: "Breakdown of token distribution across various stakeholders and purposes." },
-        { title: "8.2 Fund Allocation for Ecosystem Development", content: "How raised funds are allocated for different aspects of development." },
-        { title: "8.3 Governance and Community Participation", content: "Mechanisms for community governance and participation in decision-making." }
+        { 
+          title: "8.1 Token Distribution Overview", 
+          content: "BIT tokens are distributed across various allocations: Presale (5%), Staking (1%), P2P (10%), Marketing (10%), Foundation (2%), Emergency Fund (2%), Airdrops & Bounty (1%), Management Team (3%), Company Reserved (15%), Creator Development (1%), DEX Liquidity (5%), CEX Liquidity (10%), and Project Development (35%). This balanced distribution ensures ecosystem sustainability and growth." 
+        },
+        { 
+          title: "8.2 Fund Allocation for Ecosystem Development", 
+          content: "Funds from token sales are allocated to Product Development (17%), Marketing (14%), Legal & Regulation (6%), Team (9%), Business Operations (9%), Advisors (4%), Taxes (5%), Contingency (5%), Community Rewards (8%), Partnerships (5%), Charity Works (4%), and Company Funds (10%) to support all aspects of ecosystem growth." 
+        },
+        { 
+          title: "8.3 Governance and Community Participation", 
+          content: "BIT Access implements a decentralized governance model where token holders vote on key decisions such as platform upgrades and protocol changes. A DAO-like structure allows users to propose and implement changes, while active community engagement ensures the ecosystem evolves according to user needs." 
+        }
       ]
     },
     {
       title: "9.0 Legal Considerations and Regulatory Compliance",
       subsections: [
-        { title: "9.1 Legal Framework", content: "Overview of the legal framework governing BIT Access operations." },
-        { title: "9.2 Regulatory Compliance", content: "Strategies for ensuring compliance with relevant regulations across jurisdictions." }
+        { 
+          title: "9.1 Legal Framework", 
+          content: "BIT Access operates within a robust legal framework that includes a centralized management structure overseeing decentralized components, proper token classification as a utility token, compliance with blockchain laws, adherence to data protection regulations (GDPR/CCPA), AML/KYC procedures, intellectual property protections, and clear dispute resolution mechanisms." 
+        },
+        { 
+          title: "9.2 Regulatory Compliance", 
+          content: "The ecosystem maintains regulatory compliance across key markets including the US (SEC/CFTC/FinCEN), EU (MiCA), UK (FCA), Asia-Pacific, and Latin America. It adheres to international standards like FATF guidelines and anti-terrorism financing regulations, with regular audits, a dedicated legal advisory board, and ongoing engagement with regulators." 
+        }
       ]
     },
     {
