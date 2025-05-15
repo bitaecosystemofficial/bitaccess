@@ -3,9 +3,22 @@ import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Download, FileText, Link } from "lucide-react";
 import { Link as RouterLink } from "react-router-dom";
+import { ReactNode } from "react";
+
+// Define proper types for our sections to avoid TypeScript errors
+interface SubSection {
+  title: string;
+  content: string;
+}
+
+interface Section {
+  title: string;
+  content?: string | ReactNode;
+  subsections?: SubSection[];
+}
 
 const WhitepaperDetails = () => {
-  const sections = [
+  const sections: Section[] = [
     {
       title: "The Evolution of Blockchain and the Rise of BIT Access",
       content: (
