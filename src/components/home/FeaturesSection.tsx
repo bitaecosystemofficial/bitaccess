@@ -66,20 +66,6 @@ const FeaturesSection = () => {
             />
           ))}
         </div>
-
-        <div className="mt-12 bg-bitaccess-black-light p-6 rounded-xl border border-bitaccess-gold/20 max-w-3xl mx-auto">
-          <h3 className="text-lg font-medium text-bitaccess-gold mb-2">Powered by Binance Smart Chain</h3>
-          <p className="text-gray-300 mb-4">
-            BitAccess is built on Binance Smart Chain (BSC), offering users:
-          </p>
-          <ul className="list-disc list-inside space-y-1 text-gray-300">
-            <li>Fast transaction speeds (5 second block times)</li>
-            <li>Low gas fees compared to Ethereum</li>
-            <li>Compatibility with BNB and BEP-20 tokens</li>
-            <li>Access to DeFi protocols in the BSC ecosystem</li>
-            <li>Cross-chain functionality with other blockchains</li>
-          </ul>
-        </div>
       </div>
     </section>
   );
