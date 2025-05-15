@@ -1,18 +1,19 @@
-
 import Layout from "@/components/layout/Layout";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, Download, FileText, Link } from "lucide-react";
-import { Link as RouterLink } from "react-router-dom";
 import { ReactNode } from "react";
+import WhitepaperHeader from "@/components/whitepaper/WhitepaperHeader";
+import WhitepaperSidebar from "@/components/whitepaper/WhitepaperSidebar";
+import WhitepaperSection from "@/components/whitepaper/WhitepaperSection";
+import WhitepaperContact from "@/components/whitepaper/WhitepaperContact";
 
-// Define proper types for our sections to avoid TypeScript errors
+// Define proper types for our sections
 interface SubSection {
   title: string;
-  content: string;
+  content: string | ReactNode;
 }
 
 interface Section {
   title: string;
+  id: string;
   content?: string | ReactNode;
   subsections?: SubSection[];
 }
@@ -20,6 +21,7 @@ interface Section {
 const WhitepaperDetails = () => {
   const sections: Section[] = [
     {
+      id: "section-0",
       title: "The Evolution of Blockchain and the Rise of BIT Access",
       content: (
         <>
@@ -68,6 +70,7 @@ const WhitepaperDetails = () => {
       )
     },
     {
+      id: "section-1",
       title: "1.0 Introduction",
       subsections: [
         { 
@@ -85,6 +88,7 @@ const WhitepaperDetails = () => {
       ]
     },
     {
+      id: "section-2",
       title: "2.0 Mission, Vision, and Values",
       subsections: [
         { 
@@ -102,6 +106,7 @@ const WhitepaperDetails = () => {
       ]
     },
     {
+      id: "section-3",
       title: "3.0 The BIT Access Ecosystem",
       subsections: [
         { 
@@ -123,6 +128,7 @@ const WhitepaperDetails = () => {
       ]
     },
     {
+      id: "section-4",
       title: "4.0 The BIT Token",
       subsections: [
         { 
@@ -136,6 +142,7 @@ const WhitepaperDetails = () => {
       ]
     },
     {
+      id: "section-5",
       title: "5.0 Roadmap and Milestones",
       subsections: [
         { 
@@ -149,6 +156,7 @@ const WhitepaperDetails = () => {
       ]
     },
     {
+      id: "section-6",
       title: "6.0 Technology Infrastructure",
       subsections: [
         { 
@@ -166,6 +174,7 @@ const WhitepaperDetails = () => {
       ]
     },
     {
+      id: "section-7",
       title: "7.0 Market Strategy and Growth",
       subsections: [
         { 
@@ -183,6 +192,7 @@ const WhitepaperDetails = () => {
       ]
     },
     {
+      id: "section-8",
       title: "8.0 Token Distribution and Fund Allocation",
       subsections: [
         { 
@@ -200,6 +210,7 @@ const WhitepaperDetails = () => {
       ]
     },
     {
+      id: "section-9",
       title: "9.0 Legal Considerations and Regulatory Compliance",
       subsections: [
         { 
@@ -213,6 +224,7 @@ const WhitepaperDetails = () => {
       ]
     },
     {
+      id: "section-10",
       title: "10.0 Team and Advisors",
       subsections: [
         { title: "10.1 Executive Team", content: "Profiles of the core team leading BIT Access development." },
@@ -221,89 +233,88 @@ const WhitepaperDetails = () => {
       ]
     },
     {
+      id: "section-11",
       title: "11.0 Final Statements",
       subsections: [
-        { title: "11.1 Summary of Benefits", content: "Recap of the key advantages offered by the BIT Access ecosystem." },
-        { title: "11.2 Call to Action", content: "Invitation for users, investors, and partners to join the BIT Access journey." }
+        { 
+          title: "11.1 Summary of Benefits", 
+          content: (
+            <>
+              <p className="text-gray-300 mb-4">
+                BIT Access stands as a pioneering decentralized platform designed to revolutionize e-commerce, education, and financial services through the power of blockchain technology. By offering a secure, transparent, and scalable ecosystem, BIT Access empowers individuals and businesses to engage in peer-to-peer transactions, access educational resources, and take part in DeFi innovations. The key benefits of joining the BIT Access ecosystem include:
+              </p>
+              <ul className="list-disc pl-6 mb-4 space-y-2 text-gray-300">
+                <li>
+                  <strong>Decentralization:</strong> A blockchain-based platform that enables secure, trustless transactions without the need for intermediaries.
+                </li>
+                <li>
+                  <strong>Incentive Programs:</strong> Tokenized rewards for users engaging with the platform, including staking, loyalty programs, and educational participation.
+                </li>
+                <li>
+                  <strong>Scalability:</strong> A platform designed to grow with the market, with a strong focus on performance, low transaction costs, and scalability across multiple industries.
+                </li>
+                <li>
+                  <strong>Transparency and Security:</strong> Built on the Smart Chain (BSC) and leveraging cryptographic protocols, BIT Access offers a secure and transparent environment for users to transact.
+                </li>
+                <li>
+                  <strong>Governance:</strong> Community-driven governance, enabling token holders to influence platform development and decisions.
+                </li>
+                <li>
+                  <strong>Global Reach:</strong> Strategic partnerships across industries to expand the platform's global footprint and bring together merchants, educators, and investors.
+                </li>
+              </ul>
+            </>
+          )
+        },
+        { 
+          title: "11.2 Call to Action", 
+          content: (
+            <>
+              <p className="text-gray-300 mb-4">
+                BIT Access invites you to be part of this revolutionary ecosystem. Whether you're looking to invest, stake, or become a part of the growing decentralized economy, this is your opportunity to join a transformative platform. Participate in the presale, explore staking programs, and engage with the community to help shape the future of the platform.
+              </p>
+              <p className="text-gray-300 font-medium">
+                Together, we can build a transparent, secure, and inclusive ecosystem for all. Join BIT Access today, and be a part of the future!
+              </p>
+            </>
+          )
+        }
       ]
     }
   ];
+
+  // Create a simplified list for the sidebar navigation
+  const sidebarSections = sections.map(section => ({
+    title: section.title,
+    id: section.id
+  }));
 
   return (
     <Layout>
       <div className="py-16 md:py-24 bg-hero-pattern">
         <div className="container px-4 md:px-8">
-          <div className="mb-8">
-            <RouterLink to="/docs" className="inline-flex items-center text-bitaccess-gold hover:text-bitaccess-gold-light mb-6">
-              <ChevronLeft size={16} className="mr-1" />
-              Back to Documentation
-            </RouterLink>
-            
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">BIT Access Whitepaper</h1>
-                <p className="text-gray-400">Version 1.6 | Last updated: May 14, 2025</p>
-              </div>
-              
-              <div className="flex gap-3">
-                <Button className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium flex items-center gap-2">
-                  <Download size={16} />
-                  Download PDF
-                </Button>
-                <Button variant="outline" className="border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10 flex items-center gap-2">
-                  <Link size={16} />
-                  Share
-                </Button>
-              </div>
-            </div>
-          </div>
+          <WhitepaperHeader />
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Table of Contents - Sidebar */}
             <div className="lg:col-span-3">
-              <div className="bg-bitaccess-black-light p-6 rounded-xl border border-bitaccess-gold/20 sticky top-24">
-                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                  <FileText size={18} className="text-bitaccess-gold" />
-                  Table of Contents
-                </h3>
-                <nav className="space-y-1">
-                  {sections.map((section, index) => (
-                    <a 
-                      key={index}
-                      href={`#section-${index}`}
-                      className="block py-1.5 text-sm text-gray-300 hover:text-bitaccess-gold transition-colors"
-                    >
-                      {section.title}
-                    </a>
-                  ))}
-                </nav>
-              </div>
+              <WhitepaperSidebar sections={sidebarSections} />
             </div>
             
             {/* Main Content */}
             <div className="lg:col-span-9">
               <div className="bg-bitaccess-black-light p-6 md:p-8 rounded-xl border border-bitaccess-gold/20">
-                {sections.map((section, index) => (
-                  <div key={index} id={`section-${index}`} className="mb-10">
-                    <h2 className="text-2xl font-bold text-white mb-4">{section.title}</h2>
-                    {section.content && (
-                      typeof section.content === 'string' 
-                        ? <p className="text-gray-300 mb-4">{section.content}</p>
-                        : section.content
-                    )}
-                    
-                    {section.subsections && (
-                      <div className="space-y-6 mt-4 pl-4 border-l-2 border-bitaccess-gold/20">
-                        {section.subsections.map((subsection, subIndex) => (
-                          <div key={subIndex}>
-                            <h3 className="text-xl font-semibold text-white mb-2">{subsection.title}</h3>
-                            <p className="text-gray-300">{subsection.content}</p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                {sections.map((section) => (
+                  <WhitepaperSection
+                    key={section.id}
+                    id={section.id}
+                    title={section.title}
+                    content={section.content}
+                    subsections={section.subsections}
+                  />
                 ))}
+                
+                <WhitepaperContact />
               </div>
             </div>
           </div>
