@@ -25,8 +25,9 @@ export const useMemberSubscription = () => {
     
     try {
       if (!isConnected) {
-        const connected = await connectWallet();
-        if (!connected) {
+        await connectWallet();
+        // Check if we're connected after trying to connect
+        if (!isConnected) {
           return {
             success: false,
             error: "Failed to connect wallet"
