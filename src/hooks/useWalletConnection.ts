@@ -42,6 +42,15 @@ export const useWalletConnection = (): WalletConnectionResult => {
             // Get chain ID
             const network = await web3Provider.getNetwork();
             setChainId(network.chainId);
+            
+            // Check if we're on BSC network
+            if (network.chainId !== networkInfo.chainId) {
+              toast({
+                title: "Wrong Network Detected",
+                description: `Please switch to ${networkInfo.name} to use all features.`,
+                variant: "warning",
+              });
+            }
           } else {
             // Clear saved address if we can't match it
             localStorage.removeItem('walletAddress');
@@ -68,6 +77,11 @@ export const useWalletConnection = (): WalletConnectionResult => {
         // User switched accounts
         setAddress(accounts[0]);
         localStorage.setItem('walletAddress', accounts[0]);
+        
+        toast({
+          title: "Account Changed",
+          description: `Connected to ${accounts[0].substring(0, 6)}...${accounts[0].substring(accounts[0].length - 4)}`,
+        });
       }
     };
     
@@ -130,7 +144,8 @@ export const useWalletConnection = (): WalletConnectionResult => {
       if (network.chainId !== networkInfo.chainId) {
         toast({
           title: "Wrong Network",
-          description: `Switching to ${networkInfo.name}...`,
+          description: `Please switch to ${networkInfo.name} (BSC Mainnet) to continue.`,
+          variant: "destructive",
         });
         
         const switched = await switchNetwork();
@@ -158,9 +173,18 @@ export const useWalletConnection = (): WalletConnectionResult => {
       return true;
     } catch (error: any) {
       console.error("Wallet Connection Error:", error);
+      
+      let errorMessage = "Failed to connect to wallet.";
+      
+      if (error.code === 4001) {
+        errorMessage = "You rejected the connection request.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       toast({
         title: "Connection Error",
-        description: error.message || "Failed to connect to wallet.",
+        description: errorMessage,
         variant: "destructive",
       });
       return false;
@@ -175,9 +199,10 @@ export const useWalletConnection = (): WalletConnectionResult => {
     setSigner(null);
     setChainId(null);
     localStorage.removeItem('walletAddress');
+    
     toast({
       title: "Wallet Disconnected",
-      description: "Wallet disconnected successfully.",
+      description: "Your wallet has been disconnected successfully.",
     });
   }, []);
 

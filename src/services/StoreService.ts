@@ -95,26 +95,30 @@ export class StoreService extends BaseContractService {
       
       // Convert plan name to ID
       const planMap: Record<string, number> = {
-        "Basic": 1,
-        "Premium": 2,
-        "Enterprise": 3
+        "Membership": 1,
+        "Merchant": 2
       };
       const planId = planMap[planName] || 1;
       
       // Get store contract
       const storeContract = await this.getStoreContract();
       
-      // Get plan details to determine price
-      const planDetails = await storeContract.getPlanDetails(planId);
-      const planPrice = planDetails.price;
+      // Calculate price based on plan name
+      const planPrice = ethers.utils.parseUnits(
+        planName === "Membership" ? "20" : "100",
+        6 // USDT has 6 decimals
+      );
       
-      // Calculate total price based on duration
-      const totalPrice = planPrice.mul(duration);
+      // Calculate total price based on duration in days
+      // Assuming the price is for 365 days as specified
+      const daysInYear = 365;
+      const priceFactor = duration / daysInYear;
+      const totalPrice = planPrice.mul(Math.floor(priceFactor * 100)).div(100);
       
-      // Get token contract
+      // Get token contract address
       const tokenAddress = tokenType === 'BIT' ? 
         contractAddresses.token : 
-        '0xdAC17F958D2ee523a2206206994597C13D831ec7'; // USDT address
+        '0xdAC17F958D2ee523a2206206994597C13D831ec7'; // USDT address on BSC
       
       // Approve tokens for spending
       const tokenContract = await tokenService.getTokenContract();
@@ -140,7 +144,7 @@ export class StoreService extends BaseContractService {
         success: true,
         hash: receipt.transactionHash
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error("Payment error:", error);
       let errorMessage = "Unknown error";
       

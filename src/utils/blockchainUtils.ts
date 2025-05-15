@@ -33,7 +33,7 @@ export const checkNetwork = async (): Promise<boolean> => {
     const currentChainId = parseInt(chainId, 16);
     
     if (currentChainId !== networkInfo.chainId) {
-      console.warn(`Wrong network detected. Expected ${networkInfo.chainId} (${networkInfo.name}), got ${currentChainId}`);
+      console.warn(`Wrong network detected. Connected to ${currentChainId}, but need ${networkInfo.chainId} (${networkInfo.name})`);
       return false;
     }
     
@@ -94,7 +94,7 @@ export const switchNetwork = async (): Promise<boolean> => {
           });
           
           toast({
-            title: "Network Added",
+            title: "BSC Network Added",
             description: `${networkInfo.name} has been added to your wallet.`,
           });
           
@@ -103,7 +103,7 @@ export const switchNetwork = async (): Promise<boolean> => {
           console.error("Error adding chain:", addError);
           toast({
             title: "Network Addition Failed",
-            description: "Failed to add network to your wallet.",
+            description: "Failed to add BSC Network to your wallet.",
             variant: "destructive",
           });
           return false;
@@ -120,7 +120,7 @@ export const switchNetwork = async (): Promise<boolean> => {
       } else {
         toast({
           title: "Network Switch Failed",
-          description: "Failed to switch networks in your wallet.",
+          description: "Failed to switch to BSC Network in your wallet.",
           variant: "destructive",
         });
       }

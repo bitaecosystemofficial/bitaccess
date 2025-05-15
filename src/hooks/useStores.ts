@@ -19,47 +19,38 @@ export const useStoreData = () => {
     ],
     plans: [
       {
-        name: "Basic",
-        price: "99",
-        description: "Perfect for small e-commerce businesses",
+        name: "Membership",
+        price: "20",
+        currency: "USDT",
+        duration: "365 days",
+        description: "Access exclusive benefits and education",
         features: [
-          "Accept BIT Token payments",
-          "Basic sales analytics",
-          "Email support",
-          "Product dashboard",
-          "Basic API access",
-          "10 product listings"
+          "Access to Blockchain Education & Technical Training",
+          "$1 USDT worth of BTCB Reward",
+          "$1 USDT worth of USDT Reward",
+          "$1 USDT worth of BNB Reward",
+          "$2 USDT worth of BIT Token Rewards",
+          "Discounts from all our Products & Services",
+          "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level"
         ]
       },
       {
-        name: "Premium",
-        price: "299",
-        description: "For established online stores seeking growth",
+        name: "Merchant",
+        price: "100",
+        currency: "USDT",
+        duration: "365 days",
+        description: "Full business solution with promotional benefits",
         features: [
-          "All Basic features",
-          "Priority transaction processing",
-          "Advanced sales analytics",
-          "Priority customer support",
-          "Inventory management",
-          "Marketing promotion in ecosystem",
-          "100 product listings"
+          "Blockchain Education and Technical Training",
+          "$1 USDT worth of BTCB Reward",
+          "$1 USDT worth of USDT Reward",
+          "$1 USDT worth of BNB Reward",
+          "$10 USDT worth of BIT Token Rewards",
+          "Bit Merchant Stickers",
+          "Promotions and Advertisements on BIT Community",
+          "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level"
         ],
         highlighted: true
-      },
-      {
-        name: "Enterprise",
-        price: "599",
-        description: "Comprehensive solution for large online stores",
-        features: [
-          "All Premium features",
-          "Dedicated account manager",
-          "Custom store development",
-          "Branded checkout portal",
-          "Advanced API capabilities",
-          "Multi-currency support",
-          "Unlimited product listings",
-          "Strategic partnership opportunities"
-        ]
       }
     ]
   });
@@ -121,10 +112,10 @@ export const subscribeStore = async (
   plan: string, 
   duration: number, 
   walletAddress: string,
-  paymentToken: 'BIT' | 'USDT' = 'BIT'
+  paymentToken: 'BIT' | 'USDT' = 'USDT'
 ): Promise<ContractResult> => {
   try {
-    console.log("Subscribing store plan:", plan, "for address:", walletAddress, "using token:", paymentToken);
+    console.log("Subscribing to plan:", plan, "for address:", walletAddress, "using token:", paymentToken);
     
     const result = await storeService.payWithToken(plan, duration, paymentToken);
     return result;

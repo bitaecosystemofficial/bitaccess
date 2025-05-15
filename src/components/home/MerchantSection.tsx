@@ -10,61 +10,126 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { Check } from "lucide-react";
+import { useWallet } from "@/contexts/WalletContext";
+import { toast } from "@/hooks/use-toast";
+import { subscribeStore } from "@/hooks/useStores";
+import { switchNetwork } from "@/utils/blockchainUtils";
 
 const MerchantSection = () => {
+  const { isConnected, address, connectWallet, disconnectWallet } = useWallet();
+  
   const plans = [
     {
-      name: "Basic",
-      price: "99",
-      description: "Perfect for small businesses new to crypto",
+      name: "Membership",
+      price: "20",
+      currency: "USDT",
+      duration: "365 days",
+      description: "Access exclusive benefits and education",
       features: [
-        "Accept BIT Token payments",
-        "Basic customer analytics",
-        "Email support",
-        "Transaction dashboard",
-        "Basic API access"
+        "Access to Blockchain Education & Technical Training",
+        "$1 USDT worth of BTCB Reward",
+        "$1 USDT worth of USDT Reward",
+        "$1 USDT worth of BNB Reward",
+        "$2 USDT worth of BIT Token Rewards",
+        "Discounts from all our Products & Services",
+        "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level"
       ]
     },
     {
-      name: "Premium",
-      price: "299",
-      description: "For established businesses seeking growth",
+      name: "Merchant",
+      price: "100",
+      currency: "USDT",
+      duration: "365 days",
+      description: "Full business solution with promotional benefits",
       features: [
-        "All Basic features",
-        "Priority transaction processing",
-        "Advanced analytics and reports",
-        "Priority customer support",
-        "Custom integration assistance",
-        "Marketing promotion in ecosystem"
+        "Blockchain Education and Technical Training",
+        "$1 USDT worth of BTCB Reward",
+        "$1 USDT worth of USDT Reward",
+        "$1 USDT worth of BNB Reward",
+        "$10 USDT worth of BIT Token Rewards",
+        "Bit Merchant Stickers",
+        "Promotions and Advertisements on BIT Community",
+        "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level"
       ],
       highlighted: true
-    },
-    {
-      name: "Enterprise",
-      price: "599",
-      description: "Comprehensive solution for large businesses",
-      features: [
-        "All Premium features",
-        "Dedicated account manager",
-        "Custom development solutions",
-        "Branded payment portal",
-        "Advanced API capabilities",
-        "Exclusive networking events",
-        "Strategic partnership opportunities"
-      ]
     }
   ];
+
+  const handleSubscribe = async (plan: string) => {
+    if (!isConnected) {
+      toast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet first",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      // First ensure we're on BSC Network
+      const networkSwitched = await switchNetwork();
+      if (!networkSwitched) return;
+      
+      // Set duration to 365 days (1 year)
+      const duration = 365;
+      
+      toast({
+        title: "Processing Subscription",
+        description: `Subscribing to ${plan} plan for ${duration} days...`,
+      });
+      
+      const result = await subscribeStore(plan, duration, address!, 'USDT');
+      
+      if (result.success) {
+        toast({
+          title: "Subscription Successful",
+          description: `You have successfully subscribed to the ${plan} plan!`,
+        });
+      } else {
+        toast({
+          title: "Subscription Failed",
+          description: result.error || "Something went wrong",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Subscription error:", error);
+      toast({
+        title: "Subscription Error",
+        description: "An error occurred during subscription process",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <section className="py-16 md:py-24 bg-bitaccess-black-light">
       <div className="container px-4 md:px-8">
         <SectionHeading
-          title="Merchant Subscriptions"
-          subtitle="Join our merchant network and access powerful tools to grow your business with blockchain technology"
+          title="Exclusive Membership"
+          subtitle="Join our ecosystem and access powerful tools, education and rewards through our membership program"
           centered
         />
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="flex justify-center mb-8">
+          {!isConnected ? (
+            <Button 
+              onClick={connectWallet}
+              className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black"
+            >
+              Connect Wallet
+            </Button>
+          ) : (
+            <Button 
+              onClick={disconnectWallet}
+              className="bg-transparent border border-bitaccess-gold hover:bg-bitaccess-gold/10 text-bitaccess-gold"
+            >
+              Disconnect Wallet
+            </Button>
+          )}
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {plans.map((plan, index) => (
             <Card 
               key={index} 
@@ -72,16 +137,16 @@ const MerchantSection = () => {
             >
               <CardHeader>
                 <CardTitle className={`text-xl ${plan.highlighted ? 'text-bitaccess-gold' : 'text-white'}`}>
-                  {plan.name}
+                  {plan.name} Subscription
                 </CardTitle>
                 <CardDescription className="text-gray-400">
                   {plan.description}
                 </CardDescription>
                 <div className="mt-4">
                   <span className={`text-3xl font-bold ${plan.highlighted ? 'text-bitaccess-gold' : 'text-white'}`}>
-                    ${plan.price}
+                    {plan.price} {plan.currency}
                   </span>
-                  <span className="text-gray-400 ml-1">/month</span>
+                  <span className="text-gray-400 ml-1">/{plan.duration}</span>
                 </div>
               </CardHeader>
               <CardContent>
@@ -99,6 +164,7 @@ const MerchantSection = () => {
                   className={`w-full ${plan.highlighted 
                     ? 'bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black' 
                     : 'bg-transparent border border-gray-600 hover:border-bitaccess-gold text-gray-300 hover:text-bitaccess-gold'}`}
+                  onClick={() => handleSubscribe(plan.name)}
                 >
                   Subscribe Now
                 </Button>
