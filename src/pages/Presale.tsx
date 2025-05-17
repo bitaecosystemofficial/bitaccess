@@ -4,10 +4,24 @@ import SectionHeading from "@/components/ui/section-heading";
 import PresaleStats from "@/components/presale/PresaleStats";
 import PresaleTimer from "@/components/presale/PresaleTimer";
 import PresaleForm from "@/components/presale/PresaleForm";
+import WalletConnectPrompt from "@/components/ui/wallet-connect-prompt";
 import { usePresaleData } from "@/utils/presale/presaleHooks";
+import { useWallet } from "@/contexts/WalletContext";
 
 const Presale = () => {
   const presaleData = usePresaleData();
+  const { isConnected } = useWallet();
+  
+  if (!isConnected) {
+    return (
+      <Layout>
+        <WalletConnectPrompt 
+          title="Presale Access Required"
+          description="Please connect your wallet to participate in the token presale"
+        />
+      </Layout>
+    );
+  }
   
   return (
     <Layout>

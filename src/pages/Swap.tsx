@@ -4,8 +4,23 @@ import SectionHeading from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
 import { ArrowLeftRight } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import WalletConnectPrompt from "@/components/ui/wallet-connect-prompt";
+import { useWallet } from "@/contexts/WalletContext";
 
 const Swap = () => {
+  const { isConnected } = useWallet();
+
+  if (!isConnected) {
+    return (
+      <Layout>
+        <WalletConnectPrompt 
+          title="Swap Access Required"
+          description="Please connect your wallet to access the token swap functionality"
+        />
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <div className="py-16 md:py-24 bg-hero-pattern">
@@ -101,7 +116,7 @@ const Swap = () => {
               </div>
               
               <Button className="w-full bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium">
-                Connect Wallet
+                Swap
               </Button>
             </div>
             

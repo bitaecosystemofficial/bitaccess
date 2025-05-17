@@ -1,40 +1,26 @@
 
 import React from "react";
 import Layout from "@/components/layout/Layout";
-import { useMembership, MembershipType } from "@/contexts/MembershipContext";
+import { useMembership } from "@/contexts/MembershipContext";
 import { useWallet } from "@/contexts/WalletContext";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format } from "date-fns";
-import { Skeleton } from "@/components/ui/skeleton";
+import WalletConnectPrompt from "@/components/ui/wallet-connect-prompt";
 import DashboardMembershipCard from "@/components/dashboard/DashboardMembershipCard";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import DashboardReferrals from "@/components/dashboard/DashboardReferrals";
 import DashboardRewards from "@/components/dashboard/DashboardRewards";
 
 const Dashboard = () => {
-  const { isConnected, address, connectWallet } = useWallet();
-  const { membershipData, isLoading } = useMembership();
+  const { isConnected } = useWallet();
+  const { isLoading } = useMembership();
 
   if (!isConnected) {
     return (
       <Layout>
-        <div className="container mt-16 px-4 py-16">
-          <Card className="max-w-md mx-auto">
-            <CardHeader>
-              <CardTitle>Connect Your Wallet</CardTitle>
-              <CardDescription>
-                Please connect your wallet to access the dashboard
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex justify-center">
-              <Button onClick={connectWallet} className="mt-4">
-                Connect Wallet
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+        <WalletConnectPrompt 
+          title="Dashboard Access Required"
+          description="Please connect your wallet to access your membership dashboard"
+        />
       </Layout>
     );
   }

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
@@ -5,6 +6,7 @@ import AirdropTasks from "@/components/airdrop/AirdropTasks";
 import AirdropInfo from "@/components/airdrop/AirdropInfo";
 import AirdropTimer from "@/components/airdrop/AirdropTimer";
 import AirdropClaim from "@/components/airdrop/AirdropClaim";
+import WalletConnectPrompt from "@/components/ui/wallet-connect-prompt";
 import { useAirdropData } from "@/utils/airdrop/airdropHooks";
 import { useWallet } from "@/contexts/WalletContext";
 import { toast } from "@/hooks/use-toast";
@@ -68,6 +70,17 @@ const Airdrop = () => {
   const handleTaskComplete = (task: 'twitter' | 'telegram' | 'newsletter' | 'share') => {
     setTasks(prev => ({ ...prev, [task]: true }));
   };
+
+  if (!isConnected) {
+    return (
+      <Layout>
+        <WalletConnectPrompt 
+          title="Airdrop Access Required"
+          description="Please connect your wallet to participate in the token airdrop"
+        />
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

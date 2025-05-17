@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
@@ -8,6 +9,7 @@ import { Loader2, Award, Users, Clock, ArrowRight } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { toast } from "@/hooks/use-toast";
 import { useSpinWheelData, spinWheel } from "@/hooks/useSpinWheel";
+import WalletConnectPrompt from "@/components/ui/wallet-connect-prompt";
 
 const SpinWheel = () => {
   const { isConnected, address, connectWallet } = useWallet();
@@ -60,6 +62,17 @@ const SpinWheel = () => {
       setIsSpinning(false);
     }
   };
+
+  if (!isConnected) {
+    return (
+      <Layout>
+        <WalletConnectPrompt 
+          title="Spin Wheel Access Required"
+          description="Please connect your wallet to spin the wheel and win rewards"
+        />
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -126,32 +139,22 @@ const SpinWheel = () => {
                 </div>
               )}
 
-              {isConnected ? (
-                <Button
-                  onClick={handleSpin}
-                  disabled={isSpinning || !spinWheelData.userCanSpin}
-                  size="lg"
-                  className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium"
-                >
-                  {isSpinning ? (
-                    <>
-                      Spinning... <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                    </>
-                  ) : (
-                    <>
-                      Spin the Wheel <ArrowRight className="ml-2 h-4 w-4" />
-                    </>
-                  )}
-                </Button>
-              ) : (
-                <Button
-                  onClick={connectWallet}
-                  size="lg"
-                  className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium"
-                >
-                  Connect Wallet to Spin
-                </Button>
-              )}
+              <Button
+                onClick={handleSpin}
+                disabled={isSpinning || !spinWheelData.userCanSpin}
+                size="lg"
+                className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium"
+              >
+                {isSpinning ? (
+                  <>
+                    Spinning... <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                  </>
+                ) : (
+                  <>
+                    Spin the Wheel <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
             </div>
 
             <div className="mt-6 text-center text-sm text-gray-400">
