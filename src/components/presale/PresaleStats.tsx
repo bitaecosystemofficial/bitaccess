@@ -37,8 +37,7 @@ const PresaleStats = () => {
         </div>
         <Progress 
           value={presaleData.progress} 
-          className="h-3 bg-gray-700" 
-          indicatorClassName="bg-gradient-to-r from-bitaccess-gold to-bitaccess-gold/80"
+          className="h-3 bg-gray-700 [&>div]:bg-gradient-to-r [&>div]:from-bitaccess-gold [&>div]:to-bitaccess-gold/80"
         />
         <div className="flex justify-between mt-4 text-sm">
           <span className="text-gray-400">Soft Cap: <span className="text-white">{(presaleData.softCap / 1000000).toFixed(1)}M BIT</span></span>
