@@ -39,7 +39,7 @@ export const useAirdropData = () => {
         name: "Like Facebook Page", 
         description: "Like the official BitAccess Facebook page", 
         icon: "facebook", 
-        url: "https://facebook.com/BitAccessOfficial",
+        url: "https://facebook.com/bitaecosystemfficial",
         completed: false 
       },
       { 
@@ -47,7 +47,7 @@ export const useAirdropData = () => {
         name: "Follow Twitter", 
         description: "Follow the official BitAccess Twitter account", 
         icon: "twitter", 
-        url: "https://twitter.com/BitAccessOfficial",
+        url: "https://twitter.com/bitaecosystem",
         completed: false 
       },
       { 
@@ -55,7 +55,7 @@ export const useAirdropData = () => {
         name: "Subscribe to YouTube", 
         description: "Subscribe to the BitAccess YouTube channel", 
         icon: "youtube", 
-        url: "https://youtube.com/c/BitAccessOfficial",
+        url: "https://youtube.com/@bitaecosystemofficial",
         completed: false 
       },
       { 
@@ -63,7 +63,7 @@ export const useAirdropData = () => {
         name: "Join Telegram Group", 
         description: "Join the official BitAccess Telegram group", 
         icon: "telegram", 
-        url: "https://t.me/BitAccessOfficial",
+        url: "https://t.me/bitaecosystemofficial",
         completed: false 
       }
     ],
