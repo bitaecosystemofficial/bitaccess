@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { toast } from "@/hooks/use-toast";
 import { CheckCircle, XCircle, Calendar } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const DashboardMembershipCard = () => {
   const { membershipData, isLoading } = useMembership();
@@ -33,11 +34,14 @@ const DashboardMembershipCard = () => {
   if (!membershipData || !membershipData.isActive) {
     return (
       <Card className="border border-gray-700 bg-bitaccess-black">
-        <CardHeader>
-          <CardTitle className="text-red-400">No Active Membership</CardTitle>
-          <CardDescription>
-            You don't have an active membership. Subscribe to access exclusive benefits.
-          </CardDescription>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-red-400">No Active Membership</CardTitle>
+            <CardDescription>
+              You don't have an active membership. Subscribe to access exclusive benefits.
+            </CardDescription>
+          </div>
+          <Badge variant="destructive" className="ml-2">Not Subscribed</Badge>
         </CardHeader>
         <CardContent>
           <p className="text-gray-400">
@@ -62,11 +66,14 @@ const DashboardMembershipCard = () => {
 
   return (
     <Card className="border border-bitaccess-gold bg-bitaccess-black">
-      <CardHeader>
-        <CardTitle className="text-bitaccess-gold">{membershipTypeText}</CardTitle>
-        <CardDescription>
-          Your membership is active
-        </CardDescription>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle className="text-bitaccess-gold">{membershipTypeText}</CardTitle>
+          <CardDescription>
+            Your membership is active
+          </CardDescription>
+        </div>
+        <Badge className="bg-green-600 hover:bg-green-700 ml-2">Subscribed</Badge>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-start gap-3">

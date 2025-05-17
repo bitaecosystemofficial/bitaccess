@@ -2,6 +2,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { useWallet } from "@/contexts/WalletContext";
+import { useMembership } from "@/contexts/MembershipContext";
 import { 
   Wallet,
   Home,
@@ -26,17 +27,19 @@ type NavItem = {
   href: string;
   requiresWallet: boolean;
   hideWhenConnected: boolean;
+  requiresSubscription?: boolean;
 };
 
 const MobileBottomNav = () => {
   const { isConnected, connectWallet } = useWallet();
+  const { membershipData } = useMembership();
   
   const navItems: NavItem[] = [
     { label: "Home", icon: <Home className="h-6 w-6" />, href: "/", requiresWallet: false, hideWhenConnected: false },
     { label: "Dashboard", icon: <BarChart3 className="h-6 w-6" />, href: "/dashboard", requiresWallet: true, hideWhenConnected: false },
     { label: "About", icon: <Info className="h-6 w-6" />, href: "/about", requiresWallet: false, hideWhenConnected: true },
     { label: "Education", icon: <BookOpen className="h-6 w-6" />, href: "/education", requiresWallet: false, hideWhenConnected: true },
-    { label: "Videos", icon: <Video className="h-6 w-6" />, href: "/videos", requiresWallet: false, hideWhenConnected: true },
+    { label: "Videos", icon: <Video className="h-6 w-6" />, href: "/videos", requiresWallet: false, hideWhenConnected: true, requiresSubscription: true },
     { label: "Marketplace", icon: <ShoppingCart className="h-6 w-6" />, href: "/marketplace", requiresWallet: false, hideWhenConnected: true },
     { label: "Airdrop", icon: <Gift className="h-6 w-6" />, href: "/airdrop", requiresWallet: true, hideWhenConnected: false },
     { label: "Presale", icon: <Coins className="h-6 w-6" />, href: "/presale", requiresWallet: true, hideWhenConnected: false },
@@ -49,11 +52,19 @@ const MobileBottomNav = () => {
     { label: "Wallet", icon: <Wallet className="h-6 w-6" />, href: "#", requiresWallet: false, hideWhenConnected: false },
   ];
   
-  // Filter items based on wallet connection
-  const visibleItems = navItems.filter(item => 
-    (!item.requiresWallet || isConnected) && 
-    !(isConnected && item.hideWhenConnected)
-  );
+  // Filter items based on wallet connection and subscription
+  const visibleItems = navItems.filter(item => {
+    // Hide items that require wallet if not connected
+    if (item.requiresWallet && !isConnected) return false;
+    
+    // Hide items marked to hide when connected
+    if (isConnected && item.hideWhenConnected) return false;
+    
+    // Hide items that require subscription if not subscribed
+    if (item.requiresSubscription && (!membershipData?.isActive)) return false;
+    
+    return true;
+  });
   
   const handleWalletClick = () => {
     if (!isConnected) {
