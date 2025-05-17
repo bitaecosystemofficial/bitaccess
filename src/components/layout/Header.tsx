@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useWallet } from "@/contexts/WalletContext";
@@ -19,6 +20,7 @@ const NAVIGATION_ITEMS = [
   { label: "Spin Wheel", href: "/spin-wheel" },
   { label: "Docs", href: "/docs" },
   { label: "Community", href: "/community" },
+  { label: "Governance", href: "/governance" },
   { label: "Contact", href: "/contact" },
 ];
 

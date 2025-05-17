@@ -18,6 +18,7 @@ import SpinWheel from "./pages/SpinWheel";
 import NotFound from "./pages/NotFound";
 import Education from "./pages/Education";
 import Community from "./pages/Community";
+import Governance from "./pages/Governance";
 import CourseDetails from "./pages/CourseDetails";
 import DexAnalyticsPage from "./pages/DexAnalytics";
 import WhitepaperDetails from "./pages/WhitepaperDetails";
@@ -51,6 +52,7 @@ const App = () => (
               <Route path="/videos" element={<VideoPortal />} />
               <Route path="/video/:videoId" element={<VideoDetails />} />
               <Route path="/community" element={<Community />} />
+              <Route path="/governance" element={<Governance />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/dex-analytics" element={<DexAnalyticsPage />} />
               <Route path="*" element={<NotFound />} />
