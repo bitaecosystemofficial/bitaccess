@@ -5,6 +5,17 @@ import { AirdropABI } from '@/contracts/abis/AirdropABI';
 import { BaseContractService } from './BaseContractService';
 
 export class AirdropService extends BaseContractService {
+  // Add the missing ensureConnected method
+  async ensureConnected() {
+    if (!this.provider) {
+      throw new Error("Provider not initialized. Please connect to a wallet.");
+    }
+    
+    if (!this.signer) {
+      throw new Error("Signer not initialized. Please connect to a wallet.");
+    }
+  }
+  
   async getAirdropContract(withSigner = false) {
     try {
       if (withSigner) {
@@ -120,6 +131,33 @@ export class AirdropService extends BaseContractService {
     } catch (error) {
       console.error("Error checking claim status:", error);
       return false;
+    }
+  }
+  
+  // Add the missing subscribeToAirdropEvents method
+  subscribeToAirdropEvents(callbacks: { onTaskCompleted?: (user: string, taskId: number) => void, onTokensClaimed?: (user: string, amount: string) => void }) {
+    try {
+      const contract = this.getAirdropContract();
+      
+      if (callbacks.onTaskCompleted) {
+        contract.on("TaskCompleted", (user, taskId) => {
+          callbacks.onTaskCompleted?.(user, taskId.toNumber());
+        });
+      }
+      
+      if (callbacks.onTokensClaimed) {
+        contract.on("TokensClaimed", (user, amount) => {
+          callbacks.onTokensClaimed?.(user, ethers.utils.formatEther(amount));
+        });
+      }
+      
+      return () => {
+        contract.removeAllListeners("TaskCompleted");
+        contract.removeAllListeners("TokensClaimed");
+      };
+    } catch (error) {
+      console.error("Error subscribing to airdrop events:", error);
+      return () => {};
     }
   }
 }
