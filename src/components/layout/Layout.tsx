@@ -16,10 +16,12 @@ const Layout = ({ children }: LayoutProps) => {
     <div className="flex flex-col min-h-screen bg-bitaccess-black">
       <Header />
       <main className={`flex-grow pt-16 ${isMobile ? 'pb-16' : ''}`}>
-        {children}
+        <div className="w-full min-h-full">
+          {children}
+        </div>
       </main>
       {isMobile && <MobileBottomNav />}
-      <Footer />
+      {!isMobile && <Footer />}
     </div>
   );
 };

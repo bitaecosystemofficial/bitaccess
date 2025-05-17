@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { WalletProvider } from "@/contexts/WalletContext";
 import { MembershipProvider } from "@/contexts/MembershipContext";
 import Index from "./pages/Index";
+import About from "./pages/About";
 import Airdrop from "./pages/Airdrop";
 import Presale from "./pages/Presale";
 import Staking from "./pages/Staking";
@@ -40,6 +41,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/about" element={<About />} />
               <Route path="/airdrop" element={<Airdrop />} />
               <Route path="/presale" element={<Presale />} />
               <Route path="/staking" element={<Staking />} />

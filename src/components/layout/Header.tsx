@@ -13,6 +13,7 @@ import Logo from "@/components/ui/logo";
 const NAVIGATION_ITEMS = [
   { label: "Home", href: "/", requiresWallet: false, hideWhenConnected: false },
   { label: "Dashboard", href: "/dashboard", requiresWallet: true, hideWhenConnected: false },
+  { label: "About", href: "/about", requiresWallet: false, hideWhenConnected: true },
   { label: "Education", href: "/education", requiresWallet: false, hideWhenConnected: true },
   { label: "Videos", href: "/videos", requiresWallet: false, hideWhenConnected: true },
   { label: "Marketplace", href: "/marketplace", requiresWallet: false, hideWhenConnected: true },
@@ -151,9 +152,15 @@ const Header = () => {
                     <p className="text-xs text-gray-400">Wallet Address</p>
                     <p className="text-sm text-white break-all">{address}</p>
                   </div>
-                  <div className="mb-3 pb-2 border-b border-bitaccess-gold/10">
-                    <p className="text-xs text-gray-400">BIT Balance</p>
-                    <p className="text-sm text-bitaccess-gold">{parseFloat(tokenData.balance).toLocaleString()} BIT</p>
+                  <div className="flex justify-between mb-3 pb-2 border-b border-bitaccess-gold/10">
+                    <div>
+                      <p className="text-xs text-gray-400">BIT Balance</p>
+                      <p className="text-sm text-bitaccess-gold">{parseFloat(tokenData.balance).toLocaleString()} BIT</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-400">BNB Balance</p>
+                      <p className="text-sm text-white">0.125 BNB</p>
+                    </div>
                   </div>
                   <div className="flex justify-between items-center">
                     <NavLink 
