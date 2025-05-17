@@ -1,76 +1,126 @@
 
 import { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
 import { ContractResult } from '@/types/contracts';
-import { contractService } from '@/services/ContractService';
-import { contractAddresses } from '@/constants/contracts';
+import { spinWheelService, Prize, UserPrize } from '@/services/SpinWheelService';
+import { useWallet } from '@/contexts/WalletContext';
+import { toast } from '@/hooks/use-toast';
+
+export interface SpinWheelData {
+  totalSpins: number;
+  dailySpins: number;
+  prizes: Prize[];
+  userCanSpin: boolean;
+  userLastSpinTime: number;
+  cooldownPeriod: number;
+  spinCost: string;
+  freeSpins: number;
+  spinMultiplier: number;
+  userPrizes: UserPrize[];
+}
 
 export const useSpinWheelData = () => {
-  const [spinWheelData, setSpinWheelData] = useState({
-    totalSpins: 18457,
-    dailySpins: 1245,
-    prizes: [
-      "5 BIT Tokens",
-      "10 BIT Tokens",
-      "25 BIT Tokens",
-      "50 BIT Tokens",
-      "100 BIT Tokens",
-      "Try Again"
-    ],
-    winRate: 65,
-    userCanSpin: true,
+  const { isConnected, address } = useWallet();
+  const [isLoading, setIsLoading] = useState(true);
+  const [spinWheelData, setSpinWheelData] = useState<SpinWheelData>({
+    totalSpins: 0,
+    dailySpins: 0,
+    prizes: [],
+    userCanSpin: false,
     userLastSpinTime: 0,
-    cooldownPeriod: 24 * 60 * 60
+    cooldownPeriod: 24 * 60 * 60,
+    spinCost: "100",
+    freeSpins: 0,
+    spinMultiplier: 1,
+    userPrizes: []
   });
 
+  const fetchSpinWheelData = async () => {
+    if (!isConnected || !address) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      
+      const [
+        totalSpins,
+        dailySpins,
+        prizes,
+        canSpin,
+        lastSpin,
+        cooldownPeriod,
+        spinCost,
+        freeSpins,
+        spinMultiplier,
+        userPrizes
+      ] = await Promise.all([
+        spinWheelService.getTotalSpins(),
+        spinWheelService.getDailySpins(),
+        spinWheelService.getPrizes(),
+        spinWheelService.canSpin(address),
+        spinWheelService.getSpinCooldown(address),
+        spinWheelService.getCooldownPeriod(),
+        spinWheelService.getSpinCost(),
+        spinWheelService.getFreeSpins(address),
+        spinWheelService.getSpinMultiplier(address),
+        spinWheelService.getUserPrizes(address)
+      ]);
+
+      setSpinWheelData({
+        totalSpins: totalSpins ? totalSpins.toNumber() : 0,
+        dailySpins: dailySpins ? dailySpins.toNumber() : 0,
+        prizes: prizes || [],
+        userCanSpin: canSpin || false,
+        userLastSpinTime: lastSpin ? lastSpin.toNumber() : 0,
+        cooldownPeriod: cooldownPeriod ? cooldownPeriod.toNumber() : 24 * 60 * 60,
+        spinCost: spinCost || "100",
+        freeSpins: freeSpins || 0,
+        spinMultiplier: spinMultiplier || 1,
+        userPrizes: userPrizes || []
+      });
+    } catch (error) {
+      console.error("Error fetching spin wheel data:", error);
+      toast({
+        title: "Error fetching spin wheel data",
+        description: "Please try again later",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    // Fetch spin wheel data from the blockchain
-    const fetchSpinWheelData = async () => {
-      try {
-        if (typeof window.ethereum !== 'undefined') {
-          console.log("Fetching spin wheel data from contract:", contractAddresses.spinWheel);
-          
-          // This will be replaced with actual contract calls in a production environment
-          // For demo purposes, we're using simulated data
-          const spinWheelContract = await contractService.getSpinWheelContract();
-          
-          // In a real implementation, you would call contract methods like:
-          // const totalSpins = await spinWheelContract.getTotalSpins();
-          // const dailySpins = await spinWheelContract.getDailySpins();
-          // const userLastSpin = await spinWheelContract.getUserLastSpin(address);
-          
-          setSpinWheelData(prev => ({
-            ...prev,
-            totalSpins: prev.totalSpins + Math.floor(Math.random() * 5),
-            dailySpins: Math.floor(Math.random() * 10) + 1240
-          }));
-        }
-      } catch (error) {
-        console.error("Error fetching spin wheel data:", error);
-      }
-    };
-
     fetchSpinWheelData();
-    const interval = setInterval(fetchSpinWheelData, 30000);
     
+    // Set up a refresh interval
+    const interval = setInterval(fetchSpinWheelData, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isConnected, address]);
 
-  return spinWheelData;
+  const refreshData = () => {
+    fetchSpinWheelData();
+  };
+
+  return { spinWheelData, isLoading, refreshData };
 };
 
 export const spinWheel = async (walletAddress: string): Promise<ContractResult> => {
   try {
-    console.log("Spinning wheel for address:", walletAddress);
+    // First approve tokens for spending
+    await spinWheelService.approveTokensForSpin();
     
-    const spinWheelContract = await contractService.getSpinWheelContract();
-    const tx = await spinWheelContract.spin();
-    const receipt = await tx.wait();
+    // Then perform the spin
+    const receipt = await spinWheelService.spin();
     
     return { 
       success: true, 
       hash: receipt.transactionHash 
     };
   } catch (error) {
+    console.error("Error spinning wheel:", error);
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Unknown error' 
