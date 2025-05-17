@@ -1,4 +1,3 @@
-
 import { ethers } from 'ethers';
 import { contractAddresses } from '@/constants/contracts';
 import { AirdropABI } from '@/contracts/abis/AirdropABI';
@@ -134,10 +133,11 @@ export class AirdropService extends BaseContractService {
     }
   }
   
-  // Add the missing subscribeToAirdropEvents method
-  subscribeToAirdropEvents(callbacks: { onTaskCompleted?: (user: string, taskId: number) => void, onTokensClaimed?: (user: string, amount: string) => void }) {
+  // Fixed subscribeToAirdropEvents method
+  async subscribeToAirdropEvents(callbacks: { onTaskCompleted?: (user: string, taskId: number) => void, onTokensClaimed?: (user: string, amount: string) => void }) {
     try {
-      const contract = this.getAirdropContract();
+      // Await the contract to get the actual instance
+      const contract = await this.getAirdropContract();
       
       if (callbacks.onTaskCompleted) {
         contract.on("TaskCompleted", (user, taskId) => {

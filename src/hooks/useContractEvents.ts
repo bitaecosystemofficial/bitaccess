@@ -38,14 +38,24 @@ export const useContractEvents = () => {
           console.log('New staking event:', event);
         });
 
-        // Subscribe to Airdrop events
-        await airdropService.subscribeToAirdropEvents((event) => {
-          setLatestAirdropEvent({
-            type: event.event,
-            data: event.args,
-            timestamp: Date.now()
-          });
-          console.log('New airdrop event:', event);
+        // Subscribe to Airdrop events with proper object structure
+        await airdropService.subscribeToAirdropEvents({
+          onTaskCompleted: (user, taskId) => {
+            setLatestAirdropEvent({
+              type: 'TaskCompleted',
+              data: { user, taskId },
+              timestamp: Date.now()
+            });
+            console.log('New airdrop task completed:', { user, taskId });
+          },
+          onTokensClaimed: (user, amount) => {
+            setLatestAirdropEvent({
+              type: 'TokensClaimed',
+              data: { user, amount },
+              timestamp: Date.now()
+            });
+            console.log('New airdrop tokens claimed:', { user, amount });
+          }
         });
       } catch (error) {
         console.error('Error setting up event listeners:', error);
