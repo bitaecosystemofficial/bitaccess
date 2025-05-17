@@ -8,7 +8,7 @@ interface TokenStatCardProps {
   className?: string;
 }
 
-const TokenStatCard = ({ title, value, icon, className }: TokenStatCardProps) => {
+export const TokenStatCard = ({ title, value, icon, className }: TokenStatCardProps) => {
   return (
     <div 
       className={cn(
