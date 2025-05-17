@@ -1,150 +1,237 @@
 
-import { useState, useEffect } from 'react';
-import { useWallet } from '@/contexts/WalletContext';
-import { Proposal, ContractResult } from '@/types/contracts';
-import { mockTransaction } from '@/utils/blockchainUtils';
+import { useState, useEffect, useCallback } from "react";
+import { governanceService } from "@/services/GovernanceService";
+import { useWallet } from "@/contexts/WalletContext";
+import { toast } from "@/hooks/use-toast";
 
-// Mock data for governance proposals
-const mockActiveProposals: Proposal[] = [
-  {
-    id: "prop-001",
-    title: "Increase Staking Rewards by 5%",
-    description: "This proposal aims to increase the staking rewards from the current 10% APY to 15% APY to incentivize more users to stake their BIT tokens and improve token stability.",
-    votes: 354,
-    status: "active",
-    endTime: Date.now() + 5 * 24 * 60 * 60 * 1000 // 5 days from now
-  },
-  {
-    id: "prop-002",
-    title: "Launch BIT on New Exchange",
-    description: "This proposal suggests we should expand our token's availability by listing on another major exchange. This would increase liquidity and accessibility for new users.",
-    votes: 287,
-    status: "active",
-    endTime: Date.now() + 7 * 24 * 60 * 60 * 1000 // 7 days from now
-  },
-  {
-    id: "prop-003",
-    title: "Add New Educational Content",
-    description: "This proposal recommends allocating resources to create advanced educational content on blockchain technology and cryptocurrency trading strategies.",
-    votes: 215,
-    status: "pending",
-    endTime: Date.now() + 3 * 24 * 60 * 60 * 1000 // 3 days from now
-  }
-];
-
-const mockPastProposals: Proposal[] = [
-  {
-    id: "prop-p001",
-    title: "Reduce Transaction Fees by 2%",
-    description: "The proposal to reduce platform transaction fees from 5% to 3% has been approved and implemented.",
-    votes: 425,
-    status: "executed",
-    endTime: Date.now() - 15 * 24 * 60 * 60 * 1000 // 15 days ago
-  },
-  {
-    id: "prop-p002",
-    title: "Add Token Burning Mechanism",
-    description: "The proposal to implement a token burning mechanism where 2% of all transaction fees are used to buy back and burn BIT tokens.",
-    votes: 378,
-    status: "executed",
-    endTime: Date.now() - 25 * 24 * 60 * 60 * 1000 // 25 days ago
-  },
-  {
-    id: "prop-p003",
-    title: "Community Fund Allocation",
-    description: "The proposal to allocate 100,000 BIT tokens to a community development fund for future projects was rejected.",
-    votes: 156,
-    status: "rejected",
-    endTime: Date.now() - 10 * 24 * 60 * 60 * 1000 // 10 days ago
-  }
-];
+interface Proposal {
+  id: string;
+  title: string;
+  description: string;
+  status: "active" | "executed" | "canceled" | "defeated";
+  forVotes: string;
+  againstVotes: string;
+  startTime: number;
+  endTime: number;
+  creator: string;
+  votes: number;
+}
 
 export const useGovernance = () => {
-  const { isConnected, address, balance } = useWallet();
-  const [activeProposals, setActiveProposals] = useState<Proposal[]>(mockActiveProposals);
-  const [pastProposals, setPastProposals] = useState<Proposal[]>(mockPastProposals);
-  const [userVotingPower, setUserVotingPower] = useState<number>(0);
-  const [totalVotes, setTotalVotes] = useState<number>(0);
+  const { isConnected, address } = useWallet();
+  const [activeProposals, setActiveProposals] = useState<Proposal[]>([]);
+  const [pastProposals, setPastProposals] = useState<Proposal[]>([]);
+  const [userVotingPower, setUserVotingPower] = useState("0");
+  const [totalVotes, setTotalVotes] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Calculate total votes
-  useEffect(() => {
-    const activeTotalVotes = activeProposals.reduce((sum, proposal) => sum + proposal.votes, 0);
-    const pastTotalVotes = pastProposals.reduce((sum, proposal) => sum + proposal.votes, 0);
-    setTotalVotes(activeTotalVotes + pastTotalVotes);
-  }, [activeProposals, pastProposals]);
-
-  // Set user voting power based on their token balance
-  useEffect(() => {
-    if (isConnected && balance > 0) {
-      setUserVotingPower(balance);
-    } else {
-      setUserVotingPower(0);
-    }
-  }, [isConnected, balance, address]);
-
-  // Create a new proposal
-  const createProposal = async (
-    title: string,
-    description: string
-  ): Promise<ContractResult> => {
+  const fetchProposals = useCallback(async () => {
+    if (!governanceService) return;
+    
+    setIsLoading(true);
     try {
-      // In a real implementation, this would interact with a smart contract
-      const hash = await mockTransaction();
+      // Get active proposal IDs
+      const activeIds = await governanceService.getActiveProposals();
       
-      // Add the new proposal to state
-      const newProposal: Proposal = {
-        id: `prop-${Math.floor(Math.random() * 1000)}`,
-        title,
-        description,
-        votes: 0,
-        status: "pending",
-        endTime: Date.now() + 7 * 24 * 60 * 60 * 1000 // 7 days from now
-      };
+      // Fetch active proposals
+      const activePromises = activeIds.map(async (id: number) => {
+        const proposal = await governanceService.getProposal(id);
+        return {
+          id: id.toString(),
+          title: proposal.title,
+          description: proposal.description,
+          status: "active",
+          forVotes: proposal.forVotes,
+          againstVotes: proposal.againstVotes,
+          startTime: proposal.startTime,
+          endTime: proposal.endTime,
+          creator: proposal.creator,
+          votes: parseFloat(proposal.forVotes) + parseFloat(proposal.againstVotes)
+        };
+      });
       
-      setActiveProposals(prev => [newProposal, ...prev]);
+      const activeResults = await Promise.all(activePromises);
+      setActiveProposals(activeResults);
       
-      return { success: true, hash };
+      // Fetch total proposal count
+      const count = await governanceService.getProposalCount();
+      
+      // Fetch past proposals (simple approach - in a real app, this would be paginated)
+      const pastIds = Array.from({ length: count }, (_, i) => i + 1)
+        .filter(id => !activeIds.includes(id));
+      
+      const pastPromises = pastIds.slice(0, 10).map(async (id: number) => {
+        try {
+          const proposal = await governanceService.getProposal(id);
+          
+          let status: "executed" | "canceled" | "defeated" = "defeated";
+          if (proposal.executed) status = "executed";
+          else if (proposal.canceled) status = "canceled";
+          
+          return {
+            id: id.toString(),
+            title: proposal.title,
+            description: proposal.description,
+            status,
+            forVotes: proposal.forVotes,
+            againstVotes: proposal.againstVotes,
+            startTime: proposal.startTime,
+            endTime: proposal.endTime,
+            creator: proposal.creator,
+            votes: parseFloat(proposal.forVotes) + parseFloat(proposal.againstVotes)
+          };
+        } catch (error) {
+          console.error(`Error fetching proposal ${id}:`, error);
+          return null;
+        }
+      });
+      
+      const pastResults = (await Promise.all(pastPromises)).filter(Boolean) as Proposal[];
+      setPastProposals(pastResults);
+      
+      // Get total votes
+      const votes = await governanceService.getTotalVotes();
+      setTotalVotes(votes);
+      
     } catch (error) {
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
-      };
+      console.error("Error fetching proposals:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+  
+  const fetchUserVotingPower = useCallback(async () => {
+    if (!isConnected || !address || !governanceService) return;
+    
+    try {
+      const power = await governanceService.getUserVotingPower(address);
+      setUserVotingPower(power);
+    } catch (error) {
+      console.error("Error fetching voting power:", error);
+    }
+  }, [isConnected, address]);
+  
+  useEffect(() => {
+    fetchProposals();
+    fetchUserVotingPower();
+    
+    // Subscribe to governance events
+    const subscribeToEvents = async () => {
+      await governanceService.subscribeToGovernanceEvents((event) => {
+        console.log("Governance event:", event);
+        
+        // Refresh proposals on relevant events
+        if (["ProposalCreated", "VoteCast", "ProposalExecuted", "ProposalCanceled"].includes(event.event)) {
+          fetchProposals();
+        }
+        
+        // Show toast notifications
+        if (event.event === "ProposalCreated") {
+          toast({
+            title: "New Proposal",
+            description: `Proposal "${event.args.title}" has been created`
+          });
+        } else if (event.event === "VoteCast") {
+          toast({
+            title: "Vote Cast",
+            description: `A vote was cast on proposal #${event.args.proposalId}`
+          });
+        }
+      });
+    };
+    
+    subscribeToEvents();
+    
+    // Refresh data periodically
+    const interval = setInterval(() => {
+      fetchProposals();
+      fetchUserVotingPower();
+    }, 60000); // Every minute
+    
+    return () => {
+      clearInterval(interval);
+      governanceService.cleanup();
+    };
+  }, [fetchProposals, fetchUserVotingPower, isConnected, address]);
+  
+  const createProposal = async (title: string, description: string) => {
+    if (!isConnected) {
+      toast({
+        title: "Connect Wallet",
+        description: "Please connect your wallet to create a proposal",
+        variant: "destructive",
+      });
+      return { success: false };
+    }
+    
+    try {
+      setIsLoading(true);
+      const receipt = await governanceService.createProposal(title, description);
+      
+      toast({
+        title: "Proposal Created",
+        description: "Your governance proposal has been submitted successfully",
+      });
+      
+      fetchProposals(); // Refresh proposals
+      
+      return { success: true, receipt };
+    } catch (error: any) {
+      console.error("Error creating proposal:", error);
+      toast({
+        title: "Proposal Failed",
+        description: error.message || "Failed to create your proposal",
+        variant: "destructive",
+      });
+      return { success: false, error: error.message };
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  // Cast a vote on a proposal
-  const castVote = async (
-    proposalId: string,
-    support: boolean
-  ): Promise<ContractResult> => {
+  
+  const castVote = async (proposalId: string, support: boolean) => {
+    if (!isConnected) {
+      toast({
+        title: "Connect Wallet",
+        description: "Please connect your wallet to vote",
+        variant: "destructive",
+      });
+      return { success: false };
+    }
+    
     try {
-      // In a real implementation, this would interact with a smart contract
-      const hash = await mockTransaction();
+      setIsLoading(true);
+      const receipt = await governanceService.castVote(parseInt(proposalId), support);
       
-      // Update proposal votes
-      setActiveProposals(prevProposals => 
-        prevProposals.map(proposal => 
-          proposal.id === proposalId
-            ? { ...proposal, votes: proposal.votes + 1 }
-            : proposal
-        )
-      );
+      toast({
+        title: "Vote Recorded",
+        description: `Your vote has been recorded (${support ? "Support" : "Against"})`,
+      });
       
-      return { success: true, hash };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
-      };
+      fetchProposals(); // Refresh proposals
+      
+      return { success: true, receipt };
+    } catch (error: any) {
+      console.error("Error casting vote:", error);
+      toast({
+        title: "Voting Failed",
+        description: error.message || "Failed to record your vote",
+        variant: "destructive",
+      });
+      return { success: false, error: error.message };
+    } finally {
+      setIsLoading(false);
     }
   };
-
+  
   return {
     activeProposals,
     pastProposals,
     userVotingPower,
     totalVotes,
+    isLoading,
     createProposal,
-    castVote
+    castVote,
+    refreshProposals: fetchProposals
   };
 };

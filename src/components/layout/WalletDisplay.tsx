@@ -32,6 +32,7 @@ const WalletDisplay = ({ address, handleDisconnectWallet }: WalletDisplayProps) 
     setShowWalletInfo(!showWalletInfo);
   };
 
+  // Shortened to 6 digits at start and 4 at end as requested
   const shortenedAddress = address ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : "";
 
   return (

@@ -8,7 +8,9 @@ export const contractAddresses = {
   spinWheel: '0xabcd1234abcd1234abcd1234abcd1234abcd1234',
   token: '0xd3bde17ebd27739cf5505cd58ecf31cb628e469c',
   education: '0x9999888877776666555544443333222211110000',
-  membership: '0x1234567890123456789012345678901234567890' // ExclusiveMembership contract
+  membership: '0x1234567890123456789012345678901234567890', // ExclusiveMembership contract
+  marketplace: '0x4567890123456789012345678901234567890123', // Marketplace contract
+  governance: '0x7890123456789012345678901234567890123456'  // Governance contract
 };
 
 export const networkInfo = {
