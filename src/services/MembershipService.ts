@@ -5,6 +5,25 @@ import { MEMBERSHIP_ABI } from "../contracts/abis/MembershipABI";
 import { contractAddresses } from "../constants/contracts";
 
 class MembershipServiceClass extends BaseContractService {
+  // Add the missing getContract method
+  private async getContract(address: string, abi: any, withSigner = false) {
+    try {
+      if (withSigner) {
+        // Ensure we have a signer first
+        const signer = await this.ensureSigner();
+        const contract = new ethers.Contract(address, abi, signer);
+        return contract;
+      } else {
+        // Read-only contract using provider
+        const contract = new ethers.Contract(address, abi, this.provider);
+        return contract;
+      }
+    } catch (error) {
+      console.error("Error getting contract:", error);
+      throw error;
+    }
+  }
+
   async getMembershipContract(withSigner = true) {
     return this.getContract(contractAddresses.membership, MEMBERSHIP_ABI, withSigner);
   }
@@ -106,10 +125,13 @@ class MembershipServiceClass extends BaseContractService {
         transaction: event.transactionHash
       });
     });
+    
+    // Store the contract in eventSubscriptions map for cleanup
+    this.eventSubscriptions.set('membership', contract);
   }
 
   cleanup() {
-    super.cleanup();
+    super.cleanup('membership');
   }
 }
 
