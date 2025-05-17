@@ -1,32 +1,34 @@
+
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useWallet } from "@/contexts/WalletContext";
 import { Button } from "@/components/ui/button";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import Logo from "@/components/ui/logo";
 
+// Navigation items with wallet requirement flag
 const NAVIGATION_ITEMS = [
-  { label: "Home", href: "/" },
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Education", href: "/education" },
-  { label: "Videos", href: "/videos" },
-  { label: "Marketplace", href: "/marketplace" },
-  { label: "Airdrop", href: "/airdrop" },
-  { label: "Presale", href: "/presale" },
-  { label: "Staking", href: "/staking" },
-  { label: "Swap", href: "/swap" },
-  { label: "Spin Wheel", href: "/spin-wheel" },
-  { label: "Docs", href: "/docs" },
-  { label: "Community", href: "/community" },
-  { label: "Governance", href: "/governance" },
-  { label: "Contact", href: "/contact" },
+  { label: "Home", href: "/", requiresWallet: false },
+  { label: "Dashboard", href: "/dashboard", requiresWallet: true },
+  { label: "Education", href: "/education", requiresWallet: false },
+  { label: "Videos", href: "/videos", requiresWallet: false },
+  { label: "Marketplace", href: "/marketplace", requiresWallet: false },
+  { label: "Airdrop", href: "/airdrop", requiresWallet: true },
+  { label: "Presale", href: "/presale", requiresWallet: true },
+  { label: "Staking", href: "/staking", requiresWallet: true },
+  { label: "Swap", href: "/swap", requiresWallet: true },
+  { label: "Spin Wheel", href: "/spin-wheel", requiresWallet: true },
+  { label: "Docs", href: "/docs", requiresWallet: false },
+  { label: "Community", href: "/community", requiresWallet: false },
+  { label: "Governance", href: "/governance", requiresWallet: false },
+  { label: "Contact", href: "/contact", requiresWallet: false },
 ];
 
 const Header = () => {
   const { address, isConnected, connectWallet, disconnectWallet } = useWallet();
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isMobile = useIsMobile();
 
   const handleConnectWallet = async () => {
     if (!isConnected) {
@@ -40,6 +42,11 @@ const Header = () => {
     }
   };
 
+  // Filter navigation items based on wallet connection for desktop view
+  const visibleNavItems = NAVIGATION_ITEMS.filter(item => 
+    !item.requiresWallet || (item.requiresWallet && isConnected)
+  );
+
   return (
     <header className="bg-bitaccess-black fixed top-0 left-0 w-full z-50 border-b border-bitaccess-gold/10">
       <div className="container flex items-center justify-between h-16 px-4">
@@ -47,9 +54,9 @@ const Header = () => {
           <Logo />
         </Link>
 
-        {isDesktop ? (
+        {!isMobile ? (
           <nav className="flex items-center space-x-6">
-            {NAVIGATION_ITEMS.map((item) => (
+            {visibleNavItems.map((item) => (
               <NavLink
                 key={item.label}
                 to={item.href}
@@ -76,7 +83,7 @@ const Header = () => {
                 </SheetDescription>
               </SheetHeader>
               <nav className="grid gap-4 mt-8">
-                {NAVIGATION_ITEMS.map((item) => (
+                {visibleNavItems.map((item) => (
                   <NavLink
                     key={item.label}
                     to={item.href}
