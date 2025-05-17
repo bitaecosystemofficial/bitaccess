@@ -5,37 +5,122 @@ import { AirdropABI } from '@/contracts/abis/AirdropABI';
 import { BaseContractService } from './BaseContractService';
 
 export class AirdropService extends BaseContractService {
-  async getAirdropContract(withEvents = false) {
-    const contract = new ethers.Contract(contractAddresses.airdrop, AirdropABI, this.signer);
-    if (withEvents && !this.eventSubscriptions.has('airdrop')) {
-      this.eventSubscriptions.set('airdrop', contract);
-      console.log('Subscribed to Airdrop events');
+  async getAirdropContract(withSigner = false) {
+    try {
+      if (withSigner) {
+        await this.ensureConnected();
+        return new ethers.Contract(contractAddresses.airdrop, AirdropABI, this.signer);
+      } else {
+        return new ethers.Contract(contractAddresses.airdrop, AirdropABI, this.provider);
+      }
+    } catch (error) {
+      console.error("Error getting Airdrop contract:", error);
+      throw error;
     }
-    return contract;
   }
 
   async claimAirdrop() {
-    const contract = await this.getAirdropContract();
-    const tx = await contract.claim();
-    return tx.wait();
+    try {
+      const contract = await this.getAirdropContract(true);
+      const tx = await contract.claim();
+      return tx.wait();
+    } catch (error) {
+      console.error("Error claiming airdrop:", error);
+      throw error;
+    }
   }
 
-  async checkAirdropEligibility(address: string) {
-    const contract = await this.getAirdropContract();
-    return contract.isEligible(address);
+  async completeTask(taskId: number, uniqueCode: string) {
+    try {
+      const contract = await this.getAirdropContract(true);
+      // Convert the string to bytes32
+      const bytes32Code = ethers.utils.id(uniqueCode);
+      const tx = await contract.completeTask(taskId, bytes32Code);
+      return tx.wait();
+    } catch (error) {
+      console.error(`Error completing task ${taskId}:`, error);
+      throw error;
+    }
   }
 
-  async verifyAirdropTask(address: string, taskId: number) {
-    const contract = await this.getAirdropContract();
-    const tx = await contract.verifyTasks(address, taskId);
-    return tx.wait();
+  async getUserStatus(address: string) {
+    try {
+      const contract = await this.getAirdropContract();
+      const status = await contract.getUserStatus(address);
+      return {
+        completedTasks: status[0].toNumber(),
+        pendingReward: ethers.utils.formatEther(status[1]),
+        eligible: status[2]
+      };
+    } catch (error) {
+      console.error("Error getting user status:", error);
+      return { completedTasks: 0, pendingReward: "0", eligible: false };
+    }
   }
 
-  async subscribeToAirdropEvents(callback: (event: any) => void) {
-    const contract = await this.getAirdropContract(true);
-    contract.on('TokensClaimed', callback);
-    contract.on('TaskCompleted', callback);
-    console.log('Subscribed to Airdrop events');
+  async hasTaskCompleted(address: string, taskId: number) {
+    try {
+      const contract = await this.getAirdropContract();
+      return await contract.hasTaskCompleted(address, taskId);
+    } catch (error) {
+      console.error(`Error checking task ${taskId} completion:`, error);
+      return false;
+    }
+  }
+
+  async getAirdropInfo() {
+    try {
+      const contract = await this.getAirdropContract();
+      
+      const totalAmount = await contract.totalAirdropAmount();
+      const totalClaimed = await contract.totalClaimed();
+      const participants = await contract.totalParticipants();
+      const deadline = await contract.claimDeadline();
+      const remaining = await contract.getRemainingAirdrop();
+      
+      return {
+        totalAmount: ethers.utils.formatEther(totalAmount),
+        totalClaimed: ethers.utils.formatEther(totalClaimed),
+        participants: participants.toNumber(),
+        deadline: new Date(deadline.toNumber() * 1000),
+        remaining: ethers.utils.formatEther(remaining)
+      };
+    } catch (error) {
+      console.error("Error fetching airdrop info:", error);
+      throw error;
+    }
+  }
+
+  async getTaskDetails() {
+    try {
+      const contract = await this.getAirdropContract();
+      
+      const tasks = [];
+      for (let i = 1; i <= 4; i++) {
+        const task = await contract.tasks(i);
+        tasks.push({
+          id: i,
+          url: task.url,
+          reward: ethers.utils.formatEther(task.reward),
+          active: task.active
+        });
+      }
+      
+      return tasks;
+    } catch (error) {
+      console.error("Error fetching task details:", error);
+      return [];
+    }
+  }
+
+  async hasClaimed(address: string) {
+    try {
+      const contract = await this.getAirdropContract();
+      return await contract.hasClaimed(address);
+    } catch (error) {
+      console.error("Error checking claim status:", error);
+      return false;
+    }
   }
 }
 

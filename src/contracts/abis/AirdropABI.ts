@@ -1,20 +1,27 @@
 
 export const AirdropABI = [
   // Core functionality
-  "function claim() external returns (bool)",
-  "function isEligible(address user) view returns (bool)",
-  "function getClaimStatus(address user) view returns (bool)",
-  "function verifyTasks(address user, uint256 taskId) external returns (bool)",
-  "function getTaskStatus(address user, uint256 taskId) view returns (bool)",
-  "function getCurrentPhase() view returns (uint256)",
-  "function getTotalPhases() view returns (uint256)",
-  "function getAllocation() view returns (uint256)",
-  "function getEndTime() view returns (uint256)",
-  "function getParticipants() view returns (uint256)",
+  "function completeTask(uint256 taskId, bytes32 uniqueCode) external",
+  "function claim() external",
+  "function hasTaskCompleted(address user, uint256 taskId) view returns (bool)",
+  "function getCompletedCount(address user) view returns (uint256)",
+  "function calculateReward(address user) view returns (uint256)",
+  
+  // Admin functions
+  "function withdrawUnallocated() external",
+  "function extendDeadline(uint256 additionalDays) external",
+  
+  // View functions
+  "function getRemainingAirdrop() view returns (uint256)",
+  "function getUserStatus(address user) view returns (uint256 completed, uint256 pendingReward, bool eligible)",
+  "function tasks(uint256 taskId) view returns (string url, uint256 reward, bool active)",
+  "function totalAirdropAmount() view returns (uint256)",
+  "function totalClaimed() view returns (uint256)",
+  "function totalParticipants() view returns (uint256)",
+  "function claimDeadline() view returns (uint256)",
+  "function hasClaimed(address) view returns (bool)",
   
   // Events
-  "event TokensClaimed(address indexed user, uint256 amount, uint256 timestamp)",
-  "event TaskCompleted(address indexed user, uint256 indexed taskId, uint256 timestamp)",
-  "event PhaseUpdated(uint256 indexed phase, uint256 allocation)",
-  "event AirdropEnded(uint256 totalParticipants, uint256 totalDistributed)"
+  "event TaskCompleted(address indexed user, uint256 taskId)",
+  "event TokensClaimed(address indexed user, uint256 amount)"
 ];
