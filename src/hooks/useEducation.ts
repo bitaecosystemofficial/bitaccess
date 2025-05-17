@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import { Course, ContractResult } from '@/types/contracts';
+import { Course, VideoData, ContractResult } from '@/types/contracts';
 import { contractService } from '@/services/ContractService';
 import { contractAddresses } from '@/constants/contracts';
 
@@ -138,6 +137,134 @@ export const useEducationData = () => {
             description: "Exploring new technologies like stablecoins and layer-2 solutions"
           }
         ]
+      }
+    ],
+    videos: [
+      {
+        id: "intro-blockchain",
+        title: "Introduction to Blockchain Technology",
+        description: "A comprehensive introduction to blockchain technology, its history, and how it's revolutionizing industries worldwide.",
+        thumbnail: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=700&q=60",
+        duration: "15:24",
+        category: "beginner",
+        level: "Beginner",
+        instructor: "Dr. Sarah Johnson",
+        views: 12453,
+        likes: 856,
+        requiresMembership: false,
+        courseId: "blockchain101"
+      },
+      {
+        id: "consensus-mechanisms",
+        title: "Understanding Consensus Mechanisms",
+        description: "Dive deep into various consensus mechanisms including Proof of Work, Proof of Stake, and Delegated Proof of Stake.",
+        thumbnail: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=700&q=60",
+        duration: "23:15",
+        category: "intermediate",
+        level: "Intermediate",
+        instructor: "Michael Chen",
+        views: 8752,
+        likes: 723,
+        requiresMembership: true,
+        courseId: "blockchain101"
+      },
+      {
+        id: "smart-contracts",
+        title: "Smart Contracts Explained",
+        description: "Learn how smart contracts work, their applications, and how to create your own using Solidity.",
+        thumbnail: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=700&q=60",
+        duration: "28:42",
+        category: "intermediate",
+        level: "Intermediate",
+        instructor: "Alex Rodriguez",
+        views: 7821,
+        likes: 645,
+        requiresMembership: true,
+        courseId: "blockchain101"
+      },
+      {
+        id: "bitcoin-fundamentals",
+        title: "Bitcoin Fundamentals",
+        description: "Explore the fundamentals of Bitcoin, how it works, and its role in the cryptocurrency ecosystem.",
+        thumbnail: "https://images.unsplash.com/photo-1543699565-003b8adda5fc?auto=format&fit=crop&w=700&q=60",
+        duration: "19:37",
+        category: "beginner",
+        level: "Beginner",
+        instructor: "Emma Watson",
+        views: 15678,
+        likes: 1243,
+        requiresMembership: false,
+        courseId: "bitcoin-crypto"
+      },
+      {
+        id: "crypto-trading",
+        title: "Cryptocurrency Trading Strategies",
+        description: "Master essential trading strategies to navigate the volatile cryptocurrency markets successfully.",
+        thumbnail: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=700&q=60",
+        duration: "32:18",
+        category: "intermediate",
+        level: "Intermediate",
+        instructor: "Robert Kim",
+        views: 9876,
+        likes: 854,
+        requiresMembership: true,
+        courseId: "bitcoin-crypto"
+      },
+      {
+        id: "web3-intro",
+        title: "Introduction to Web3",
+        description: "Understand what Web3 is and how it's creating a decentralized internet powered by blockchain.",
+        thumbnail: "https://images.unsplash.com/photo-1639762681057-408e52192e55?auto=format&fit=crop&w=700&q=60",
+        duration: "21:45",
+        category: "beginner",
+        level: "Beginner",
+        instructor: "David Miller",
+        views: 11234,
+        likes: 932,
+        requiresMembership: false,
+        courseId: "web3-dapps"
+      },
+      {
+        id: "defi-explained",
+        title: "DeFi Explained: The Future of Finance",
+        description: "An in-depth look at Decentralized Finance, its components, and how it's disrupting traditional finance.",
+        thumbnail: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=700&q=60",
+        duration: "26:53",
+        category: "advanced",
+        level: "Advanced",
+        instructor: "Sophia Martinez",
+        views: 7432,
+        likes: 623,
+        requiresMembership: true,
+        courseId: "web3-dapps"
+      },
+      {
+        id: "nft-revolution",
+        title: "The NFT Revolution",
+        description: "Explore the world of Non-Fungible Tokens, their applications beyond art, and how to create and sell your own.",
+        thumbnail: "https://images.unsplash.com/photo-1646815079055-74f3a78cf945?auto=format&fit=crop&w=700&q=60",
+        duration: "24:17",
+        category: "advanced",
+        level: "Advanced",
+        instructor: "James Wilson",
+        views: 8965,
+        likes: 742,
+        requiresMembership: true,
+        courseId: "web3-dapps"
+      },
+      {
+        id: "evolution-money",
+        title: "The Evolution of Money",
+        description: "Trace the evolution of money from barter systems to digital currencies and understand the future of payments.",
+        thumbnail: "https://images.unsplash.com/photo-1559526324-593bc073d938?auto=format&fit=crop&w=700&q=60",
+        duration: "18:29",
+        category: "beginner",
+        level: "Beginner",
+        instructor: "Laura Thompson",
+        views: 10532,
+        likes: 876,
+        requiresMembership: false,
+        courseId: "evolution-money"
       }
     ]
   });

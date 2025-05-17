@@ -1,153 +1,110 @@
-
-import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Menu, X, Wallet } from "lucide-react";
-import Logo from "@/components/layout/Logo";
+import React from "react";
+import { Link, NavLink } from "react-router-dom";
 import { useWallet } from "@/contexts/WalletContext";
-import { useMembership } from "@/contexts/MembershipContext";
+import { Button } from "@/components/ui/button";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Menu } from "lucide-react";
+import Logo from "@/components/ui/logo";
+
+const NAVIGATION_ITEMS = [
+  { label: "Home", href: "/" },
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "Education", href: "/education" },
+  { label: "Videos", href: "/videos" },
+  { label: "Airdrop", href: "/airdrop" },
+  { label: "Presale", href: "/presale" },
+  { label: "Staking", href: "/staking" },
+  { label: "Swap", href: "/swap" },
+  { label: "Spin Wheel", href: "/spin-wheel" },
+  { label: "Docs", href: "/docs" },
+  { label: "Community", href: "/community" },
+  { label: "Contact", href: "/contact" },
+];
 
 const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { address, isConnected, isConnecting, balance, connectWallet, disconnectWallet } = useWallet();
-  const { membershipData } = useMembership();
-  const location = useLocation();
+  const { address, isConnected, connectWallet, disconnectWallet } = useWallet();
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  // Show limited navigation when connected with membership
-  const navItems = isConnected ? [
-    { label: "Home", path: "/" },
-    { label: "Dashboard", path: "/dashboard" },
-  ] : [
-    { label: "Home", path: "/" },
-    { label: "Airdrop", path: "/airdrop" },
-    { label: "Presale", path: "/presale" },
-    { label: "Staking", path: "/staking" },
-    { label: "Swap", path: "/swap" },
-    { label: "Spin Wheel", path: "/spin-wheel" },
-    { label: "Education", path: "/education" },
-    { label: "Analytics", path: "/dex-analytics" },
-    { label: "Docs", path: "/docs" },
-    { label: "Contact", path: "/contact" },
-  ];
+  const handleConnectWallet = async () => {
+    if (!isConnected) {
+      await connectWallet();
+    }
+  };
 
-  const truncateAddress = (address: string) => {
-    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+  const handleDisconnectWallet = () => {
+    if (isConnected) {
+      disconnectWallet();
+    }
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-black bg-opacity-80 backdrop-blur-md border-b border-bitaccess-gold/30">
-      <div className="container flex items-center justify-between py-4 px-4 md:px-8">
-        <Link to="/" className="flex items-center gap-2">
+    <header className="bg-bitaccess-black fixed top-0 left-0 w-full z-50 border-b border-bitaccess-gold/10">
+      <div className="container flex items-center justify-between h-16 px-4">
+        <Link to="/" className="flex items-center font-bold text-xl text-white">
           <Logo />
-          <span className="text-xl md:text-2xl font-bold bg-gold-gradient text-transparent bg-clip-text">Bit Access Ecosystem</span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`px-3 py-2 text-sm rounded-md hover:bg-bitaccess-gold/10 transition-colors ${
-                location.pathname === item.path 
-                  ? "text-bitaccess-gold border-b-2 border-bitaccess-gold" 
-                  : "text-bitaccess-gold-light"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="hidden md:flex items-center gap-4">
-          {isConnected ? (
-            <div className="flex items-center gap-3">
-              <div className="bg-bitaccess-black-light px-3 py-1 rounded-full border border-bitaccess-gold/20">
-                <span className="text-bitaccess-gold text-sm font-medium">{balance} BIT</span>
-              </div>
-              <Button 
-                variant="outline" 
-                className="border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
-                onClick={disconnectWallet}
-              >
-                <Wallet size={16} className="mr-2" />
-                {truncateAddress(address as string)}
-              </Button>
-            </div>
-          ) : (
-            <Button 
-              variant="outline" 
-              className="border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
-              onClick={connectWallet}
-              disabled={isConnecting}
-            >
-              {isConnecting ? "Connecting..." : "Connect Wallet"}
-            </Button>
-          )}
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button 
-          className="md:hidden text-bitaccess-gold"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Navigation */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-bitaccess-black py-4 px-6 border-b border-bitaccess-gold/20">
-          <nav className="flex flex-col space-y-3">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`px-2 py-2 text-sm rounded-md hover:bg-bitaccess-gold/10 transition-colors ${
-                  location.pathname === item.path 
-                    ? "text-bitaccess-gold font-medium" 
-                    : "text-bitaccess-gold-light"
-                }`}
-                onClick={() => setIsMenuOpen(false)}
+        {isDesktop ? (
+          <nav className="flex items-center space-x-6">
+            {NAVIGATION_ITEMS.map((item) => (
+              <NavLink
+                key={item.label}
+                to={item.href}
+                className={({ isActive }) =>
+                  `text-gray-400 hover:text-bitaccess-gold transition-colors ${isActive ? "text-bitaccess-gold" : ""}`
+                }
               >
                 {item.label}
-              </Link>
+              </NavLink>
             ))}
-            {isConnected ? (
-              <>
-                <div className="px-2 py-2">
-                  <div className="bg-bitaccess-black-light px-3 py-1 rounded-full border border-bitaccess-gold/20 inline-block">
-                    <span className="text-bitaccess-gold text-sm font-medium">{balance} BIT</span>
-                  </div>
-                </div>
-                <Button 
-                  variant="outline" 
-                  className="mt-3 border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
-                  onClick={() => {
-                    disconnectWallet();
-                    setIsMenuOpen(false);
-                  }}
-                >
-                  <Wallet size={16} className="mr-2" />
-                  {truncateAddress(address as string)}
-                </Button>
-              </>
-            ) : (
-              <Button 
-                variant="outline" 
-                className="mt-3 border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
-                onClick={() => {
-                  connectWallet();
-                  setIsMenuOpen(false);
-                }}
-                disabled={isConnecting}
-              >
-                {isConnecting ? "Connecting..." : "Connect Wallet"}
-              </Button>
-            )}
           </nav>
-        </div>
-      )}
+        ) : (
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-5 w-5 text-white" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="bg-bitaccess-black border-r border-bitaccess-gold/10">
+              <SheetHeader>
+                <SheetTitle>Navigation</SheetTitle>
+                <SheetDescription>
+                  Explore the BitAccess Ecosystem
+                </SheetDescription>
+              </SheetHeader>
+              <nav className="grid gap-4 mt-8">
+                {NAVIGATION_ITEMS.map((item) => (
+                  <NavLink
+                    key={item.label}
+                    to={item.href}
+                    className={({ isActive }) =>
+                      `block px-4 py-2 text-gray-400 hover:text-bitaccess-gold transition-colors ${isActive ? "text-bitaccess-gold" : ""}`
+                    }
+                  >
+                    {item.label}
+                  </NavLink>
+                ))}
+              </nav>
+            </SheetContent>
+          </Sheet>
+        )}
+
+        {isConnected ? (
+          <div className="flex items-center">
+            <span className="text-gray-400 mr-3 hidden md:block">
+              {address?.substring(0, 6) + "..." + address?.substring(address.length - 4)}
+            </span>
+            <Button variant="outline" size="sm" className="border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10" onClick={handleDisconnectWallet}>
+              Disconnect
+            </Button>
+          </div>
+        ) : (
+          <Button onClick={handleConnectWallet} className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black">
+            Connect Wallet
+          </Button>
+        )}
+      </div>
     </header>
   );
 };

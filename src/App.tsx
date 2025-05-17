@@ -22,6 +22,8 @@ import CourseDetails from "./pages/CourseDetails";
 import DexAnalyticsPage from "./pages/DexAnalytics";
 import WhitepaperDetails from "./pages/WhitepaperDetails";
 import Dashboard from "./pages/Dashboard";
+import VideoPortal from "./pages/VideoPortal";
+import VideoDetails from "./pages/VideoDetails";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +48,8 @@ const App = () => (
               <Route path="/whitepaper" element={<WhitepaperDetails />} />
               <Route path="/education" element={<Education />} />
               <Route path="/education/:courseId" element={<CourseDetails />} />
+              <Route path="/videos" element={<VideoPortal />} />
+              <Route path="/video/:videoId" element={<VideoDetails />} />
               <Route path="/community" element={<Community />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/dex-analytics" element={<DexAnalyticsPage />} />

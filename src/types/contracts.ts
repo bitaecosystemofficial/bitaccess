@@ -1,10 +1,3 @@
-
-export interface ContractResult {
-  success: boolean;
-  hash?: string;
-  error?: string;
-}
-
 export interface Course {
   id: string;
   title: string;
@@ -12,40 +5,29 @@ export interface Course {
   duration: string;
   level: string;
   enrolledStudents: number;
-  modules: {
+  modules?: {
     title: string;
     description: string;
   }[];
 }
 
-export interface Proposal {
+export interface VideoData {
   id: string;
   title: string;
   description: string;
-  votes: number;
-  status: 'active' | 'completed' | 'failed';
-  endTime: number;
+  thumbnail: string;
+  duration: string;
+  category: string;
+  level: string;
+  instructor: string;
+  views: number;
+  likes: number;
+  requiresMembership: boolean;
+  courseId: string;
 }
 
-export interface SocialActivity {
-  id: string;
-  type: 'share' | 'engage' | 'create';
-  reward: number;
-  description: string;
-}
-
-export interface Promotion {
-  id: string;
-  title: string;
-  description: string;
-  reward: number;
-  endTime: number;
-  isActive: boolean;
-}
-
-export interface ReferralStats {
-  totalReferrals: number;
-  activeReferrals: number;
-  totalEarnings: number;
-  pendingRewards: number;
+export interface ContractResult {
+  success: boolean;
+  hash?: string;
+  error?: string;
 }
