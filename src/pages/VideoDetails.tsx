@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useWallet } from "@/contexts/WalletContext";
 import { useEducationData } from "@/hooks/useEducation";
-import { Clock, ThumbsUp, User, Video, Book, ChevronLeft } from "lucide-react";
+import { Clock, ThumbsUp, User, Video, Book, ChevronLeft, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 
