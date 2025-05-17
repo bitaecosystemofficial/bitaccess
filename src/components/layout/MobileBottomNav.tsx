@@ -21,7 +21,10 @@ import {
   Info
 } from "lucide-react";
 
-type NavItem = {
+// Import the navigation constants
+import { NAVIGATION_ITEMS } from "./navigationConstants";
+
+type NavItemWithIcon = {
   label: string;
   icon: React.ReactNode;
   href: string;
@@ -34,7 +37,8 @@ const MobileBottomNav = () => {
   const { isConnected, connectWallet } = useWallet();
   const { membershipData } = useMembership();
   
-  const navItems: NavItem[] = [
+  // Add icons to navigation items for mobile
+  const navItems: NavItemWithIcon[] = [
     { label: "Home", icon: <Home className="h-6 w-6" />, href: "/", requiresWallet: false, hideWhenConnected: false },
     { label: "Dashboard", icon: <BarChart3 className="h-6 w-6" />, href: "/dashboard", requiresWallet: true, hideWhenConnected: false },
     { label: "About", icon: <Info className="h-6 w-6" />, href: "/about", requiresWallet: false, hideWhenConnected: true },
