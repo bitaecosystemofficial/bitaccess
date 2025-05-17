@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import AirdropTaskList from "@/components/airdrop/AirdropTaskList";
@@ -7,7 +8,7 @@ import AirdropHero from "@/components/airdrop/AirdropHero";
 import WalletConnectPrompt from "@/components/ui/wallet-connect-prompt";
 import { useAirdropData } from "@/utils/airdrop/airdropHooks";
 import { useWallet } from "@/contexts/WalletContext";
-import { contractAddresses } from "@/constants/contracts"; // Added missing import
+import { contractAddresses } from "@/constants/contracts";
 
 const Airdrop = () => {
   const { airdropData, updateTaskCompletionStatus } = useAirdropData();

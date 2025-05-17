@@ -1,14 +1,21 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from "@/hooks/use-toast";
-import { contractService } from '@/services/ContractService';
+import { presaleService } from '@/services/PresaleService';
 import { useWallet } from '@/contexts/WalletContext';
 import { ethers } from 'ethers';
+import { contractAddresses } from '@/constants/contracts';
+
+export interface BonusTier {
+  minAmount: number;
+  bonusPercent: number;
+}
 
 export interface PresaleData {
-  currentPrice: number;
-  nextPhasePrice: number;
-  launchPrice: number;
+  currentPhase: number;
+  totalPhases: number;
+  bnbRate: number;
+  usdtRate: number;
   totalSupply: number;
   soldTokens: number;
   progress: number;
@@ -18,6 +25,10 @@ export interface PresaleData {
   paymentMethods: {
     bnb: { rate: number; min: number; max: number };
     usdt: { rate: number; min: number; max: number };
+  };
+  bonusTiers: {
+    bnb: BonusTier[];
+    usdt: BonusTier[];
   };
   address: string;
 }
@@ -32,20 +43,25 @@ interface TimeRemaining {
 export const usePresaleData = () => {
   const { isConnected } = useWallet();
   const [presaleData, setPresaleData] = useState<PresaleData>({
-    currentPrice: 0.042,
-    nextPhasePrice: 0.056,
-    launchPrice: 0.07,
+    currentPhase: 1,
+    totalPhases: 3,
+    bnbRate: 0,
+    usdtRate: 0,
     totalSupply: 5000000,
-    soldTokens: 3400000,
-    progress: 68,
-    softCap: 2000000,
-    hardCap: 5000000,
+    soldTokens: 0,
+    progress: 0,
+    softCap: 0,
+    hardCap: 0,
     endTimeInSeconds: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
     paymentMethods: {
-      bnb: { rate: 250, min: 0.1, max: 50 },
-      usdt: { rate: 1, min: 50, max: 25000 }
+      bnb: { rate: 0, min: 0.1, max: 50 },
+      usdt: { rate: 0, min: 100, max: 25000 }
     },
-    address: '0x1234567890123456789012345678901234567890'
+    bonusTiers: {
+      bnb: [],
+      usdt: []
+    },
+    address: contractAddresses.presale
   });
 
   useEffect(() => {
@@ -53,12 +69,57 @@ export const usePresaleData = () => {
       if (!isConnected) return;
 
       try {
-        const info = await contractService.getPresaleInfo();
+        const info = await presaleService.getPresaleInfo();
+        const bonusInfo = await presaleService.getBonusTiers();
+        
+        // Format BNB rate - convert from wei to ether
+        const bnbRateInEther = parseFloat(ethers.utils.formatEther(info.bnbRate));
+        // Format USDT rate - assuming 18 decimals
+        const usdtRateInUsd = parseFloat(ethers.utils.formatUnits(info.usdtRate, 18));
+        
+        // Format bonus tiers
+        const bnbTiers = bonusInfo.bnbTiers.map(tier => ({
+          minAmount: parseFloat(ethers.utils.formatEther(tier.minAmount)),
+          bonusPercent: tier.bonusPercent.toNumber()
+        }));
+        
+        const usdtTiers = bonusInfo.usdtTiers.map(tier => ({
+          minAmount: parseFloat(ethers.utils.formatUnits(tier.minAmount, 18)),
+          bonusPercent: tier.bonusPercent.toNumber()
+        }));
+
+        // Calculate progress
+        const soldTokensFormatted = parseFloat(ethers.utils.formatUnits(info.soldTokens, 6)); // Assuming 6 decimals for BIT token
+        const totalSupplyFormatted = parseFloat(ethers.utils.formatUnits(info.totalSupply, 6));
+        const progress = Math.round((soldTokensFormatted / totalSupplyFormatted) * 100);
+
         setPresaleData(prev => ({
           ...prev,
-          currentPrice: parseFloat(ethers.utils.formatEther(info.price)),
-          soldTokens: parseFloat(ethers.utils.formatEther(info.available)),
-          endTimeInSeconds: info.endTime.toNumber()
+          currentPhase: info.phase.toNumber(),
+          bnbRate: bnbRateInEther,
+          usdtRate: usdtRateInUsd,
+          totalSupply: totalSupplyFormatted,
+          soldTokens: soldTokensFormatted,
+          progress: progress,
+          softCap: parseFloat(ethers.utils.formatUnits(info.softCap, 6)),
+          hardCap: parseFloat(ethers.utils.formatUnits(info.hardCap, 6)),
+          endTimeInSeconds: info.endTime.toNumber(),
+          paymentMethods: {
+            bnb: { 
+              rate: bnbRateInEther, 
+              min: 0.1, 
+              max: 50 
+            },
+            usdt: { 
+              rate: usdtRateInUsd, 
+              min: 100, 
+              max: 25000 
+            }
+          },
+          bonusTiers: {
+            bnb: bnbTiers,
+            usdt: usdtTiers
+          }
         }));
       } catch (error) {
         console.error("Error fetching presale data:", error);
@@ -74,23 +135,57 @@ export const usePresaleData = () => {
 };
 
 export const useBuyTokens = () => {
-  return async (amount: number) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const buyWithBNB = async (amount: number) => {
+    setIsProcessing(true);
     try {
-      const tx = await contractService.buyPresaleTokens(amount);
+      const bnbAmount = ethers.utils.parseEther(amount.toString());
+      const tx = await presaleService.buyWithBNB(bnbAmount);
+      
       toast({
         title: "Purchase Successful",
-        description: `You have successfully purchased ${amount.toFixed(2)} BIT tokens!`,
+        description: `You have successfully bought tokens with ${amount} BNB!`,
       });
       return true;
     } catch (error) {
+      console.error("Error buying with BNB:", error);
       toast({
         title: "Purchase Failed",
         description: error instanceof Error ? error.message : "Transaction failed. Please try again.",
         variant: "destructive"
       });
       return false;
+    } finally {
+      setIsProcessing(false);
     }
   };
+
+  const buyWithUSDT = async (amount: number) => {
+    setIsProcessing(true);
+    try {
+      const usdtAmount = ethers.utils.parseUnits(amount.toString(), 18); // Assuming USDT has 18 decimals
+      const tx = await presaleService.buyWithUSDT(usdtAmount);
+      
+      toast({
+        title: "Purchase Successful",
+        description: `You have successfully bought tokens with ${amount} USDT!`,
+      });
+      return true;
+    } catch (error) {
+      console.error("Error buying with USDT:", error);
+      toast({
+        title: "Purchase Failed",
+        description: error instanceof Error ? error.message : "Transaction failed. Please try again.",
+        variant: "destructive"
+      });
+      return false;
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return { buyWithBNB, buyWithUSDT, isProcessing };
 };
 
 export const usePresaleTimer = (): TimeRemaining => {

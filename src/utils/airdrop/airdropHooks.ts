@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { contractAddresses } from '@/constants/contracts';
 import { airdropService } from '@/services/AirdropService';
 import { useWallet } from '@/contexts/WalletContext';
+import { toast } from "@/hooks/use-toast";
 
 export interface SocialTask {
   id: number;
@@ -27,7 +28,6 @@ export interface AirdropData {
 
 export const useAirdropData = () => {
   const { address } = useWallet();
-  const [selectedTask, setSelectedTask] = useState<SocialTask | null>(null);
   const [airdropData, setAirdropData] = useState<AirdropData>({
     phase: 1,
     totalPhases: 3,
@@ -83,14 +83,36 @@ export const useAirdropData = () => {
     }));
   };
 
+  // Fetch airdrop data from blockchain
+  useEffect(() => {
+    const fetchAirdropData = async () => {
+      try {
+        const info = await airdropService.getAirdropInfo();
+        
+        setAirdropData(prev => ({
+          ...prev,
+          phase: info.phase,
+          totalPhases: info.totalPhases,
+          allocation: parseFloat(info.allocation),
+          endTimeInSeconds: info.endTime,
+          remainingTokens: parseFloat(info.remainingTokens),
+          participants: info.participants,
+          totalClaimed: parseFloat(info.allocation) - parseFloat(info.remainingTokens)
+        }));
+      } catch (error) {
+        console.error("Error fetching airdrop data:", error);
+      }
+    };
+
+    fetchAirdropData();
+  }, []);
+
   // Fetch task status from blockchain when wallet connects
   useEffect(() => {
     if (!address) return;
 
     const fetchTaskStatus = async () => {
       try {
-        const contract = await airdropService.getAirdropContract();
-        
         // Update the address in airdrop data
         setAirdropData(prev => ({
           ...prev,
@@ -99,7 +121,7 @@ export const useAirdropData = () => {
 
         // Fetch task status for each task
         for (let i = 0; i < airdropData.tasks.length; i++) {
-          const isCompleted = await contract.getTaskStatus(address, i).catch(() => false);
+          const isCompleted = await airdropService.getTaskStatus(address, i);
           updateTaskCompletionStatus(i, isCompleted);
         }
       } catch (error) {
@@ -137,8 +159,6 @@ export const useAirdropData = () => {
 
   return {
     airdropData,
-    selectedTask,
-    setSelectedTask,
     updateTaskCompletionStatus
   };
 };
@@ -148,11 +168,24 @@ export const claimAirdrop = async () => {
     console.log("Claiming airdrop");
     const tx = await airdropService.claimAirdrop();
     
+    toast({
+      title: "Airdrop Claimed",
+      description: "Congratulations! You've successfully claimed your BIT tokens.",
+    });
+    
     return { 
       success: true, 
       hash: tx.transactionHash 
     };
   } catch (error) {
+    console.error("Error claiming airdrop:", error);
+    
+    toast({
+      title: "Claim Failed",
+      description: error instanceof Error ? error.message : 'Unknown error',
+      variant: "destructive"
+    });
+    
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Unknown error' 
@@ -165,11 +198,25 @@ export const verifyTask = async (taskId: number, walletAddress: string) => {
     console.log(`Verifying task ${taskId} for wallet ${walletAddress}`);
     
     const tx = await airdropService.verifyAirdropTask(walletAddress, taskId);
+    
+    toast({
+      title: "Task Verified",
+      description: "You've successfully completed this task!",
+    });
+    
     return { 
       success: true,
       hash: tx.transactionHash
     };
   } catch (error) {
+    console.error("Error verifying task:", error);
+    
+    toast({
+      title: "Verification Failed",
+      description: error instanceof Error ? error.message : 'Unknown error',
+      variant: "destructive"
+    });
+    
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Unknown error' 

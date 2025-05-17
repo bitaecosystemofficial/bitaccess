@@ -10,9 +10,8 @@ import { usePresaleData, useBuyTokens } from "@/utils/presale/presaleHooks";
 const PresaleForm = () => {
   const [amount, setAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<'bnb' | 'usdt'>('bnb');
-  const [isLoading, setIsLoading] = useState(false);
   const presaleData = usePresaleData();
-  const buyTokens = useBuyTokens();
+  const { buyWithBNB, buyWithUSDT, isProcessing } = useBuyTokens();
 
   const handlePurchase = async () => {
     if (!amount || parseFloat(amount) <= 0) {
@@ -26,8 +25,9 @@ const PresaleForm = () => {
 
     const minAmount = presaleData.paymentMethods[paymentMethod].min;
     const maxAmount = presaleData.paymentMethods[paymentMethod].max;
+    const amountValue = parseFloat(amount);
     
-    if (parseFloat(amount) < minAmount || parseFloat(amount) > maxAmount) {
+    if (amountValue < minAmount || amountValue > maxAmount) {
       toast({
         title: "Invalid Amount",
         description: `Amount must be between ${minAmount} and ${maxAmount} ${paymentMethod.toUpperCase()}`,
@@ -36,23 +36,45 @@ const PresaleForm = () => {
       return;
     }
 
-    setIsLoading(true);
     try {
-      await buyTokens(parseFloat(amount));
-      setAmount("");
-      toast({
-        title: "Success",
-        description: "Purchase successful!"
-      });
+      let success = false;
+      if (paymentMethod === 'bnb') {
+        success = await buyWithBNB(amountValue);
+      } else {
+        success = await buyWithUSDT(amountValue);
+      }
+      
+      if (success) {
+        setAmount("");
+      }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Purchase failed",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
+      console.error("Error in purchase:", error);
     }
+  };
+
+  // Calculate estimated tokens based on current rates
+  const calculateEstimatedTokens = () => {
+    if (!amount || isNaN(parseFloat(amount))) return "0";
+    
+    const amountValue = parseFloat(amount);
+    const rate = presaleData.paymentMethods[paymentMethod].rate;
+    let baseTokens = amountValue / rate * 1000000; // Convert to tokens
+    
+    // Apply bonus if applicable
+    const tiers = paymentMethod === 'bnb' ? presaleData.bonusTiers.bnb : presaleData.bonusTiers.usdt;
+    let bonusPercent = 0;
+    
+    for (const tier of tiers) {
+      if (amountValue >= tier.minAmount) {
+        bonusPercent = tier.bonusPercent;
+        break;
+      }
+    }
+    
+    const bonusTokens = baseTokens * (bonusPercent / 100);
+    const totalTokens = baseTokens + bonusTokens;
+    
+    return totalTokens.toLocaleString(undefined, { maximumFractionDigits: 0 });
   };
 
   return (
@@ -95,12 +117,24 @@ const PresaleForm = () => {
           </div>
         </div>
 
+        <div className="bg-bitaccess-black-dark p-4 rounded-md">
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-400">Estimated tokens:</span>
+            <span className="text-bitaccess-gold font-semibold">{calculateEstimatedTokens()} BIT</span>
+          </div>
+          
+          <div className="flex justify-between text-sm mt-1">
+            <span className="text-gray-400">Current price:</span>
+            <span className="text-white">${presaleData.paymentMethods[paymentMethod].rate.toFixed(3)} / BIT</span>
+          </div>
+        </div>
+
         <Button
           onClick={handlePurchase}
-          disabled={isLoading}
+          disabled={isProcessing}
           className="w-full bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black mt-4"
         >
-          {isLoading ? "Processing..." : "Purchase Tokens"}
+          {isProcessing ? "Processing..." : "Purchase Tokens"}
         </Button>
       </CardContent>
     </Card>

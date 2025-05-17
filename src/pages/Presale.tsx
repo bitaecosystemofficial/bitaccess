@@ -23,6 +23,34 @@ const Presale = () => {
     );
   }
   
+  // Format bonus tiers for display
+  const renderBonusTiers = () => {
+    const bnbTiers = presaleData.bonusTiers.bnb;
+    
+    if (bnbTiers.length === 0) {
+      return (
+        <ul className="space-y-1 text-sm">
+          <li className="text-gray-300">Loading bonus tiers...</li>
+        </ul>
+      );
+    }
+
+    return (
+      <ul className="space-y-1 text-sm">
+        {bnbTiers.map((tier, index) => (
+          <li key={index} className="flex justify-between">
+            <span className="text-gray-300">
+              {index === 0 
+                ? `Purchase ${tier.minAmount}+ BNB:`
+                : `Purchase ${tier.minAmount}+ BNB:`}
+            </span>
+            <span className="text-bitaccess-gold">+{tier.bonusPercent}% Bonus</span>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+  
   return (
     <Layout>
       <div className="py-16 md:py-24 bg-hero-pattern">
@@ -41,20 +69,7 @@ const Presale = () => {
               
               <div className="bg-bitaccess-black p-4 rounded-lg border border-bitaccess-gold/10">
                 <p className="text-gray-400 text-sm mb-1">Bonus Structure</p>
-                <ul className="space-y-1 text-sm">
-                  <li className="flex justify-between">
-                    <span className="text-gray-300">Purchase $500-$999:</span>
-                    <span className="text-bitaccess-gold">+5% Bonus</span>
-                  </li>
-                  <li className="flex justify-between">
-                    <span className="text-gray-300">Purchase $1,000-$4,999:</span>
-                    <span className="text-bitaccess-gold">+10% Bonus</span>
-                  </li>
-                  <li className="flex justify-between">
-                    <span className="text-gray-300">Purchase $5,000+:</span>
-                    <span className="text-bitaccess-gold">+15% Bonus</span>
-                  </li>
-                </ul>
+                {renderBonusTiers()}
               </div>
             </div>
             

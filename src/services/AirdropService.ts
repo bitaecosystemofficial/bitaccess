@@ -32,8 +32,34 @@ export class AirdropService extends BaseContractService {
 
   async verifyAirdropTask(address: string, taskId: number) {
     const contract = await this.getAirdropContract();
-    const tx = await contract.verifyTasks(address, taskId);
+    const tx = await contract.verifyTask(address, taskId);
     return tx.wait();
+  }
+
+  async getTaskStatus(address: string, taskId: number) {
+    const contract = await this.getAirdropContract();
+    return contract.getTaskStatus(address, taskId);
+  }
+
+  async getAirdropInfo() {
+    const contract = await this.getAirdropContract();
+    const [phase, totalPhases, allocation, endTime, participants, remainingTokens] = await Promise.all([
+      contract.getCurrentPhase(),
+      contract.getTotalPhases(),
+      contract.getAllocation(),
+      contract.getEndTime(),
+      contract.getParticipants(),
+      contract.getRemainingTokens()
+    ]);
+    
+    return {
+      phase: phase.toNumber(),
+      totalPhases: totalPhases.toNumber(),
+      allocation: ethers.utils.formatUnits(allocation, 6), // Assuming 6 decimals for BIT
+      endTime: endTime.toNumber(),
+      participants: participants.toNumber(),
+      remainingTokens: ethers.utils.formatUnits(remainingTokens, 6) // Assuming 6 decimals for BIT
+    };
   }
 
   async subscribeToAirdropEvents(events: AirdropEvents) {

@@ -13,9 +13,9 @@ const PresaleStats = () => {
           <Coins size={40} className="text-bitaccess-gold" />
         </div>
         <div>
-          <h3 className="text-xl font-bold text-white mb-2">Presale Phase: 2 of 3</h3>
+          <h3 className="text-xl font-bold text-white mb-2">Presale Phase: {presaleData.currentPhase + 1} of {presaleData.totalPhases}</h3>
           <p className="text-gray-400">
-            Current Price: ${presaleData.currentPrice} | Next Phase: ${presaleData.nextPhasePrice} | Launch Price: ${presaleData.launchPrice}
+            Current Price: ${presaleData.bnbRate.toFixed(3)} | Launch Price: ${(presaleData.bnbRate * 1.5).toFixed(3)}
           </p>
         </div>
       </div>
@@ -24,7 +24,7 @@ const PresaleStats = () => {
         <div className="flex justify-between mb-2">
           <span className="text-gray-400">Progress</span>
           <span className="text-bitaccess-gold">
-            {presaleData.progress}% ({(presaleData.soldTokens).toLocaleString()} / {(presaleData.totalSupply).toLocaleString()} BIT)
+            {presaleData.progress}% ({presaleData.soldTokens.toLocaleString()} / {presaleData.totalSupply.toLocaleString()} BIT)
           </span>
         </div>
         <Progress value={presaleData.progress} className="h-3 bg-gray-700" />
