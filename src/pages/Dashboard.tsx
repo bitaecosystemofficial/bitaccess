@@ -9,10 +9,12 @@ import DashboardMembershipCard from "@/components/dashboard/DashboardMembershipC
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import DashboardReferrals from "@/components/dashboard/DashboardReferrals";
 import DashboardRewards from "@/components/dashboard/DashboardRewards";
+import DashboardMembershipStats from "@/components/dashboard/DashboardMembershipStats";
+import ReferralTree from "@/components/dashboard/ReferralTree";
 
 const Dashboard = () => {
   const { isConnected } = useWallet();
-  const { isLoading } = useMembership();
+  const { membershipData, isLoading, getReferrals } = useMembership();
 
   if (!isConnected) {
     return (
@@ -32,6 +34,10 @@ const Dashboard = () => {
           Membership Dashboard
         </h1>
         
+        {/* Global Membership Stats */}
+        <DashboardMembershipStats />
+        
+        {/* User Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <DashboardStats />
         </div>
@@ -41,6 +47,7 @@ const Dashboard = () => {
             <TabsTrigger value="membership">Membership</TabsTrigger>
             <TabsTrigger value="rewards">Rewards</TabsTrigger>
             <TabsTrigger value="referrals">Referrals</TabsTrigger>
+            <TabsTrigger value="network">Network</TabsTrigger>
           </TabsList>
           
           <TabsContent value="membership">
@@ -53,6 +60,13 @@ const Dashboard = () => {
           
           <TabsContent value="referrals">
             <DashboardReferrals />
+          </TabsContent>
+          
+          <TabsContent value="network">
+            <ReferralTree 
+              referrals={membershipData?.referrals || []} 
+              loading={isLoading} 
+            />
           </TabsContent>
         </Tabs>
       </div>

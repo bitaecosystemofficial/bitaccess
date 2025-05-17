@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useWallet } from "./WalletContext";
 import { toast } from "@/hooks/use-toast";
 import { ethers } from "ethers";
-import { contractAddresses } from "@/constants/contracts";
+import { membershipService } from "@/services/MembershipService";
 
 export enum MembershipType {
   None = -1,
@@ -21,13 +21,24 @@ export interface MembershipData {
   referrals: string[];
 }
 
+interface MembershipStats {
+  totalDeposits: string;
+  totalWithdrawals: string;
+  totalSubscribers: number;
+  activeSubscriptions: number;
+  referralEarnings: string;
+}
+
 interface MembershipContextType {
   membershipData: MembershipData | null;
+  membershipStats: MembershipStats | null;
   isLoading: boolean;
   subscribe: (type: MembershipType, referrer?: string) => Promise<boolean>;
   claimRewards: () => Promise<boolean>;
   getReferrals: () => Promise<string[]>;
   refreshMembership: () => Promise<void>;
+  loadingStats: boolean;
+  refreshStats: () => Promise<void>;
 }
 
 const defaultMembershipData: MembershipData = {
@@ -42,51 +53,40 @@ const defaultMembershipData: MembershipData = {
 
 const MembershipContext = createContext<MembershipContextType>({
   membershipData: defaultMembershipData,
+  membershipStats: null,
   isLoading: false,
   subscribe: async () => false,
   claimRewards: async () => false,
   getReferrals: async () => [],
-  refreshMembership: async () => {}
+  refreshMembership: async () => {},
+  loadingStats: false,
+  refreshStats: async () => {}
 });
 
 interface MembershipProviderProps {
   children: React.ReactNode;
 }
 
-const MEMBERSHIP_ABI = [
-  "function subscribe(uint8 mType, address referrer) external",
-  "function claimRewards() external",
-  "function getUserSubscription(address user) external view returns (tuple(uint8 mType, uint256 startDate, uint256 endDate, address referrer, bool claimedRewards))",
-  "function getUserReferrals(address user) external view returns (address[])",
-  "function isSubscribed(address user) external view returns (bool)"
-];
-
-const MEMBERSHIP_CONTRACT_ADDRESS = "0x1234567890123456789012345678901234567890"; // Replace with actual contract
-
 export function MembershipProvider({ children }: MembershipProviderProps) {
-  const { isConnected, address, signer, provider } = useWallet();
+  const { isConnected, address } = useWallet();
   const [membershipData, setMembershipData] = useState<MembershipData | null>(null);
+  const [membershipStats, setMembershipStats] = useState<MembershipStats | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  
-  const getMembershipContract = () => {
-    if (!signer) throw new Error("Wallet not connected");
-    return new ethers.Contract(MEMBERSHIP_CONTRACT_ADDRESS, MEMBERSHIP_ABI, signer);
-  };
+  const [loadingStats, setLoadingStats] = useState<boolean>(false);
 
   const subscribe = async (type: MembershipType, referrer: string = ethers.constants.AddressZero): Promise<boolean> => {
     try {
       setIsLoading(true);
       
-      const contract = getMembershipContract();
-      const tx = await contract.subscribe(type, referrer);
-      await tx.wait();
+      await membershipService.subscribe(type, referrer);
       
       toast({
         title: "Subscription Successful",
         description: `You have successfully subscribed to the ${type === MembershipType.Regular ? "Regular" : "Merchant"} membership!`,
       });
       
-      refreshMembership();
+      await refreshMembership();
+      await refreshStats();
       return true;
     } catch (error: any) {
       console.error("Subscription error:", error);
@@ -105,16 +105,14 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
     try {
       setIsLoading(true);
       
-      const contract = getMembershipContract();
-      const tx = await contract.claimRewards();
-      await tx.wait();
+      await membershipService.claimRewards();
       
       toast({
         title: "Rewards Claimed",
         description: "You have successfully claimed your membership rewards!",
       });
       
-      refreshMembership();
+      await refreshMembership();
       return true;
     } catch (error: any) {
       console.error("Claiming rewards error:", error);
@@ -133,9 +131,7 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
     try {
       if (!isConnected || !address) return [];
       
-      const contract = getMembershipContract();
-      const referrals = await contract.getUserReferrals(address);
-      return referrals;
+      return await membershipService.getUserReferrals(address);
     } catch (error) {
       console.error("Error getting referrals:", error);
       return [];
@@ -143,16 +139,15 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
   };
 
   const refreshMembership = async (): Promise<void> => {
-    if (!isConnected || !address || !provider) {
+    if (!isConnected || !address) {
       setMembershipData(null);
       return;
     }
 
     try {
       setIsLoading(true);
-      const contract = getMembershipContract();
       
-      const isActive = await contract.isSubscribed(address);
+      const isActive = await membershipService.isSubscribed(address);
       if (!isActive) {
         setMembershipData({
           ...defaultMembershipData,
@@ -161,13 +156,13 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
         return;
       }
       
-      const subscription = await contract.getUserSubscription(address);
-      const referrals = await contract.getUserReferrals(address);
+      const subscription = await membershipService.getUserSubscription(address);
+      const referrals = await membershipService.getUserReferrals(address);
       
       setMembershipData({
         type: subscription.mType,
-        startDate: new Date(subscription.startDate.toNumber() * 1000),
-        endDate: new Date(subscription.endDate.toNumber() * 1000),
+        startDate: subscription.startDate,
+        endDate: subscription.endDate,
         referrer: subscription.referrer,
         claimedRewards: subscription.claimedRewards,
         isActive,
@@ -181,19 +176,91 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
     }
   };
 
+  const refreshStats = async (): Promise<void> => {
+    if (!isConnected || !address) {
+      setMembershipStats(null);
+      return;
+    }
+
+    try {
+      setLoadingStats(true);
+      
+      const stats = await membershipService.getTotalStats();
+      const referralEarnings = await membershipService.getReferralEarnings(address);
+      
+      setMembershipStats({
+        totalDeposits: stats.deposits,
+        totalWithdrawals: stats.withdrawals,
+        totalSubscribers: stats.subscribers,
+        activeSubscriptions: stats.activeSubscriptions,
+        referralEarnings
+      });
+    } catch (error) {
+      console.error("Error refreshing stats:", error);
+      setMembershipStats(null);
+    } finally {
+      setLoadingStats(false);
+    }
+  };
+
   useEffect(() => {
-    refreshMembership();
+    if (isConnected && address) {
+      refreshMembership();
+      refreshStats();
+
+      // Subscribe to membership events
+      const setupEventListeners = async () => {
+        try {
+          await membershipService.subscribeToMembershipEvents((event) => {
+            console.log('Membership event:', event);
+            
+            // Refresh data when events occur
+            if (event.args.user?.toLowerCase() === address?.toLowerCase() || 
+                event.args.referrer?.toLowerCase() === address?.toLowerCase()) {
+              refreshMembership();
+              refreshStats();
+              
+              if (event.event === "RewardsClaimed") {
+                toast({
+                  title: "Rewards Claimed",
+                  description: `Rewards worth ${event.args.totalValue} USDT have been claimed!`
+                });
+              } else if (event.event === "ReferralEarned") {
+                toast({
+                  title: "Referral Bonus Earned",
+                  description: `You earned ${event.args.amount} USDT from a level ${event.args.level} referral`
+                });
+              }
+            }
+          });
+        } catch (error) {
+          console.error('Error setting up event listeners:', error);
+        }
+      };
+      
+      setupEventListeners();
+    } else {
+      setMembershipData(null);
+      setMembershipStats(null);
+    }
+    
+    return () => {
+      membershipService.cleanup();
+    };
   }, [isConnected, address]);
 
   return (
     <MembershipContext.Provider 
       value={{ 
         membershipData, 
+        membershipStats,
         isLoading, 
         subscribe, 
         claimRewards, 
         getReferrals,
-        refreshMembership
+        refreshMembership,
+        loadingStats,
+        refreshStats
       }}
     >
       {children}

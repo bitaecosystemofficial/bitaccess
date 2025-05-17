@@ -32,6 +32,8 @@ const WalletDisplay = ({ address, handleDisconnectWallet }: WalletDisplayProps) 
     setShowWalletInfo(!showWalletInfo);
   };
 
+  const shortenedAddress = address ? `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : "";
+
   return (
     <div className="flex items-center">
       <div className="relative">
@@ -41,7 +43,7 @@ const WalletDisplay = ({ address, handleDisconnectWallet }: WalletDisplayProps) 
           className="border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10 flex items-center space-x-2"
           onClick={toggleWalletInfo}
         >
-          <span>{address?.substring(0, 6)}...{address?.substring(address.length - 4)}</span>
+          <span>{shortenedAddress}</span>
           <button 
             onClick={(e) => {
               e.stopPropagation();
