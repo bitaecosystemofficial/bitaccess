@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -18,6 +17,8 @@ interface AirdropTaskListProps {
   setVerificationCode: (code: string) => void;
   completeTask: (taskId: number, code: string) => Promise<void>;
   claimRewards: () => Promise<void>;
+  selectedTask: AirdropTask | null;
+  setSelectedTask: (task: AirdropTask | null) => void;
 }
 
 const AirdropTaskList = ({
@@ -28,10 +29,11 @@ const AirdropTaskList = ({
   verificationCode,
   setVerificationCode,
   completeTask,
-  claimRewards
+  claimRewards,
+  selectedTask,
+  setSelectedTask
 }: AirdropTaskListProps) => {
   const { isConnected, connectWallet, address } = useWallet();
-  const [selectedTask, setSelectedTask] = useState<AirdropTask | null>(null);
   
   const getTaskIcon = (icon: string) => {
     switch (icon) {

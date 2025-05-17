@@ -22,7 +22,9 @@ const Airdrop = () => {
     verificationCode,
     setVerificationCode,
     completeTask,
-    claimRewards
+    claimRewards,
+    selectedTask,
+    setSelectedTask
   } = useAirdrop();
   
   const scrollToTasks = () => {
@@ -63,6 +65,8 @@ const Airdrop = () => {
           setVerificationCode={setVerificationCode}
           completeTask={completeTask}
           claimRewards={claimRewards}
+          selectedTask={selectedTask}
+          setSelectedTask={setSelectedTask}
         />
       </div>
       

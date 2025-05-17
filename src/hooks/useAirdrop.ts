@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { airdropService } from '@/services/AirdropService';
@@ -45,6 +44,8 @@ export const useAirdrop = () => {
   const [isSubmitting, setIsSubmitting] = useState<number | null>(null);
   const [isClaiming, setIsClaiming] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
+  // Add the missing selectedTask state
+  const [selectedTask, setSelectedTask] = useState<AirdropTask | null>(null);
 
   // Define task titles and icons based on contract data
   const taskMetadata = [
@@ -217,6 +218,9 @@ export const useAirdrop = () => {
     setVerificationCode,
     completeTask,
     claimRewards,
-    refreshData: fetchAirdropData
+    refreshData: fetchAirdropData,
+    // Export the selectedTask state and setter
+    selectedTask,
+    setSelectedTask
   };
 };
