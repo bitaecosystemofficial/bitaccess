@@ -25,6 +25,7 @@ import WhitepaperDetails from "./pages/WhitepaperDetails";
 import Dashboard from "./pages/Dashboard";
 import VideoPortal from "./pages/VideoPortal";
 import VideoDetails from "./pages/VideoDetails";
+import Marketplace from "./pages/Marketplace";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const App = () => (
               <Route path="/governance" element={<Governance />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/dex-analytics" element={<DexAnalyticsPage />} />
+              <Route path="/marketplace" element={<Marketplace />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

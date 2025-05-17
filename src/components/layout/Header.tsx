@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useWallet } from "@/contexts/WalletContext";
@@ -13,6 +12,7 @@ const NAVIGATION_ITEMS = [
   { label: "Dashboard", href: "/dashboard" },
   { label: "Education", href: "/education" },
   { label: "Videos", href: "/videos" },
+  { label: "Marketplace", href: "/marketplace" },
   { label: "Airdrop", href: "/airdrop" },
   { label: "Presale", href: "/presale" },
   { label: "Staking", href: "/staking" },
