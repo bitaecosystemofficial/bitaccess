@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import WalletConnectPrompt from "@/components/ui/wallet-connect-prompt";
 import { useWallet } from "@/contexts/WalletContext";
-import { tokenAddresses } from '@/constants/contracts';
+import { tokenAddresses, contractAddresses } from '@/constants/contracts';
 import { useSwapData, useTokenBalance, swapTokens, SwapPair } from "@/hooks/useSwap";
 import { ethers } from "ethers";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -151,7 +151,7 @@ const Swap = () => {
         const amountToApprove = ethers.utils.parseEther(fromAmount);
         const approvalResult = await executeFromTokenCall<boolean>(
           "approve",
-          tokenAddresses.swap,
+          contractAddresses.swap,  // Use contractAddresses.swap instead of tokenAddresses.swap
           amountToApprove.toString()
         );
         
