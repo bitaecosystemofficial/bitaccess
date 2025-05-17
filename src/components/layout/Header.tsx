@@ -11,20 +11,20 @@ import Logo from "@/components/ui/logo";
 
 // Navigation items with wallet requirement flag
 const NAVIGATION_ITEMS = [
-  { label: "Home", href: "/", requiresWallet: false },
-  { label: "Dashboard", href: "/dashboard", requiresWallet: true },
-  { label: "Education", href: "/education", requiresWallet: false },
-  { label: "Videos", href: "/videos", requiresWallet: false },
-  { label: "Marketplace", href: "/marketplace", requiresWallet: false },
-  { label: "Airdrop", href: "/airdrop", requiresWallet: true },
-  { label: "Presale", href: "/presale", requiresWallet: true },
-  { label: "Staking", href: "/staking", requiresWallet: true },
-  { label: "Swap", href: "/swap", requiresWallet: true },
-  { label: "Spin Wheel", href: "/spin-wheel", requiresWallet: true },
-  { label: "Docs", href: "/docs", requiresWallet: false },
-  { label: "Community", href: "/community", requiresWallet: false },
-  { label: "Governance", href: "/governance", requiresWallet: false },
-  { label: "Contact", href: "/contact", requiresWallet: false },
+  { label: "Home", href: "/", requiresWallet: false, hideWhenConnected: false },
+  { label: "Dashboard", href: "/dashboard", requiresWallet: true, hideWhenConnected: false },
+  { label: "Education", href: "/education", requiresWallet: false, hideWhenConnected: true },
+  { label: "Videos", href: "/videos", requiresWallet: false, hideWhenConnected: true },
+  { label: "Marketplace", href: "/marketplace", requiresWallet: false, hideWhenConnected: true },
+  { label: "Airdrop", href: "/airdrop", requiresWallet: true, hideWhenConnected: false },
+  { label: "Presale", href: "/presale", requiresWallet: true, hideWhenConnected: false },
+  { label: "Staking", href: "/staking", requiresWallet: true, hideWhenConnected: false },
+  { label: "Swap", href: "/swap", requiresWallet: true, hideWhenConnected: false },
+  { label: "Spin Wheel", href: "/spin-wheel", requiresWallet: true, hideWhenConnected: false },
+  { label: "Docs", href: "/docs", requiresWallet: false, hideWhenConnected: true },
+  { label: "Community", href: "/community", requiresWallet: false, hideWhenConnected: true },
+  { label: "Governance", href: "/governance", requiresWallet: false, hideWhenConnected: true },
+  { label: "Contact", href: "/contact", requiresWallet: false, hideWhenConnected: true },
 ];
 
 const Header = () => {
@@ -47,11 +47,14 @@ const Header = () => {
 
   // Filter navigation items based on wallet connection
   const visibleNavItems = NAVIGATION_ITEMS.filter(item => 
-    !item.requiresWallet || (item.requiresWallet && isConnected)
+    (!item.requiresWallet || (item.requiresWallet && isConnected)) && 
+    !(isConnected && item.hideWhenConnected)
   );
 
-  // Non-wallet required items for basic navigation
-  const baseNavItems = NAVIGATION_ITEMS.filter(item => !item.requiresWallet);
+  // Non-wallet required items for basic navigation - also filter out items that should be hidden when connected
+  const baseNavItems = NAVIGATION_ITEMS.filter(item => 
+    !item.requiresWallet && !(isConnected && item.hideWhenConnected)
+  );
 
   const toggleWalletInfo = () => {
     setShowWalletInfo(!showWalletInfo);
@@ -110,7 +113,9 @@ const Header = () => {
                     <div className="border-t border-bitaccess-gold/10 mt-2 pt-2">
                       <h3 className="px-4 text-sm font-medium text-bitaccess-gold mb-2">Wallet Features</h3>
                     </div>
-                    {NAVIGATION_ITEMS.filter(item => item.requiresWallet).map((item) => (
+                    {NAVIGATION_ITEMS.filter(item => 
+                      item.requiresWallet && !item.hideWhenConnected
+                    ).map((item) => (
                       <NavLink
                         key={item.label}
                         to={item.href}
