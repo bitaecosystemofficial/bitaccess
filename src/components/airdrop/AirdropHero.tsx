@@ -2,7 +2,6 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { Clock } from "lucide-react";
 import Countdown from "react-countdown";
 import { useWallet } from "@/contexts/WalletContext";
 

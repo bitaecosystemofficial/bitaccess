@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Check, X, ArrowUpRight, Facebook, Twitter, Youtube, Send } from "lucide-react";
+import { Facebook, Twitter, Youtube, Send, Check, ArrowUpRight } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { AirdropTask, UserStatus } from "@/hooks/useAirdrop";
 
@@ -48,7 +48,7 @@ const AirdropTaskList = ({
     }
   };
   
-  const progressPercent = userStatus.completedTasks / 4 * 100;
+  const progressPercent = tasks.length > 0 ? (userStatus.completedTasks / tasks.length * 100) : 0;
   
   const handleTaskClick = (task: AirdropTask) => {
     if (!task.completed) {
@@ -99,7 +99,7 @@ const AirdropTaskList = ({
           <div>
             <h3 className="text-lg font-medium text-white mb-1">Task Progress</h3>
             <p className="text-gray-400 text-sm">
-              Complete all 4 tasks to claim your BIT tokens
+              Complete all {tasks.length} tasks to claim your BIT tokens
             </p>
           </div>
           <div className="bg-bitaccess-black rounded-lg p-3 border border-bitaccess-gold/10 mt-4 md:mt-0">
@@ -112,7 +112,7 @@ const AirdropTaskList = ({
           <div className="flex justify-between text-sm mb-2">
             <span className="text-gray-400">Progress</span>
             <span className="text-white font-medium">
-              {userStatus.completedTasks}/4 Tasks ({progressPercent}%)
+              {userStatus.completedTasks}/{tasks.length} Tasks ({Math.round(progressPercent)}%)
             </span>
           </div>
           <Progress 
@@ -121,7 +121,7 @@ const AirdropTaskList = ({
           />
         </div>
         
-        <div className="space-y-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           {tasks.map(task => (
             <div 
               key={task.id}
@@ -165,7 +165,7 @@ const AirdropTaskList = ({
         <div className="flex justify-center">
           <Button
             onClick={claimRewards}
-            disabled={!userStatus.eligible || userStatus.hasClaimed || isClaiming}
+            disabled={!userStatus.eligible || userStatus.hasClaimed || isClaiming || tasks.length === 0}
             size="lg"
             className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium px-8 w-full md:w-auto"
           >

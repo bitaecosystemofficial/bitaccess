@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from "react";
 import Layout from "@/components/layout/Layout";
 import AirdropHero from "@/components/airdrop/AirdropHero";
 import AirdropTaskList from "@/components/airdrop/AirdropTaskList";
-import AirdropFAQ from "@/components/airdrop/AirdropFAQ";
 import { useAirdrop } from "@/hooks/useAirdrop";
 import { useWallet } from "@/contexts/WalletContext";
 import WalletConnectPrompt from "@/components/ui/wallet-connect-prompt";
@@ -66,9 +65,6 @@ const Airdrop = () => {
           claimRewards={claimRewards}
         />
       </div>
-      
-      {/* FAQ section */}
-      <AirdropFAQ />
       
       {/* Footer */}
       <footer className="bg-bitaccess-black py-12 border-t border-gray-800">

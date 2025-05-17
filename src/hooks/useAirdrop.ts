@@ -46,12 +46,12 @@ export const useAirdrop = () => {
   const [isClaiming, setIsClaiming] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
 
-  // Define task titles and icons
+  // Define task titles and icons based on contract data
   const taskMetadata = [
-    { id: 1, title: "Follow on Twitter", icon: "twitter" },
-    { id: 2, title: "Join Telegram", icon: "send" },
-    { id: 3, title: "Like Facebook Page", icon: "facebook" },
-    { id: 4, title: "Subscribe YouTube", icon: "youtube" }
+    { id: 1, title: "Follow on Twitter", icon: "twitter", platform: "Twitter" },
+    { id: 2, title: "Join Telegram", icon: "send", platform: "Telegram" },
+    { id: 3, title: "Like Facebook Page", icon: "facebook", platform: "Facebook" },
+    { id: 4, title: "Subscribe YouTube", icon: "youtube", platform: "YouTube" }
   ];
 
   // Fetch airdrop data
@@ -69,11 +69,11 @@ export const useAirdrop = () => {
       // Combine task details with metadata
       const enhancedTasks = taskDetails.map(task => {
         const metadata = taskMetadata.find(m => m.id === task.id) || 
-          { title: `Task ${task.id}`, icon: "check-circle" };
+          { title: `Task ${task.id}`, icon: "check-circle", platform: "Platform" };
         
         return {
           ...task,
-          title: metadata.title,
+          title: `${metadata.platform}: ${metadata.title}`,
           icon: metadata.icon,
           completed: false
         };
@@ -149,6 +149,7 @@ export const useAirdrop = () => {
       // Refresh user status
       await fetchUserStatus();
       setVerificationCode("");
+      setSelectedTask(null);
     } catch (error: any) {
       console.error("Error completing task:", error);
       toast({
