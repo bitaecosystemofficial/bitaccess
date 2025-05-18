@@ -12,6 +12,7 @@ import DashboardRewards from "@/components/dashboard/DashboardRewards";
 import DashboardMembershipStats from "@/components/dashboard/DashboardMembershipStats";
 import ReferralTree from "@/components/dashboard/ReferralTree";
 import DashboardEarnings from "@/components/dashboard/DashboardEarnings";
+import MembershipCountdown from "@/components/dashboard/MembershipCountdown";
 
 const Dashboard = () => {
   const { isConnected } = useWallet();
@@ -47,6 +48,13 @@ const Dashboard = () => {
         
         {/* Global Membership Stats */}
         <DashboardMembershipStats />
+        
+        {/* Membership Countdown Timer */}
+        {membershipData?.isActive && (
+          <div className="mb-8">
+            <MembershipCountdown />
+          </div>
+        )}
         
         {/* User Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

@@ -12,6 +12,22 @@ export interface ReferralEarning {
   timestamp: Date;
 }
 
+export interface SubscriptionRecord {
+  user: string;
+  mType: number;
+  amount: string;
+  timestamp: Date;
+}
+
+export interface MembershipPlan {
+  price: string;
+  duration: number;
+  btcbReward: string;
+  usdtReward: string;
+  bnbReward: string;
+  bitReward: string;
+}
+
 class MembershipServiceClass extends BaseContractService {
   // Add the missing getContract method
   private async getContract(address: string, abi: any, withSigner = false) {
@@ -115,6 +131,51 @@ class MembershipServiceClass extends BaseContractService {
       amount: ethers.utils.formatUnits(item.amount, 18),
       timestamp: new Date(item.timestamp.toNumber() * 1000)
     }));
+  }
+
+  async getUserSubscriptionHistory(address: string): Promise<SubscriptionRecord[]> {
+    const contract = await this.getMembershipContract(false);
+    const history = await contract.getUserSubscriptionHistory(address);
+    
+    return history.map((item: any) => ({
+      user: item.user,
+      mType: item.mType,
+      amount: ethers.utils.formatUnits(item.amount, 18),
+      timestamp: new Date(item.timestamp.toNumber() * 1000)
+    }));
+  }
+
+  async getReferralEarningsByLevel(address: string, level: number): Promise<ReferralEarning[]> {
+    const contract = await this.getMembershipContract(false);
+    const levelEarnings = await contract.getReferralEarningsByLevel(address, level);
+    
+    return levelEarnings.map((item: any) => ({
+      referrer: item.referrer,
+      user: item.user,
+      level: item.level.toNumber(),
+      amount: ethers.utils.formatUnits(item.amount, 18),
+      timestamp: new Date(item.timestamp.toNumber() * 1000)
+    }));
+  }
+
+  async getMembershipPlan(membershipType: number): Promise<MembershipPlan> {
+    const contract = await this.getMembershipContract(false);
+    const plan = await contract.membershipPlans(membershipType);
+    
+    return {
+      price: ethers.utils.formatUnits(plan.price, 18),
+      duration: plan.duration.toNumber(),
+      btcbReward: ethers.utils.formatUnits(plan.btcbReward, 18),
+      usdtReward: ethers.utils.formatUnits(plan.usdtReward, 18),
+      bnbReward: ethers.utils.formatUnits(plan.bnbReward, 18),
+      bitReward: ethers.utils.formatUnits(plan.bitReward, 18)
+    };
+  }
+
+  async getBitRate(): Promise<string> {
+    const contract = await this.getMembershipContract(false);
+    const rate = await contract.bitRate();
+    return ethers.utils.formatUnits(rate, 0);
   }
 
   async getActiveSubscribersCount() {
