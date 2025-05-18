@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { toast } from "@/hooks/use-toast";
-import { CheckCircle, XCircle, Calendar } from "lucide-react";
+import { CheckCircle, XCircle, Calendar, Coins } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 
 const DashboardMembershipCard = () => {
   const { membershipData, isLoading } = useMembership();
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -47,13 +49,40 @@ const DashboardMembershipCard = () => {
           <p className="text-gray-400">
             Subscribe to our membership plans to access special features, rewards, and benefits!
           </p>
+          
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Membership Benefits</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-bitaccess-black-light p-4 rounded-md">
+                <h4 className="text-bitaccess-gold font-medium mb-2">Regular Membership</h4>
+                <p className="text-gray-300 text-sm mb-2">20 USDT for 365 days</p>
+                <ul className="text-xs text-gray-400 space-y-1 list-disc list-inside">
+                  <li>Access to Blockchain Education</li>
+                  <li>Token Rewards (BTCB, USDT, BNB, BIT)</li>
+                  <li>Access to exclusive resources</li>
+                  <li>Three-level referral commissions</li>
+                </ul>
+              </div>
+              
+              <div className="bg-bitaccess-black-light p-4 rounded-md border border-bitaccess-gold/30">
+                <h4 className="text-bitaccess-gold font-medium mb-2">Merchant Membership</h4>
+                <p className="text-gray-300 text-sm mb-2">100 USDT for 365 days</p>
+                <ul className="text-xs text-gray-400 space-y-1 list-disc list-inside">
+                  <li>All Regular membership benefits</li>
+                  <li>5× more BIT token rewards</li>
+                  <li>Promotion on BIT Community platform</li>
+                  <li>Merchant stickers and marketing tools</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </CardContent>
         <CardFooter>
-          <Button variant="outline" onClick={() => toast({
-            title: "Available on Home Page",
-            description: "Visit the home page to subscribe to our membership plans.",
-          })}>
-            Check Membership Plans
+          <Button 
+            className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black"
+            onClick={() => navigate("/")}
+          >
+            Subscribe Now
           </Button>
         </CardFooter>
       </Card>
@@ -61,7 +90,9 @@ const DashboardMembershipCard = () => {
   }
 
   const membershipTypeText = membershipData.type === MembershipType.Regular ? "Regular Membership" : "Merchant Membership";
+  const membershipPrice = membershipData.type === MembershipType.Regular ? "20 USDT" : "100 USDT";
   const endDateFormatted = format(membershipData.endDate, "MMM dd, yyyy");
+  const startDateFormatted = format(membershipData.startDate, "MMM dd, yyyy");
   const daysLeft = Math.ceil((membershipData.endDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
 
   return (
@@ -70,7 +101,7 @@ const DashboardMembershipCard = () => {
         <div>
           <CardTitle className="text-bitaccess-gold">{membershipTypeText}</CardTitle>
           <CardDescription>
-            Your membership is active
+            Your membership is active - {membershipPrice} for 365 days
           </CardDescription>
         </div>
         <Badge className="bg-green-600 hover:bg-green-700 ml-2">Subscribed</Badge>
@@ -79,8 +110,10 @@ const DashboardMembershipCard = () => {
         <div className="flex items-start gap-3">
           <Calendar className="h-5 w-5 text-bitaccess-gold mt-0.5" />
           <div>
-            <p className="text-gray-300">Expires on {endDateFormatted}</p>
-            <p className="text-sm text-bitaccess-gold-light">{daysLeft} days remaining</p>
+            <p className="text-gray-300">Subscription Period</p>
+            <p className="text-sm text-white">From: <span className="text-bitaccess-gold">{startDateFormatted}</span></p>
+            <p className="text-sm text-white">To: <span className="text-bitaccess-gold">{endDateFormatted}</span></p>
+            <p className="text-sm text-bitaccess-gold-light mt-1">{daysLeft} days remaining</p>
           </div>
         </div>
         
@@ -102,6 +135,19 @@ const DashboardMembershipCard = () => {
               </div>
             </>
           )}
+        </div>
+        
+        <div className="flex items-start gap-3">
+          <Coins className="h-5 w-5 text-bitaccess-gold mt-0.5" />
+          <div>
+            <p className="text-gray-300">Membership Rewards</p>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-1 mt-1">
+              <p className="text-sm text-gray-400">• $1 USDT worth of BTCB</p>
+              <p className="text-sm text-gray-400">• $1 USDT worth of USDT</p>
+              <p className="text-sm text-gray-400">• $1 USDT worth of BNB</p>
+              <p className="text-sm text-gray-400">• ${membershipData.type === MembershipType.Regular ? "2" : "10"} USDT worth of BIT</p>
+            </div>
+          </div>
         </div>
         
         {membershipData.type === MembershipType.Merchant && (

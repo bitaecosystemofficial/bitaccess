@@ -2,7 +2,7 @@
 import React from "react";
 import { useMembership } from "@/contexts/MembershipContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wallet, Users, BarChart } from "lucide-react";
+import { Wallet, Users, BarChart, TrendingUp } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const DashboardMembershipStats = () => {
@@ -10,8 +10,8 @@ const DashboardMembershipStats = () => {
 
   if (loadingStats) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        {[1, 2, 3].map((i) => (
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        {[1, 2, 3, 4].map((i) => (
           <Card key={i} className="border border-gray-700 bg-bitaccess-black">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <Skeleton className="h-5 w-1/3" />
@@ -32,7 +32,7 @@ const DashboardMembershipStats = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
       <Card className="border border-gray-700 bg-bitaccess-black">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm text-gray-400">Total Subscribers</CardTitle>
@@ -55,7 +55,7 @@ const DashboardMembershipStats = () => {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-white">
-            ${parseFloat(membershipStats.totalDeposits).toLocaleString()} USDT
+            ${parseFloat(membershipStats.totalDeposits).toLocaleString(undefined, {maximumFractionDigits: 0})}
           </div>
           <p className="text-sm text-muted-foreground mt-1">
             Total subscription payments
@@ -70,10 +70,25 @@ const DashboardMembershipStats = () => {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-white">
-            ${parseFloat(membershipStats.referralEarnings).toLocaleString()} USDT
+            ${parseFloat(membershipStats.referralEarnings).toLocaleString(undefined, {maximumFractionDigits: 2})}
           </div>
           <p className="text-sm text-muted-foreground mt-1">
             From direct and indirect referrals
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card className="border border-gray-700 bg-bitaccess-black">
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardTitle className="text-sm text-gray-400">Global Referral Rewards</CardTitle>
+          <TrendingUp className="h-5 w-5 text-bitaccess-gold" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-white">
+            ${Math.max(0, parseFloat(membershipStats.totalDeposits) - parseFloat(membershipStats.totalWithdrawals)).toLocaleString(undefined, {maximumFractionDigits: 0})}
+          </div>
+          <p className="text-sm text-muted-foreground mt-1">
+            Distributed to the community
           </p>
         </CardContent>
       </Card>

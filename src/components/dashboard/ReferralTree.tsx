@@ -1,10 +1,10 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useWallet } from "@/contexts/WalletContext";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Network, ChevronDown, ChevronUp, User, ExternalLink } from "lucide-react";
+import { Network, ChevronDown, ChevronUp, User, ExternalLink, Users } from "lucide-react";
 
 interface ReferralData {
   address: string;
@@ -15,6 +15,7 @@ interface ReferralData {
 interface ReferralTreeProps {
   referrals: string[];
   loading: boolean;
+  level?: number;
 }
 
 const ReferralNode = ({ data, expanded = false }: { data: ReferralData, expanded?: boolean }) => {
@@ -61,7 +62,7 @@ const ReferralNode = ({ data, expanded = false }: { data: ReferralData, expanded
   );
 };
 
-const ReferralTree = ({ referrals, loading }: ReferralTreeProps) => {
+const ReferralTree = ({ referrals, loading, level = 1 }: ReferralTreeProps) => {
   const { address } = useWallet();
   
   if (loading) {
@@ -90,7 +91,7 @@ const ReferralTree = ({ referrals, loading }: ReferralTreeProps) => {
     level: 0,
     children: referrals.map(ref => ({
       address: ref,
-      level: 1
+      level: level
     }))
   };
 
@@ -99,24 +100,53 @@ const ReferralTree = ({ referrals, loading }: ReferralTreeProps) => {
       <CardHeader>
         <div className="flex justify-between items-center">
           <div>
-            <CardTitle>Your Referral Network</CardTitle>
+            <CardTitle>Level {level} Referrals</CardTitle>
             <CardDescription>
               {referrals.length === 0 
-                ? "You haven't referred anyone yet" 
-                : `You have ${referrals.length} direct ${referrals.length === 1 ? 'referral' : 'referrals'}`}
+                ? `You don't have any level ${level} referrals` 
+                : `You have ${referrals.length} level ${level} ${referrals.length === 1 ? 'referral' : 'referrals'}`}
             </CardDescription>
           </div>
-          <Network className="h-5 w-5 text-bitaccess-gold" />
+          <div className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-bitaccess-gold" />
+            <span className="text-xl font-bold text-bitaccess-gold">{referrals.length}</span>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
         {referrals.length === 0 ? (
           <div className="bg-bitaccess-black-light p-4 rounded-md text-center text-gray-400">
-            Share your referral link to start building your network
+            {level === 1 
+              ? "Share your referral link to start building your network" 
+              : `You don't have any level ${level} referrals yet`}
           </div>
         ) : (
-          <div className="space-y-1">
-            <ReferralNode data={treeData} expanded={true} />
+          <div className="space-y-1 max-h-[400px] overflow-y-auto">
+            {level === 1 ? (
+              <ReferralNode data={treeData} expanded={true} />
+            ) : (
+              <div className="space-y-1">
+                {referrals.map((ref, index) => (
+                  <div 
+                    key={index}
+                    className="flex items-center p-2 rounded-md bg-bitaccess-black-light text-gray-300"
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    <span className="text-sm mr-auto truncate">
+                      {`${ref.substring(0, 6)}...${ref.substring(ref.length - 4)}`}
+                    </span>
+                    <a 
+                      href={`https://bscscan.com/address/${ref}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-bitaccess-gold hover:text-bitaccess-gold-dark"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </CardContent>

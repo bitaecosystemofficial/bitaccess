@@ -3,7 +3,7 @@ import React from "react";
 import { useMembership, MembershipType } from "@/contexts/MembershipContext";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Gift } from "lucide-react";
+import { CheckCircle, Gift, ArrowRight } from "lucide-react";
 
 const DashboardRewards = () => {
   const { membershipData, isLoading, claimRewards } = useMembership();
@@ -75,6 +75,15 @@ const DashboardRewards = () => {
               <div className="text-lg font-medium text-white mt-1">{rewardsData.bit}</div>
             </div>
           </div>
+
+          <div className="bg-bitaccess-black-light p-4 rounded-md mt-4">
+            <h3 className="font-medium text-white mb-2">How Rewards Work</h3>
+            <p className="text-sm text-gray-400">
+              Upon subscribing to a membership plan, you're eligible to receive token rewards. 
+              These tokens will be sent directly to your wallet when you claim them.
+              Merchant memberships receive 5× more BIT tokens than Regular memberships.
+            </p>
+          </div>
         </div>
       </CardContent>
       <CardFooter>
@@ -87,9 +96,10 @@ const DashboardRewards = () => {
           <Button 
             onClick={handleClaimRewards} 
             className="w-full bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black gap-2"
+            disabled={isLoading}
           >
             <Gift className="h-4 w-4" />
-            Claim Rewards
+            {isLoading ? "Processing..." : "Claim Rewards"}
           </Button>
         )}
       </CardFooter>

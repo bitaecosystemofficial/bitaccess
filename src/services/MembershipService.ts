@@ -4,6 +4,14 @@ import { BaseContractService } from "./BaseContractService";
 import { MEMBERSHIP_ABI } from "../contracts/abis/MembershipABI";
 import { contractAddresses } from "../constants/contracts";
 
+export interface ReferralEarning {
+  referrer: string;
+  user: string;
+  level: number;
+  amount: string;
+  timestamp: Date;
+}
+
 class MembershipServiceClass extends BaseContractService {
   // Add the missing getContract method
   private async getContract(address: string, abi: any, withSigner = false) {
@@ -34,9 +42,15 @@ class MembershipServiceClass extends BaseContractService {
     return await tx.wait();
   }
 
-  async claimRewards() {
+  async withdrawAllRewards() {
     const contract = await this.getMembershipContract();
-    const tx = await contract.claimRewards();
+    const tx = await contract.withdrawAllRewards();
+    return await tx.wait();
+  }
+
+  async withdrawEarnings() {
+    const contract = await this.getMembershipContract();
+    const tx = await contract.withdrawEarnings();
     return await tx.wait();
   }
 
@@ -57,6 +71,11 @@ class MembershipServiceClass extends BaseContractService {
     return await contract.getUserReferrals(address);
   }
 
+  async getReferralsByLevel(address: string, level: number) {
+    const contract = await this.getMembershipContract(false);
+    return await contract.getReferralsByLevel(address, level);
+  }
+
   async isSubscribed(address: string) {
     const contract = await this.getMembershipContract(false);
     return await contract.isSubscribed(address);
@@ -66,8 +85,8 @@ class MembershipServiceClass extends BaseContractService {
     const contract = await this.getMembershipContract(false);
     const stats = await contract.getTotalStats();
     return {
-      deposits: ethers.utils.formatUnits(stats.deposits, 6), // USDT has 6 decimals
-      withdrawals: ethers.utils.formatUnits(stats.withdrawals, 6),
+      deposits: ethers.utils.formatUnits(stats.deposits, 18), 
+      withdrawals: ethers.utils.formatUnits(stats.withdrawals, 18),
       subscribers: stats.subscribers.toNumber(),
       activeSubscriptions: stats.activeSubs.toNumber()
     };
@@ -76,7 +95,26 @@ class MembershipServiceClass extends BaseContractService {
   async getReferralEarnings(address: string) {
     const contract = await this.getMembershipContract(false);
     const earnings = await contract.getReferralEarnings(address);
-    return ethers.utils.formatUnits(earnings, 6); // USDT has 6 decimals
+    return ethers.utils.formatUnits(earnings, 18); 
+  }
+
+  async getAvailableEarnings(address: string) {
+    const contract = await this.getMembershipContract(false);
+    const earnings = await contract.getAvailableEarnings(address);
+    return ethers.utils.formatUnits(earnings, 18);
+  }
+
+  async getReferralEarningsHistory(address: string): Promise<ReferralEarning[]> {
+    const contract = await this.getMembershipContract(false);
+    const history = await contract.getReferralEarningsHistory(address);
+    
+    return history.map((item: any) => ({
+      referrer: item.referrer,
+      user: item.user,
+      level: item.level.toNumber(),
+      amount: ethers.utils.formatUnits(item.amount, 18),
+      timestamp: new Date(item.timestamp.toNumber() * 1000)
+    }));
   }
 
   async getActiveSubscribersCount() {
@@ -88,7 +126,7 @@ class MembershipServiceClass extends BaseContractService {
   async getTotalReferralEarnings() {
     const contract = await this.getMembershipContract(false);
     const earnings = await contract.getTotalReferralEarnings();
-    return ethers.utils.formatUnits(earnings, 6); // USDT has 6 decimals
+    return ethers.utils.formatUnits(earnings, 18);
   }
 
   async subscribeToMembershipEvents(callback: (event: any) => void) {
@@ -98,16 +136,27 @@ class MembershipServiceClass extends BaseContractService {
     contract.on("Subscribed", (user, mType, referrer, amount, event) => {
       callback({
         event: "Subscribed",
-        args: { user, mType, referrer, amount: ethers.utils.formatUnits(amount, 6) },
+        args: { 
+          user, 
+          mType, 
+          referrer, 
+          amount: ethers.utils.formatUnits(amount, 18) 
+        },
         transaction: event.transactionHash
       });
     });
     
     // Subscribe to RewardsClaimed events
-    contract.on("RewardsClaimed", (user, totalValue, event) => {
+    contract.on("RewardsClaimed", (user, btcbAmount, usdtAmount, bnbAmount, bitAmount, event) => {
       callback({
         event: "RewardsClaimed",
-        args: { user, totalValue: ethers.utils.formatUnits(totalValue, 6) },
+        args: { 
+          user, 
+          btcbAmount: ethers.utils.formatUnits(btcbAmount, 18),
+          usdtAmount: ethers.utils.formatUnits(usdtAmount, 18),
+          bnbAmount: ethers.utils.formatUnits(bnbAmount, 18),
+          bitAmount: ethers.utils.formatUnits(bitAmount, 18)
+        },
         transaction: event.transactionHash
       });
     });
@@ -120,7 +169,19 @@ class MembershipServiceClass extends BaseContractService {
           referrer, 
           user, 
           level: level.toNumber(),
-          amount: ethers.utils.formatUnits(amount, 6)
+          amount: ethers.utils.formatUnits(amount, 18)
+        },
+        transaction: event.transactionHash
+      });
+    });
+
+    // Subscribe to EarningsWithdrawn events
+    contract.on("EarningsWithdrawn", (user, amount, event) => {
+      callback({
+        event: "EarningsWithdrawn",
+        args: { 
+          user, 
+          amount: ethers.utils.formatUnits(amount, 18)
         },
         transaction: event.transactionHash
       });

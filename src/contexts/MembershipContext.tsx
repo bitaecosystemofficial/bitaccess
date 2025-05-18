@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useWallet } from "./WalletContext";
 import { toast } from "@/hooks/use-toast";
 import { ethers } from "ethers";
-import { membershipService } from "@/services/MembershipService";
+import { membershipService, ReferralEarning } from "@/services/MembershipService";
 
 export enum MembershipType {
   None = -1,
@@ -27,18 +27,23 @@ interface MembershipStats {
   totalSubscribers: number;
   activeSubscriptions: number;
   referralEarnings: string;
+  availableEarnings: string;
 }
 
 interface MembershipContextType {
   membershipData: MembershipData | null;
   membershipStats: MembershipStats | null;
   isLoading: boolean;
+  loadingStats: boolean;
+  referralEarningsHistory: ReferralEarning[];
   subscribe: (type: MembershipType, referrer?: string) => Promise<boolean>;
   claimRewards: () => Promise<boolean>;
+  withdrawEarnings: () => Promise<boolean>;
   getReferrals: () => Promise<string[]>;
+  getReferralsByLevel: (level: number) => Promise<string[]>;
   refreshMembership: () => Promise<void>;
-  loadingStats: boolean;
   refreshStats: () => Promise<void>;
+  loadReferralEarningsHistory: () => Promise<void>;
 }
 
 const defaultMembershipData: MembershipData = {
@@ -55,12 +60,16 @@ const MembershipContext = createContext<MembershipContextType>({
   membershipData: defaultMembershipData,
   membershipStats: null,
   isLoading: false,
+  loadingStats: false,
+  referralEarningsHistory: [],
   subscribe: async () => false,
   claimRewards: async () => false,
+  withdrawEarnings: async () => false,
   getReferrals: async () => [],
+  getReferralsByLevel: async () => [],
   refreshMembership: async () => {},
-  loadingStats: false,
-  refreshStats: async () => {}
+  refreshStats: async () => {},
+  loadReferralEarningsHistory: async () => {}
 });
 
 interface MembershipProviderProps {
@@ -71,6 +80,7 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
   const { isConnected, address } = useWallet();
   const [membershipData, setMembershipData] = useState<MembershipData | null>(null);
   const [membershipStats, setMembershipStats] = useState<MembershipStats | null>(null);
+  const [referralEarningsHistory, setReferralEarningsHistory] = useState<ReferralEarning[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingStats, setLoadingStats] = useState<boolean>(false);
 
@@ -105,7 +115,7 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
     try {
       setIsLoading(true);
       
-      await membershipService.claimRewards();
+      await membershipService.withdrawAllRewards();
       
       toast({
         title: "Rewards Claimed",
@@ -127,6 +137,32 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
     }
   };
 
+  const withdrawEarnings = async (): Promise<boolean> => {
+    try {
+      setIsLoading(true);
+      
+      await membershipService.withdrawEarnings();
+      
+      toast({
+        title: "Earnings Withdrawn",
+        description: "You have successfully withdrawn your referral earnings!",
+      });
+      
+      await refreshStats();
+      return true;
+    } catch (error: any) {
+      console.error("Withdrawing earnings error:", error);
+      toast({
+        title: "Withdrawal Failed",
+        description: error.message || "An error occurred while withdrawing earnings",
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const getReferrals = async (): Promise<string[]> => {
     try {
       if (!isConnected || !address) return [];
@@ -135,6 +171,31 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
     } catch (error) {
       console.error("Error getting referrals:", error);
       return [];
+    }
+  };
+
+  const getReferralsByLevel = async (level: number): Promise<string[]> => {
+    try {
+      if (!isConnected || !address) return [];
+      
+      return await membershipService.getReferralsByLevel(address, level);
+    } catch (error) {
+      console.error(`Error getting level ${level} referrals:`, error);
+      return [];
+    }
+  };
+
+  const loadReferralEarningsHistory = async (): Promise<void> => {
+    if (!isConnected || !address) {
+      setReferralEarningsHistory([]);
+      return;
+    }
+
+    try {
+      const history = await membershipService.getReferralEarningsHistory(address);
+      setReferralEarningsHistory(history);
+    } catch (error) {
+      console.error("Error loading referral earnings history:", error);
     }
   };
 
@@ -187,13 +248,15 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
       
       const stats = await membershipService.getTotalStats();
       const referralEarnings = await membershipService.getReferralEarnings(address);
+      const availableEarnings = await membershipService.getAvailableEarnings(address);
       
       setMembershipStats({
         totalDeposits: stats.deposits,
         totalWithdrawals: stats.withdrawals,
         totalSubscribers: stats.subscribers,
         activeSubscriptions: stats.activeSubscriptions,
-        referralEarnings
+        referralEarnings,
+        availableEarnings
       });
     } catch (error) {
       console.error("Error refreshing stats:", error);
@@ -207,6 +270,7 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
     if (isConnected && address) {
       refreshMembership();
       refreshStats();
+      loadReferralEarningsHistory();
 
       // Subscribe to membership events
       const setupEventListeners = async () => {
@@ -219,16 +283,22 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
                 event.args.referrer?.toLowerCase() === address?.toLowerCase()) {
               refreshMembership();
               refreshStats();
+              loadReferralEarningsHistory();
               
               if (event.event === "RewardsClaimed") {
                 toast({
                   title: "Rewards Claimed",
-                  description: `Rewards worth ${event.args.totalValue} USDT have been claimed!`
+                  description: `Rewards have been claimed!`
                 });
               } else if (event.event === "ReferralEarned") {
                 toast({
                   title: "Referral Bonus Earned",
                   description: `You earned ${event.args.amount} USDT from a level ${event.args.level} referral`
+                });
+              } else if (event.event === "EarningsWithdrawn") {
+                toast({
+                  title: "Earnings Withdrawn",
+                  description: `${event.args.amount} USDT has been withdrawn to your wallet`
                 });
               }
             }
@@ -242,6 +312,7 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
     } else {
       setMembershipData(null);
       setMembershipStats(null);
+      setReferralEarningsHistory([]);
     }
     
     return () => {
@@ -255,12 +326,16 @@ export function MembershipProvider({ children }: MembershipProviderProps) {
         membershipData, 
         membershipStats,
         isLoading, 
-        subscribe, 
-        claimRewards, 
-        getReferrals,
-        refreshMembership,
         loadingStats,
-        refreshStats
+        referralEarningsHistory,
+        subscribe, 
+        claimRewards,
+        withdrawEarnings,
+        getReferrals,
+        getReferralsByLevel,
+        refreshMembership,
+        refreshStats,
+        loadReferralEarningsHistory
       }}
     >
       {children}

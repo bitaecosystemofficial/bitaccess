@@ -2,13 +2,13 @@
 import React from "react";
 import { useMembership, MembershipType } from "@/contexts/MembershipContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Award, Calendar } from "lucide-react";
+import { Users, Award, Calendar, DollarSign } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const DashboardStats = () => {
-  const { membershipData, isLoading } = useMembership();
+  const { membershipData, membershipStats, isLoading, loadingStats } = useMembership();
 
-  if (isLoading) {
+  if (isLoading || loadingStats) {
     return (
       <>
         {[1, 2, 3].map((i) => (
@@ -75,17 +75,17 @@ const DashboardStats = () => {
       
       <Card className="border border-gray-700 bg-bitaccess-black">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm text-gray-400">Days Remaining</CardTitle>
-          <Calendar className="h-5 w-5 text-bitaccess-gold" />
+          <CardTitle className="text-sm text-gray-400">Available Earnings</CardTitle>
+          <DollarSign className="h-5 w-5 text-bitaccess-gold" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-white">{membershipData?.isActive ? daysLeft : 0}</div>
+          <div className="text-2xl font-bold text-white">
+            ${parseFloat(membershipStats?.availableEarnings || "0").toFixed(2)}
+          </div>
           <p className="text-sm text-muted-foreground mt-1">
-            {membershipData?.isActive
-              ? daysLeft > 30 
-                ? "Your membership is active" 
-                : "Membership expires soon"
-              : "No active membership"}
+            {parseFloat(membershipStats?.availableEarnings || "0") > 0
+              ? "Ready to withdraw to your wallet"
+              : "Refer users to earn commissions"}
           </p>
         </CardContent>
       </Card>

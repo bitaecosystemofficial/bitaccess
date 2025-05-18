@@ -9,14 +9,20 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
-import { Check } from "lucide-react";
+import { Check, AlertCircle } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
+import { useMembership } from "@/contexts/MembershipContext";
 import { toast } from "@/hooks/use-toast";
 import { useMemberSubscription, SubscriptionPlan } from "@/hooks/useMemberSubscription";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 const MerchantSection = () => {
   const { isConnected, address, connectWallet, disconnectWallet } = useWallet();
+  const { membershipData } = useMembership();
   const { subscribeToMembership, isProcessing } = useMemberSubscription();
+  const [referrerAddress, setReferrerAddress] = useState("");
+  const [showReferrer, setShowReferrer] = useState(false);
   
   const plans = [
     {
@@ -32,7 +38,7 @@ const MerchantSection = () => {
         "$1 USDT worth of BNB Reward",
         "$2 USDT worth of BIT Token Rewards",
         "Discounts from all our Products & Services",
-        "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level"
+        "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level, 2.5% - 4th to 7th Level"
       ]
     },
     {
@@ -49,7 +55,7 @@ const MerchantSection = () => {
         "$10 USDT worth of BIT Token Rewards",
         "Bit Merchant Stickers",
         "Promotions and Advertisements on BIT Community",
-        "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level"
+        "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level, 2.5% - 4th to 7th Level"
       ],
       highlighted: true
     }
@@ -65,8 +71,17 @@ const MerchantSection = () => {
       return;
     }
     
+    if (membershipData?.isActive) {
+      toast({
+        title: "Already Subscribed",
+        description: "You already have an active membership",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     try {
-      const result = await subscribeToMembership(plan);
+      const result = await subscribeToMembership(plan, referrerAddress || undefined);
       
       if (result.success) {
         toast({
@@ -88,6 +103,10 @@ const MerchantSection = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const toggleReferrerInput = () => {
+    setShowReferrer(!showReferrer);
   };
 
   return (
@@ -116,6 +135,26 @@ const MerchantSection = () => {
             </Button>
           )}
         </div>
+        
+        {isConnected && showReferrer && (
+          <div className="max-w-md mx-auto mb-8">
+            <div className="mb-2 text-sm text-gray-400">Enter Referrer Address (Optional)</div>
+            <div className="flex gap-2">
+              <Input 
+                placeholder="0x..." 
+                value={referrerAddress}
+                onChange={(e) => setReferrerAddress(e.target.value)}
+                className="bg-bitaccess-black border-gray-700"
+              />
+            </div>
+            {referrerAddress && !referrerAddress.startsWith('0x') && (
+              <div className="flex items-center gap-1 mt-1 text-xs text-red-400">
+                <AlertCircle className="h-3 w-3" />
+                <span>Address must start with 0x</span>
+              </div>
+            )}
+          </div>
+        )}
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {plans.map((plan, index) => (
@@ -147,16 +186,26 @@ const MerchantSection = () => {
                   ))}
                 </ul>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="flex flex-col gap-2">
                 <Button 
                   className={`w-full ${plan.highlighted 
                     ? 'bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black' 
                     : 'bg-transparent border border-gray-600 hover:border-bitaccess-gold text-gray-300 hover:text-bitaccess-gold'}`}
                   onClick={() => handleSubscribe(plan.name)}
-                  disabled={isProcessing}
+                  disabled={isProcessing || membershipData?.isActive}
                 >
-                  {isProcessing ? "Processing..." : "Subscribe Now"}
+                  {isProcessing ? "Processing..." : membershipData?.isActive ? "Already Subscribed" : "Subscribe Now"}
                 </Button>
+                
+                {isConnected && !showReferrer && (
+                  <Button 
+                    variant="link" 
+                    onClick={toggleReferrerInput} 
+                    className="text-sm text-gray-400 hover:text-bitaccess-gold"
+                  >
+                    Have a referrer? Click here
+                  </Button>
+                )}
               </CardFooter>
             </Card>
           ))}
