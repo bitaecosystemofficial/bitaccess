@@ -13,10 +13,25 @@ export enum MembershipType {
 interface MembershipData {
   isActive: boolean;
   type: MembershipType;
-  startDate: Date;
+  startDate: string;
+  expiryDate: string;
   endDate: Date;
+  status: string;
+  level: string;
   claimedRewards: boolean;
   referrals: string[];
+  rewards: number;
+  earnings: string;
+  level2Referrals: number;
+  level3Referrals: number;
+  level4Referrals: number;
+  level5Referrals: number;
+  level6Referrals: number;
+  level7Referrals: number;
+  pendingRewards: any[];
+  claimedRewards: any[];
+  referralEarnings: number;
+  stakingEarnings: number;
 }
 
 interface MembershipStats {
@@ -71,10 +86,31 @@ export const MembershipProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         const mockMembership: MembershipData = {
           isActive: true,
           type: isMerchant ? MembershipType.Merchant : MembershipType.Regular,
-          startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+          startDate: '2025-04-23',
+          expiryDate: '2026-04-23',
           endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000), // 335 days from now
+          status: "Active",
+          level: "Gold",
           claimedRewards: false,
-          referrals: ["0x123...456", "0x789...012", "0xABC...DEF"]
+          referrals: ["0x123...456", "0x789...012", "0xABC...DEF"],
+          rewards: 25,
+          earnings: "120 BIT",
+          level2Referrals: 5,
+          level3Referrals: 3,
+          level4Referrals: 2,
+          level5Referrals: 1,
+          level6Referrals: 0,
+          level7Referrals: 0,
+          pendingRewards: [
+            {type: "Referral Bonus", description: "Level 1 Referral Reward", amount: 10},
+            {type: "Activity Reward", description: "Daily Login Bonus", amount: 5}
+          ],
+          claimedRewards: [
+            {type: "Welcome Bonus", claimedDate: "2025-05-01", amount: 50},
+            {type: "Staking Reward", claimedDate: "2025-05-10", amount: 25}
+          ],
+          referralEarnings: 75,
+          stakingEarnings: 45
         };
         
         setMembershipData(mockMembership);

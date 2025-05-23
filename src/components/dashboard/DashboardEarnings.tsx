@@ -45,8 +45,7 @@ const DashboardEarnings = () => {
           <CardContent className="p-6">
             <h4 className="text-gray-400 text-sm">Total Earnings</h4>
             <div className="flex items-center mt-2">
-              <span className="text-2xl font-bold text-white">{membershipData?.earnings || 0}</span>
-              <span className="ml-2 text-xl text-white">BIT</span>
+              <span className="text-2xl font-bold text-white">{membershipData?.earnings || "0 BIT"}</span>
             </div>
             <div className="flex items-center mt-2">
               <span className="text-green-500 text-sm">+12% from last month</span>

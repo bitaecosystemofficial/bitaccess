@@ -22,25 +22,25 @@ const DashboardMembershipStats = () => {
           <div>
             <p className="text-sm text-gray-400">Total Members</p>
             <p className="text-2xl font-bold text-white">{membershipStats.totalMembers.toLocaleString()}</p>
-            <Progress value={70} className="mt-2 bg-bitaccess-black h-2" indicatorClassName="bg-bitaccess-gold" />
+            <Progress value={70} className="mt-2 bg-bitaccess-black h-2" />
           </div>
           
           <div>
             <p className="text-sm text-gray-400">Active Members</p>
             <p className="text-2xl font-bold text-white">{membershipStats.activeMembers.toLocaleString()}</p>
-            <Progress value={70} className="mt-2 bg-bitaccess-black h-2" indicatorClassName="bg-blue-500" />
+            <Progress value={70} className="mt-2 bg-bitaccess-black h-2" />
           </div>
           
           <div>
             <p className="text-sm text-gray-400">Average Staking</p>
             <p className="text-2xl font-bold text-white">{membershipStats.averageStaking}</p>
-            <Progress value={55} className="mt-2 bg-bitaccess-black h-2" indicatorClassName="bg-green-500" />
+            <Progress value={55} className="mt-2 bg-bitaccess-black h-2" />
           </div>
           
           <div>
             <p className="text-sm text-gray-400">Monthly Growth Rate</p>
             <p className="text-2xl font-bold text-green-500">{membershipStats.growthRate}</p>
-            <Progress value={62} className="mt-2 bg-bitaccess-black h-2" indicatorClassName="bg-green-500" />
+            <Progress value={62} className="mt-2 bg-bitaccess-black h-2" />
           </div>
         </div>
       </CardContent>

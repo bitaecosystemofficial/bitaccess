@@ -22,7 +22,7 @@ const DashboardStats = () => {
     },
     {
       title: "Earnings",
-      value: `${membershipData?.earnings || 0} BIT`,
+      value: membershipData?.earnings || "0 BIT",
       icon: <CreditCard className="h-8 w-8 text-blue-500" />,
       description: "Total Earnings Collected"
     }
