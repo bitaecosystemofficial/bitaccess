@@ -98,6 +98,28 @@ class MarketplaceServiceClass extends BaseContractService {
     return purchaseIds.map((id: ethers.BigNumber) => id.toNumber());
   }
 
+  async getProductSales(productId: number) {
+    const contract = await this.getMarketplaceContract(false);
+    const sales = await contract.getProductSales(productId);
+    return sales.map((sale: any) => ({
+      buyer: sale.buyer,
+      amount: ethers.utils.formatUnits(sale.amount, 6),
+      date: new Date(sale.date.toNumber() * 1000)
+    }));
+  }
+
+  async addProductToFavorites(productId: number) {
+    const contract = await this.getMarketplaceContract();
+    const tx = await contract.addProductToFavorites(productId);
+    return await tx.wait();
+  }
+
+  async removeProductFromFavorites(productId: number) {
+    const contract = await this.getMarketplaceContract();
+    const tx = await contract.removeProductFromFavorites(productId);
+    return await tx.wait();
+  }
+
   async subscribeToMarketplaceEvents(callback: (event: any) => void) {
     const contract = await this.getMarketplaceContract(false);
     

@@ -8,6 +8,7 @@ import { useWallet } from "@/contexts/WalletContext";
 import { useMembership } from "@/contexts/MembershipContext";
 import { WalletProvider } from "@/contexts/WalletContext";
 import { MembershipProvider } from "@/contexts/MembershipContext";
+import { CartProvider } from "@/contexts/CartContext";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Airdrop from "./pages/Airdrop";
@@ -29,6 +30,9 @@ import Dashboard from "./pages/Dashboard";
 import VideoPortal from "./pages/VideoPortal";
 import VideoDetails from "./pages/VideoDetails";
 import Marketplace from "./pages/Marketplace";
+import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import OrdersPage from "./pages/OrdersPage";
 
 const queryClient = new QueryClient();
 
@@ -77,6 +81,9 @@ const AppRoutes = () => {
       <Route path="/contact" element={<Contact />} />
       <Route path="/dex-analytics" element={<DexAnalyticsPage />} />
       <Route path="/marketplace" element={<Marketplace />} />
+      <Route path="/marketplace/cart" element={<CartPage />} />
+      <Route path="/marketplace/checkout" element={<CheckoutPage />} />
+      <Route path="/marketplace/orders" element={<OrdersPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
@@ -87,11 +94,13 @@ const App = () => (
     <TooltipProvider>
       <WalletProvider>
         <MembershipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
+          <CartProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <AppRoutes />
+            </BrowserRouter>
+          </CartProvider>
         </MembershipProvider>
       </WalletProvider>
     </TooltipProvider>

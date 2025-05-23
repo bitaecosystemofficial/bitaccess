@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useWallet } from '@/contexts/WalletContext';
+import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
 
 interface ProductCardProps {
@@ -16,6 +17,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { isConnected } = useWallet();
   const { toast } = useToast();
+  const { addToCart } = useCart();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -30,10 +32,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       return;
     }
 
-    toast({
-      title: "Added to cart",
-      description: `${product.name} has been added to your cart`
-    });
+    addToCart(product);
   };
 
   const calculateFinalPrice = () => {

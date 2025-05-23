@@ -1,17 +1,36 @@
-
 import React from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LogoProps {
   className?: string;
 }
 
 const Logo: React.FC<LogoProps> = ({ className }) => {
+  const isMobile = useIsMobile();
+  
+  if (isMobile) {
+    // Keep the square BA logo for mobile
+    return (
+      <div className={`flex items-center ${className || ''}`}>
+        <div className="bg-bitaccess-gold rounded-md w-8 h-8 flex items-center justify-center mr-2">
+          <span className="font-bold text-black">BA</span>
+        </div>
+        <span className="font-bold text-lg text-white">BitAccess</span>
+      </div>
+    );
+  }
+  
+  // Use the circular logo design for desktop view
   return (
     <div className={`flex items-center ${className || ''}`}>
-      <div className="bg-bitaccess-gold rounded-md w-8 h-8 flex items-center justify-center mr-2">
-        <span className="font-bold text-black">BA</span>
+      <div className="h-8 w-8 mr-2">
+        <img 
+          src="/lovable-uploads/76777d14-6829-4372-a4ca-691c8eee3f34.png" 
+          alt="BitAccess Logo" 
+          className="h-full w-auto"
+        />
       </div>
-      <span className="font-bold text-lg text-white">BitAccess</span>
+      <span className="font-bold text-lg text-white">Bit Access Ecosystem</span>
     </div>
   );
 };

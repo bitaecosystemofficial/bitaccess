@@ -8,6 +8,7 @@ export const MARKETPLACE_ABI = [
   "function getCategories() view returns (tuple(uint256 id, string name, string imageUrl)[])",
   "function getUserPurchases(address buyer) view returns (uint256[])",
   "function getProductSales(uint256 productId) view returns (tuple(address buyer, uint256 amount, uint256 date)[])",
+  "function getUserFavorites(address user) view returns (uint256[])",
   
   // Write functions
   "function listProduct(string name, string description, uint256 price, uint256 categoryId, uint256 stock) payable returns (uint256)",
@@ -22,5 +23,6 @@ export const MARKETPLACE_ABI = [
   "event ProductUpdated(uint256 indexed productId, uint256 price, uint256 stock, bool active)",
   "event ProductPurchased(uint256 indexed productId, address indexed buyer, address indexed seller, uint256 quantity, uint256 amount, uint256 timestamp)",
   "event ProductAddedToFavorites(address indexed user, uint256 indexed productId)",
+  "event ProductRemovedFromFavorites(address indexed user, uint256 indexed productId)",
   "event CategoryAdded(uint256 indexed categoryId, string name)"
 ];
