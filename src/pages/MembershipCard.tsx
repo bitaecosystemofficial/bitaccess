@@ -95,9 +95,9 @@ const MembershipCard = () => {
 
   // Format ID number
   const formatIdNumber = (address: string) => {
-    if (!address) return "ID: BIT-0000-0001";
+    if (!address) return "BIT-0000-0001";
     const last4 = address.slice(-4);
-    return `ID: BIT-${last4}-0001`;
+    return `BIT-${last4}-0001`;
   };
 
   return (
@@ -159,7 +159,7 @@ const MembershipCard = () => {
                       </div>
                     </div>
                     
-                    <div className="my-4 text-center">
+                    <div className="text-center">
                       <p className="text-xl font-mono tracking-widest text-gray-200 card-number">
                         {formatCardNumber(address || "")}
                       </p>
@@ -168,6 +168,7 @@ const MembershipCard = () => {
                     <div className="flex justify-between items-end">
                       <div>
                         <p className="text-xs text-gray-400">{formatIdNumber(address || "")}</p>
+                        <p className="text-sm font-mono">{formatIdNumber(address || "")}</p>
                       </div>
                       
                       <div>
@@ -218,11 +219,13 @@ const MembershipCard = () => {
                     
                     <div className="flex justify-between items-end">
                       <div>
-                        <p className="text-xs text-gray-400">JOINED: {startDate}</p>
+                        <p className="text-xs text-gray-400">MEMBER SINCE</p>
+                        <p className="text-sm font-medium text-gray-200">{startDate}</p>
                       </div>
                       
                       <div>
-                        <p className="text-xs text-gray-400 text-right">EXPIRY: {endDate}</p>
+                        <p className="text-xs text-gray-400 text-right">EXPIRATION DATE</p>
+                        <p className="text-sm font-medium text-gray-200">{endDate}</p>
                       </div>
                     </div>
                   </div>
