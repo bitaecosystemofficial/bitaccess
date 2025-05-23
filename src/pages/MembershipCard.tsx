@@ -95,9 +95,9 @@ const MembershipCard = () => {
 
   // Format ID number
   const formatIdNumber = (address: string) => {
-    if (!address) return "BIT-0000-0001";
+    if (!address) return "ID: BIT-0000-0001";
     const last4 = address.slice(-4);
-    return `BIT-${last4}-0001`;
+    return `ID: BIT-${last4}-0001`;
   };
 
   return (
@@ -167,8 +167,7 @@ const MembershipCard = () => {
                     
                     <div className="flex justify-between items-end">
                       <div>
-                        <p className="text-xs text-gray-400">ID:  <span className="text-sm font-mono"><{formatIdNumber(address || "")}</span></p>
-       
+                        <p className="text-sm font-mono">{formatIdNumber(address || "")}</p>
                       </div>
                       
                       <div>
