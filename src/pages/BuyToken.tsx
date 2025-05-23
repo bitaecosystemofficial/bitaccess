@@ -2,19 +2,20 @@
 import { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
 import SectionHeading from "@/components/ui/section-heading";
 import WalletConnectPrompt from "@/components/ui/wallet-connect-prompt";
 import { useWallet } from "@/contexts/WalletContext";
 import { ethers } from "ethers";
 import { presaleService } from "@/services/PresaleService";
 import { toast } from "@/hooks/use-toast";
-import { usePresaleData, useBuyTokens, BonusTier } from "@/utils/presale/presaleHooks";
-import { Wallet, CreditCard, Clock, AlertCircle } from "lucide-react";
+import { usePresaleData, useBuyTokens } from '@/utils/presale';
+import { Wallet, CreditCard } from "lucide-react";
+import { TokenCalculator } from "@/components/buytoken/TokenCalculator";
+import { PresaleInfoCard } from "@/components/buytoken/PresaleInfoCard";
+import { BnbPaymentForm } from "@/components/buytoken/BnbPaymentForm";
+import { UsdtPaymentForm } from "@/components/buytoken/UsdtPaymentForm";
 
 const BuyToken = () => {
   const { isConnected } = useWallet();
@@ -78,7 +79,7 @@ const BuyToken = () => {
   };
   
   // Calculate bonus percentage based on amount and tier
-  const calculateBonus = (amount: number, tiers: BonusTier[]): number => {
+  const calculateBonus = (amount: number, tiers: { minAmount: number; bonusPercent: number }[]): number => {
     if (!tiers || tiers.length === 0) return 0;
     
     // Sort tiers in descending order by minAmount
@@ -198,20 +199,6 @@ const BuyToken = () => {
       setIsLoading(false);
     }
   };
-  
-  // Format large numbers for display
-  const formatNumber = (value: string | number): string => {
-    const num = typeof value === 'string' ? parseFloat(value) : value;
-    if (isNaN(num)) return '0';
-    
-    if (num >= 1_000_000) {
-      return (num / 1_000_000).toFixed(2) + 'M';
-    } else if (num >= 1_000) {
-      return (num / 1_000).toFixed(2) + 'K';
-    } else {
-      return num.toFixed(2);
-    }
-  };
 
   if (!isConnected) {
     return (
@@ -241,70 +228,17 @@ const BuyToken = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {/* Presale Info Card */}
             <div className="md:col-span-1">
-              <Card className="bg-bitaccess-black-light border border-bitaccess-gold/20 h-full">
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Clock className="mr-2 h-5 w-5 text-bitaccess-gold" />
-                    Presale Info
-                  </CardTitle>
-                  <CardDescription>Phase {presaleData.currentPhase} of {presaleData.totalPhases}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div>
-                    <p className="text-sm text-gray-400 mb-1">Token Sale Progress</p>
-                    <Progress value={presaleData.progress} className="h-2 bg-bitaccess-black" />
-                    <div className="flex justify-between text-xs mt-1">
-                      <span>{formatNumber(presaleData.soldTokens)} BIT sold</span>
-                      <span>{formatNumber(presaleData.totalSupply)} BIT total</span>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-3 bg-bitaccess-black rounded border border-bitaccess-gold/20">
-                      <p className="text-xs text-gray-400">BNB Rate</p>
-                      <p className="font-medium">{presaleData.bnbRate.toLocaleString()} BIT</p>
-                    </div>
-                    <div className="p-3 bg-bitaccess-black rounded border border-bitaccess-gold/20">
-                      <p className="text-xs text-gray-400">USDT Rate</p>
-                      <p className="font-medium">{presaleData.usdtRate.toLocaleString()} BIT</p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <h4 className="font-medium text-sm">Bonus Tiers</h4>
-                    <div className="space-y-1">
-                      {presaleData.bonusTiers.bnb.map((tier, i) => (
-                        <div key={`bnb-${i}`} className="flex justify-between text-xs">
-                          <span>≥ {tier.minAmount} BNB</span>
-                          <span className="text-bitaccess-gold">+{tier.bonusPercent}% Bonus</span>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    <div className="space-y-1 mt-2">
-                      {presaleData.bonusTiers.usdt.map((tier, i) => (
-                        <div key={`usdt-${i}`} className="flex justify-between text-xs">
-                          <span>≥ {tier.minAmount} USDT</span>
-                          <span className="text-bitaccess-gold">+{tier.bonusPercent}% Bonus</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="p-3 bg-bitaccess-black rounded border border-bitaccess-gold/20">
-                    <div className="flex items-center mb-1">
-                      <AlertCircle className="h-4 w-4 mr-1 text-yellow-500" />
-                      <p className="text-sm font-medium">Presale Limits</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <p>Min BNB: {presaleData.paymentMethods.bnb.min}</p>
-                      <p>Max BNB: {presaleData.paymentMethods.bnb.max}</p>
-                      <p>Min USDT: {presaleData.paymentMethods.usdt.min}</p>
-                      <p>Max USDT: {presaleData.paymentMethods.usdt.max}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <PresaleInfoCard 
+                currentPhase={presaleData.currentPhase}
+                totalPhases={presaleData.totalPhases}
+                bnbRate={presaleData.bnbRate}
+                usdtRate={presaleData.usdtRate}
+                soldTokens={presaleData.soldTokens}
+                totalSupply={presaleData.totalSupply}
+                progress={presaleData.progress}
+                bonusTiers={presaleData.bonusTiers}
+                paymentMethods={presaleData.paymentMethods}
+              />
             </div>
             
             {/* Purchase Card */}
@@ -335,91 +269,37 @@ const BuyToken = () => {
                         </TabsTrigger>
                       </TabsList>
                       
-                      <TabsContent value="bnb" className="space-y-4 mt-4">
-                        <div>
-                          <label className="block text-sm font-medium mb-2">BNB Amount</label>
-                          <div className="flex items-center space-x-2">
-                            <Input
-                              type="text"
-                              value={bnbAmount}
-                              onChange={handleBnbChange}
-                              placeholder="Enter BNB amount"
-                              className="bg-bitaccess-black border-bitaccess-gold/30"
-                            />
-                            <span className="text-sm font-medium">BNB</span>
-                          </div>
-                          <p className="text-xs text-gray-400 mt-1">
-                            Minimum purchase: {presaleData.paymentMethods.bnb.min} BNB
-                          </p>
-                        </div>
-                        
-                        <Button 
-                          onClick={handleBuyTokens} 
-                          disabled={isLoading || !isValidAmount}
-                          className="w-full bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black"
-                        >
-                          {isLoading ? "Processing..." : "Buy with BNB"}
-                        </Button>
+                      <TabsContent value="bnb" className="mt-4">
+                        <BnbPaymentForm 
+                          bnbAmount={bnbAmount}
+                          handleBnbChange={handleBnbChange}
+                          handleBuyTokens={handleBuyTokens}
+                          isLoading={isLoading}
+                          isValidAmount={isValidAmount}
+                          minPurchaseAmount={presaleData.paymentMethods.bnb.min}
+                        />
                       </TabsContent>
                       
-                      <TabsContent value="usdt" className="space-y-4 mt-4">
-                        <div>
-                          <label className="block text-sm font-medium mb-2">USDT Amount</label>
-                          <div className="flex items-center space-x-2">
-                            <Input
-                              type="text"
-                              value={usdtAmount}
-                              onChange={handleUsdtChange}
-                              placeholder="Enter USDT amount"
-                              className="bg-bitaccess-black border-bitaccess-gold/30"
-                            />
-                            <span className="text-sm font-medium">USDT</span>
-                          </div>
-                          <p className="text-xs text-gray-400 mt-1">
-                            Minimum purchase: {presaleData.paymentMethods.usdt.min} USDT
-                          </p>
-                        </div>
-                        
-                        {!approved ? (
-                          <Button 
-                            onClick={handleApprove} 
-                            disabled={isLoading || !isValidAmount}
-                            className="w-full bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black"
-                          >
-                            {isLoading ? "Approving..." : "Approve USDT"}
-                          </Button>
-                        ) : (
-                          <Button 
-                            onClick={handleBuyTokens} 
-                            disabled={isLoading || !isValidAmount}
-                            className="w-full bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black"
-                          >
-                            {isLoading ? "Processing..." : "Buy with USDT"}
-                          </Button>
-                        )}
+                      <TabsContent value="usdt" className="mt-4">
+                        <UsdtPaymentForm 
+                          usdtAmount={usdtAmount}
+                          handleUsdtChange={handleUsdtChange}
+                          handleApprove={handleApprove}
+                          handleBuyTokens={handleBuyTokens}
+                          isLoading={isLoading}
+                          isValidAmount={isValidAmount}
+                          approved={approved}
+                          minPurchaseAmount={presaleData.paymentMethods.usdt.min}
+                        />
                       </TabsContent>
                     </Tabs>
                     
                     {/* Token calculation box */}
-                    <div className="p-4 bg-bitaccess-black rounded-lg border border-bitaccess-gold/20">
-                      <h4 className="font-medium mb-3">Token Calculation</h4>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Base Tokens:</span>
-                          <span>{formatNumber(tokenAmount)} BIT</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span>Bonus Tokens:</span>
-                          <span className="text-bitaccess-gold">+{formatNumber(bonusAmount)} BIT</span>
-                        </div>
-                        <div className="border-t border-bitaccess-gold/20 pt-2 mt-2">
-                          <div className="flex justify-between font-bold">
-                            <span>Total Tokens:</span>
-                            <span>{formatNumber(totalTokens)} BIT</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <TokenCalculator 
+                      tokenAmount={tokenAmount}
+                      bonusAmount={bonusAmount}
+                      totalTokens={totalTokens}
+                    />
                     
                     {!isValidAmount && (
                       <Alert variant="destructive" className="bg-red-900/20 border-red-900">
