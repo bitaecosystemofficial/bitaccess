@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from 'react';
 import { Course, VideoData, ContractResult } from '@/types/contracts';
-import { contractService } from '@/services/ContractService';
+import { contractService } from '@/services/ContractService'; // Now properly imported
 import { contractAddresses } from '@/constants/contracts';
 
 export const useEducationData = () => {

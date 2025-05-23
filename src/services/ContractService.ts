@@ -2,11 +2,11 @@
 import { ethers } from "ethers";
 import { PresaleABI } from "../contracts/abis/PresaleABI";
 import { StakingABI } from "../contracts/abis/StakingABI";
-import { MarketplaceABI } from "../contracts/abis/MarketplaceABI";
+import { MARKETPLACE_ABI } from "../contracts/abis/MarketplaceABI";
 import { TokenABI } from "../contracts/abis/TokenABI";
 import { AirdropABI } from "../contracts/abis/AirdropABI";
 import { SwapABI } from "../contracts/abis/SwapABI";
-import { GovernanceABI } from "../contracts/abis/GovernanceABI";
+import { GOVERNANCE_ABI } from "../contracts/abis/GovernanceABI";
 import { contractAddresses } from "../constants/contracts";
 
 export type ContractType = 
@@ -20,7 +20,7 @@ export const getContractABI = (contractType: ContractType) => {
     case 'staking':
       return StakingABI;
     case 'marketplace':
-      return MarketplaceABI;
+      return MARKETPLACE_ABI;
     case 'token':
       return TokenABI;
     case 'airdrop':
@@ -28,7 +28,7 @@ export const getContractABI = (contractType: ContractType) => {
     case 'swap':
       return SwapABI;
     case 'governance':
-      return GovernanceABI;
+      return GOVERNANCE_ABI;
     default:
       throw new Error(`Contract ABI not found for ${contractType}`);
   }
@@ -51,7 +51,7 @@ export const getContractAddress = (contractType: ContractType): string => {
     case 'governance':
       return contractAddresses.governance;
     case 'merchant':
-      return contractAddresses.merchant;
+      return contractAddresses.merchants;
     case 'membership':
       return contractAddresses.membership;
     default:
@@ -73,3 +73,31 @@ export const createContract = (
   );
 };
 
+// Export a singleton instance of the contract service
+export const contractService = {
+  getContract: createContract,
+  getAirdropContract: async () => {
+    if (typeof window.ethereum !== 'undefined') {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      return createContract('airdrop', provider);
+    }
+    throw new Error('Ethereum provider not available');
+  },
+  getEducationContract: async () => {
+    if (typeof window.ethereum !== 'undefined') {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      return createContract('education', provider);
+    }
+    throw new Error('Ethereum provider not available');
+  },
+  verifyAirdropTask: async (address: string, taskId: number) => {
+    if (typeof window.ethereum !== 'undefined') {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = createContract('airdrop', provider).connect(signer);
+      const tx = await contract.verifyTask(address, taskId);
+      return await tx.wait();
+    }
+    throw new Error('Ethereum provider not available');
+  }
+};

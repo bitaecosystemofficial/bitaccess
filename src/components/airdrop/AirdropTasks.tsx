@@ -1,10 +1,9 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, ArrowUpRight } from "lucide-react";
 import { useState } from "react";
 import { useWallet } from "@/contexts/WalletContext";
-import { contractService } from "@/services/ContractService";
+import { contractService } from "@/services/ContractService"; // Now properly imported
 import { toast } from "@/hooks/use-toast";
 
 interface AirdropTasksProps {
