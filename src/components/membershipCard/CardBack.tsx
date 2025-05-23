@@ -10,7 +10,7 @@ interface CardBackProps {
 
 const CardBack: React.FC<CardBackProps> = ({ startDate, endDate }) => {
   const CONTRACT_ADDRESS = "0xd3bde17ebd27739cf5505cd58ecf31cb628e469c";
-  const CONTRACT_ADDRESS_SHORT = "0x0002...";
+  const CONTRACT_ADDRESS_SHORT = "0xd3bde17ebd27739cf5...";
   
   // QR code URL for the contract
   const contractQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://bscscan.com/token/${CONTRACT_ADDRESS}`;
