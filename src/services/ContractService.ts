@@ -11,7 +11,7 @@ import { contractAddresses } from "../constants/contracts";
 
 export type ContractType = 
   'presale' | 'staking' | 'marketplace' | 'token' | 
-  'airdrop' | 'swap' | 'governance' | 'merchant' | 'membership';
+  'airdrop' | 'swap' | 'governance' | 'merchants' | 'membership' | 'education';
 
 export const getContractABI = (contractType: ContractType) => {
   switch(contractType) {
@@ -50,10 +50,12 @@ export const getContractAddress = (contractType: ContractType): string => {
       return contractAddresses.swap;
     case 'governance':
       return contractAddresses.governance;
-    case 'merchant':
+    case 'merchants':
       return contractAddresses.merchants;
     case 'membership':
       return contractAddresses.membership;
+    case 'education':
+      return contractAddresses.education;
     default:
       throw new Error(`Contract address not found for ${contractType}`);
   }

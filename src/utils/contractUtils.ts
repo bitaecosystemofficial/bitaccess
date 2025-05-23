@@ -1,3 +1,4 @@
+
 import { ethers } from "ethers";
 import { useQuery } from "@tanstack/react-query";
 import { useWallet } from "@/contexts/WalletContext";
@@ -9,9 +10,9 @@ import { useEducationData } from "@/hooks/useEducation";
 export const useTokenAllowance = (tokenAddress: string, spenderAddress: string) => {
   const { address, provider } = useWallet();
 
-  return useQuery(
-    ["tokenAllowance", tokenAddress, spenderAddress, address],
-    async () => {
+  return useQuery({
+    queryKey: ["tokenAllowance", tokenAddress, spenderAddress, address],
+    queryFn: async () => {
       if (!address || !provider || !tokenAddress || !spenderAddress) {
         return 0n;
       }
@@ -25,11 +26,9 @@ export const useTokenAllowance = (tokenAddress: string, spenderAddress: string) 
       const allowance = await tokenContract.allowance(address, spenderAddress);
       return BigInt(allowance.toString());
     },
-    {
-      enabled: !!address && !!provider && !!tokenAddress && !!spenderAddress,
-      refetchInterval: 60000, // Refetch every 60 seconds
-    }
-  );
+    enabled: !!address && !!provider && !!tokenAddress && !!spenderAddress,
+    refetchInterval: 60000, // Refetch every 60 seconds
+  });
 };
 
 export const formatAddress = (address: string | null | undefined): string => {
@@ -45,35 +44,31 @@ export const shortenAddress = (address: string, chars = 4, separator = "...") =>
 };
 
 export const useEthPrice = () => {
-  return useQuery(
-    ["ethPrice"],
-    async () => {
+  return useQuery({
+    queryKey: ["ethPrice"],
+    queryFn: async () => {
       const response = await fetch(
         "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
       );
       const data = await response.json();
       return data.ethereum.usd;
     },
-    {
-      refetchInterval: 300000, // Refetch every 5 minutes
-    }
-  );
+    refetchInterval: 300000, // Refetch every 5 minutes
+  });
 };
 
 export const useBnbPrice = () => {
-  return useQuery(
-    ["bnbPrice"],
-    async () => {
+  return useQuery({
+    queryKey: ["bnbPrice"],
+    queryFn: async () => {
       const response = await fetch(
         "https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd"
       );
       const data = await response.json();
       return data.binancecoin.usd;
     },
-    {
-      refetchInterval: 300000, // Refetch every 5 minutes
-    }
-  );
+    refetchInterval: 300000, // Refetch every 5 minutes
+  });
 };
 
 // Fixed function with issue on line 67 - adjusting parameter count
