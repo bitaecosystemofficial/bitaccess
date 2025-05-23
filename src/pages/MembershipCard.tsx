@@ -5,9 +5,10 @@ import { useMembership } from "@/contexts/MembershipContext";
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { QrCode, CreditCard, BarChart2 } from "lucide-react";
+import { CreditCard, BarChart2 } from "lucide-react";
 import WalletConnectPrompt from '@/components/ui/wallet-connect-prompt';
 import { format } from "date-fns";
+import "../components/ui/card-flip.css";
 
 const MembershipCard = () => {
   const { isConnected, address } = useWallet();
@@ -144,7 +145,12 @@ const MembershipCard = () => {
                   <div className="p-6 h-full flex flex-col justify-between">
                     <div className="flex justify-between items-start">
                       <div className="w-16 h-16 flex items-center justify-center">
-                        <QrCode className="h-10 w-10 text-bitaccess-gold/80" />
+                        {/* Custom QR Code image with gold border */}
+                        <div className="p-1 rounded-lg border-2 border-bitaccess-gold">
+                          <img src="/lovable-uploads/2083e9af-3de5-412c-94dc-88cde90c0b33.png" 
+                               alt="QR Code" 
+                               className="h-12 w-12 rounded-md" />
+                        </div>
                       </div>
                       
                       <div className="text-right">
@@ -203,8 +209,11 @@ const MembershipCard = () => {
                     </div>
                     
                     <div className="flex justify-center my-2">
-                      <div className="w-24 h-24 bg-white p-2 rounded-md flex items-center justify-center shadow-lg">
-                        <QrCode className="h-20 w-20 text-black" />
+                      {/* Enhanced QR code with gold border */}
+                      <div className="p-2 bg-white rounded-xl border-2 border-bitaccess-gold shadow-lg">
+                        <img src="/lovable-uploads/2083e9af-3de5-412c-94dc-88cde90c0b33.png" 
+                             alt="QR Code" 
+                             className="h-20 w-20 rounded-lg" />
                       </div>
                     </div>
                     
@@ -249,7 +258,14 @@ const MembershipCard = () => {
               <Card className="bg-bitaccess-black-light border-bitaccess-gold/10">
                 <CardContent className="p-4 flex items-start">
                   <div className="mr-4 mt-1">
-                    <QrCode className="h-5 w-5 text-bitaccess-gold" />
+                    {/* Custom QR code as icon with gold border */}
+                    <div className="p-0.5 border border-bitaccess-gold/50 rounded">
+                      <img 
+                        src="/lovable-uploads/2083e9af-3de5-412c-94dc-88cde90c0b33.png" 
+                        alt="QR Code" 
+                        className="h-4 w-4" 
+                      />
+                    </div>
                   </div>
                   <div>
                     <h3 className="font-medium mb-1">Cross Border Payments</h3>
