@@ -32,8 +32,8 @@ const CardFront: React.FC<CardFrontProps> = ({ address, membershipType }) => {
 
   return (
     <Card 
-      className="absolute w-full h-full bg-gradient-to-br from-bitaccess-black to-black text-white border border-bitaccess-gold/30 rounded-xl overflow-hidden"
-    >
+  className="absolute w-full h-full bg-black text-white border border-bitaccess-gold/30 rounded-xl overflow-hidden">
+
       <CardContent className="p-0 h-full relative">
         {/* Golden border decoration at top */}
         <div className="w-full h-10 bg-gradient-to-r from-bitaccess-gold/80 via-bitaccess-gold to-bitaccess-gold/80 border-b border-bitaccess-gold/30"></div>
