@@ -218,13 +218,12 @@ const MembershipCard = () => {
                     
                     <div className="flex justify-between items-end">
                       <div>
-                        <p className="text-xs text-gray-400">MEMBER SINCE</p>
-                        <p className="text-sm font-medium text-gray-200">{startDate}</p>
+                        <p className="text-xs text-gray-400">JOINED: {startDate}</p>
+                        <p className="text-sm font-medium text-gray-200"></p>
                       </div>
                       
                       <div>
-                        <p className="text-xs text-gray-400 text-right">EXPIRATION DATE</p>
-                        <p className="text-sm font-medium text-gray-200">{endDate}</p>
+                        <p className="text-xs text-gray-400 text-right">EXPIRY: {endDate}</p>
                       </div>
                     </div>
                   </div>
