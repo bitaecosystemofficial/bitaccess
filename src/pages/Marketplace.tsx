@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -10,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import ProductCard from '@/components/marketplace/ProductCard';
-import { products, categories, featuredStores } from '@/data/marketplaceData';
+import { products, categories, categoryIcons, featuredStores } from '@/data/marketplaceData';
 import { Search, Filter, ShoppingBag, Tag, TrendingUp } from 'lucide-react';
 
 const Marketplace = () => {
@@ -90,11 +91,11 @@ const Marketplace = () => {
               <Card 
                 key={index} 
                 className="bg-bitaccess-black-light border-gray-700 hover:border-bitaccess-gold transition-colors cursor-pointer"
-                onClick={() => navigate(`/marketplace?category=${category.slug}`)}
+                onClick={() => navigate(`/marketplace?category=${category.id}`)}
               >
                 <CardContent className="p-4 flex flex-col items-center justify-center text-center">
                   <div className="w-12 h-12 rounded-full bg-bitaccess-black flex items-center justify-center mb-3">
-                    {category.icon}
+                    {categoryIcons[category.id]}
                   </div>
                   <h3 className="font-medium text-sm">{category.name}</h3>
                 </CardContent>

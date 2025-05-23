@@ -1,5 +1,7 @@
 
 import { Product, Category } from '@/types/marketplace';
+import { ShoppingBag, HeadphonesIcon, Home, FileCode, HeartHandshake, Gift } from 'lucide-react';
+import React from 'react';
 
 export const categories: Category[] = [
   { id: 'electronics', name: 'Electronics', count: 24, image: '/placeholder.svg' },
@@ -8,6 +10,50 @@ export const categories: Category[] = [
   { id: 'digital', name: 'Digital Products', count: 12, image: '/placeholder.svg' },
   { id: 'services', name: 'Services', count: 10, image: '/placeholder.svg' },
   { id: 'collectibles', name: 'Collectibles', count: 8, image: '/placeholder.svg' },
+];
+
+export const categoryIcons: Record<string, React.ReactNode> = {
+  'electronics': <HeadphonesIcon className="h-5 w-5 text-gray-300" />,
+  'clothing': <ShoppingBag className="h-5 w-5 text-gray-300" />,
+  'home': <Home className="h-5 w-5 text-gray-300" />,
+  'digital': <FileCode className="h-5 w-5 text-gray-300" />,
+  'services': <HeartHandshake className="h-5 w-5 text-gray-300" />,
+  'collectibles': <Gift className="h-5 w-5 text-gray-300" />
+};
+
+export const featuredStores = [
+  {
+    id: 's1',
+    name: 'Blockchain Academy',
+    coverImage: '/placeholder.svg',
+    category: 'digital',
+    rating: 4.8,
+    productCount: 12
+  },
+  {
+    id: 's2',
+    name: 'CryptoSecure',
+    coverImage: '/placeholder.svg',
+    category: 'electronics',
+    rating: 4.9,
+    productCount: 15
+  },
+  {
+    id: 's3',
+    name: 'BitConsult Pro',
+    coverImage: '/placeholder.svg',
+    category: 'services',
+    rating: 4.7,
+    productCount: 8
+  },
+  {
+    id: 's4',
+    name: 'CryptoWear',
+    coverImage: '/placeholder.svg',
+    category: 'clothing',
+    rating: 4.3,
+    productCount: 24
+  }
 ];
 
 export const products: Product[] = [
