@@ -18,10 +18,9 @@ interface MembershipData {
   endDate: Date;
   status: string;
   level: string;
-  claimedRewards: boolean;
-  referrals: string[];
   rewards: number;
   earnings: string;
+  referrals: string[];
   level2Referrals: number;
   level3Referrals: number;
   level4Referrals: number;
@@ -29,9 +28,10 @@ interface MembershipData {
   level6Referrals: number;
   level7Referrals: number;
   pendingRewards: any[];
-  claimedRewards: any[];
+  claimedRewardsArray: any[]; // Renamed to avoid duplicate identifier
   referralEarnings: number;
   stakingEarnings: number;
+  hasClaimedRewards: boolean; // Renamed from claimedRewards to avoid duplicate
 }
 
 interface MembershipStats {
@@ -88,10 +88,10 @@ export const MembershipProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           type: isMerchant ? MembershipType.Merchant : MembershipType.Regular,
           startDate: '2025-04-23',
           expiryDate: '2026-04-23',
-          endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000), // 335 days from now
+          endDate: new Date('2026-04-23'), // Fixed to string-compatible date
           status: "Active",
           level: "Gold",
-          claimedRewards: false,
+          hasClaimedRewards: false, // Renamed from claimedRewards
           referrals: ["0x123...456", "0x789...012", "0xABC...DEF"],
           rewards: 25,
           earnings: "120 BIT",
@@ -105,7 +105,7 @@ export const MembershipProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             {type: "Referral Bonus", description: "Level 1 Referral Reward", amount: 10},
             {type: "Activity Reward", description: "Daily Login Bonus", amount: 5}
           ],
-          claimedRewards: [
+          claimedRewardsArray: [ // Renamed from claimedRewards
             {type: "Welcome Bonus", claimedDate: "2025-05-01", amount: 50},
             {type: "Staking Reward", claimedDate: "2025-05-10", amount: 25}
           ],
@@ -246,10 +246,25 @@ export const MembershipProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       const newMembership: MembershipData = {
         isActive: true,
         type: type,
-        startDate: new Date(),
+        startDate: new Date().toISOString(),
+        expiryDate: new Date(Date.now() + (type === MembershipType.Merchant ? 180 : 365) * 24 * 60 * 60 * 1000).toISOString(),
         endDate: new Date(Date.now() + (type === MembershipType.Merchant ? 180 : 365) * 24 * 60 * 60 * 1000),
-        claimedRewards: false,
-        referrals: membershipData?.referrals || []
+        hasClaimedRewards: false,
+        referrals: membershipData?.referrals || [],
+        status: "Active",
+        level: "Bronze",
+        rewards: 0,
+        earnings: "0 BIT",
+        level2Referrals: 0,
+        level3Referrals: 0,
+        level4Referrals: 0,
+        level5Referrals: 0,
+        level6Referrals: 0,
+        level7Referrals: 0,
+        pendingRewards: [],
+        claimedRewardsArray: [],
+        referralEarnings: 0,
+        stakingEarnings: 0
       };
       
       setMembershipData(newMembership);
@@ -292,7 +307,7 @@ export const MembershipProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       // Update membership data to show claimed rewards
       setMembershipData({
         ...membershipData,
-        claimedRewards: true
+        hasClaimedRewards: true // Updated from claimedRewards
       });
       
       toast({

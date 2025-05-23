@@ -8,8 +8,9 @@ import { BadgeCheck, Gift, Clock, ArrowRight } from "lucide-react";
 const DashboardRewards = () => {
   const { membershipData } = useMembership();
   
+  // Use the new property names and provide defaults
   const pendingRewards = membershipData?.pendingRewards || [];
-  const claimedRewards = membershipData?.claimedRewards || [];
+  const claimedRewards = membershipData?.claimedRewardsArray || [];
   
   return (
     <div className="space-y-6">
