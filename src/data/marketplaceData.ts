@@ -13,12 +13,12 @@ export const categories: Category[] = [
 ];
 
 export const categoryIcons: Record<string, React.ReactNode> = {
-  'electronics': <HeadphonesIcon className="h-5 w-5 text-gray-300" />,
-  'clothing': <ShoppingBag className="h-5 w-5 text-gray-300" />,
-  'home': <Home className="h-5 w-5 text-gray-300" />,
-  'digital': <FileCode className="h-5 w-5 text-gray-300" />,
-  'services': <HeartHandshake className="h-5 w-5 text-gray-300" />,
-  'collectibles': <Gift className="h-5 w-5 text-gray-300" />
+  'electronics': React.createElement(HeadphonesIcon, { className: "h-5 w-5 text-gray-300" }),
+  'clothing': React.createElement(ShoppingBag, { className: "h-5 w-5 text-gray-300" }),
+  'home': React.createElement(Home, { className: "h-5 w-5 text-gray-300" }),
+  'digital': React.createElement(FileCode, { className: "h-5 w-5 text-gray-300" }),
+  'services': React.createElement(HeartHandshake, { className: "h-5 w-5 text-gray-300" }),
+  'collectibles': React.createElement(Gift, { className: "h-5 w-5 text-gray-300" })
 };
 
 export const featuredStores = [
