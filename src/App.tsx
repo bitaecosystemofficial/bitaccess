@@ -18,7 +18,6 @@ import Swap from "./pages/Swap";
 import Docs from "./pages/Docs";
 import GuideDetails from "./pages/GuideDetails";
 import Contact from "./pages/Contact";
-import SpinWheel from "./pages/SpinWheel";
 import NotFound from "./pages/NotFound";
 import Education from "./pages/Education";
 import Community from "./pages/Community";
@@ -36,6 +35,7 @@ import MerchantDashboard from "./pages/MerchantDashboard";
 import MerchantStore from "./pages/MerchantStore";
 import MerchantListing from "./pages/MerchantListing";
 import BecomeAMerchant from "./pages/BecomeAMerchant";
+import MembershipCard from "./pages/MembershipCard";
 
 const queryClient = new QueryClient();
 
@@ -80,7 +80,7 @@ const AppRoutes = () => {
       <Route path="/presale" element={<Presale />} />
       <Route path="/staking" element={<Staking />} />
       <Route path="/swap" element={<Swap />} />
-      <Route path="/spin-wheel" element={<SpinWheel />} />
+      <Route path="/membership-card" element={<MembershipCard />} />
       <Route path="/docs" element={<Docs />} />
       <Route path="/guides/:guideId" element={<GuideDetails />} />
       <Route path="/whitepaper" element={<WhitepaperDetails />} />

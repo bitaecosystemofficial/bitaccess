@@ -9,7 +9,7 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
-import { Check, AlertCircle } from "lucide-react";
+import { Check, AlertCircle, Globe } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { useMembership } from "@/contexts/MembershipContext";
 import { toast } from "@/hooks/use-toast";
@@ -38,6 +38,7 @@ const MerchantSection = () => {
         "$1 USDT worth of BNB Reward",
         "$2 USDT worth of BIT Token Rewards",
         "Discounts from all our Products & Services",
+        "Cross Border Payments Card",
         "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level, 2.5% - 4th to 7th Level"
       ]
     },
@@ -53,6 +54,7 @@ const MerchantSection = () => {
         "$1 USDT worth of USDT Reward",
         "$1 USDT worth of BNB Reward",
         "$10 USDT worth of BIT Token Rewards",
+        "Premium Cross Border Payments Card",
         "Bit Merchant Stickers",
         "Promotions and Advertisements on BIT Community",
         "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level, 2.5% - 4th to 7th Level"
