@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { QrCode } from "lucide-react";
 
 interface CardBackProps {
   startDate: string;
@@ -9,7 +10,7 @@ interface CardBackProps {
 
 const CardBack: React.FC<CardBackProps> = ({ startDate, endDate }) => {
   const CONTRACT_ADDRESS = "0xd3bde17ebd27739cf5505cd58ecf31cb628e469c";
-  const CONTRACT_ADDRESS_SHORT = "0xd3bd...469c";
+  const CONTRACT_ADDRESS_SHORT = "0x0002...";
   
   // QR code URL for the contract
   const contractQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://bscscan.com/token/${CONTRACT_ADDRESS}`;
@@ -30,7 +31,7 @@ const CardBack: React.FC<CardBackProps> = ({ startDate, endDate }) => {
             <p className="text-sm font-mono text-bitaccess-gold">{CONTRACT_ADDRESS_SHORT}</p>
           </div>
           
-          <div className="flex justify-center my-2">
+          <div className="flex justify-center my-4">
             <div className="w-28 h-28 bg-white p-2 rounded-md flex items-center justify-center">
               <img
                 src={contractQrUrl}
@@ -40,7 +41,7 @@ const CardBack: React.FC<CardBackProps> = ({ startDate, endDate }) => {
             </div>
           </div>
           
-          <div className="flex justify-between items-end mt-4">
+          <div className="flex justify-between items-end mt-auto">
             <div>
               <p className="text-xs text-gray-400">MEMBER SINCE</p>
               <p className="text-sm font-medium text-bitaccess-gold">{startDate}</p>
@@ -50,10 +51,6 @@ const CardBack: React.FC<CardBackProps> = ({ startDate, endDate }) => {
               <p className="text-xs text-gray-400 text-right">EXPIRATION DATE</p>
               <p className="text-sm font-medium text-bitaccess-gold">{endDate}</p>
             </div>
-          </div>
-          
-          <div className="text-center text-xs text-gray-500 mt-4">
-            <p>This card represents your digital membership in the BitAccess ecosystem</p>
           </div>
         </div>
       </CardContent>
