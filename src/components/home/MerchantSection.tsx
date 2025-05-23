@@ -9,7 +9,7 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
-import { Check, AlertCircle, Globe } from "lucide-react";
+import { Check, AlertCircle, Globe, CreditCard } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { useMembership } from "@/contexts/MembershipContext";
 import { toast } from "@/hooks/use-toast";
@@ -120,18 +120,18 @@ const MerchantSection = () => {
           centered
         />
         
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-8 animate-fade-in">
           {!isConnected ? (
             <Button 
               onClick={connectWallet}
-              className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black"
+              className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black transition-transform duration-300 hover:scale-105"
             >
               Connect Wallet
             </Button>
           ) : (
             <Button 
               onClick={disconnectWallet}
-              className="bg-transparent border border-bitaccess-gold hover:bg-bitaccess-gold/10 text-bitaccess-gold"
+              className="bg-transparent border border-bitaccess-gold hover:bg-bitaccess-gold/10 text-bitaccess-gold transition-transform duration-300 hover:scale-105"
             >
               Disconnect Wallet
             </Button>
@@ -139,14 +139,14 @@ const MerchantSection = () => {
         </div>
         
         {isConnected && showReferrer && (
-          <div className="max-w-md mx-auto mb-8">
+          <div className="max-w-md mx-auto mb-8 animate-fade-in">
             <div className="mb-2 text-sm text-gray-400">Enter Referrer Address (Optional)</div>
             <div className="flex gap-2">
               <Input 
                 placeholder="0x..." 
                 value={referrerAddress}
                 onChange={(e) => setReferrerAddress(e.target.value)}
-                className="bg-bitaccess-black border-gray-700"
+                className="bg-bitaccess-black border-gray-700 focus:border-bitaccess-gold/50"
               />
             </div>
             {referrerAddress && !referrerAddress.startsWith('0x') && (
@@ -162,7 +162,7 @@ const MerchantSection = () => {
           {plans.map((plan, index) => (
             <Card 
               key={index} 
-              className={`border ${plan.highlighted ? 'border-bitaccess-gold' : 'border-gray-700'} bg-bitaccess-black`}
+              className={`border ${plan.highlighted ? 'border-bitaccess-gold' : 'border-gray-700'} bg-bitaccess-black hover:shadow-lg hover:shadow-bitaccess-gold/10 transition-all duration-300 animate-fade-in animation-delay-${index * 200}`}
             >
               <CardHeader>
                 <CardTitle className={`text-xl ${plan.highlighted ? 'text-bitaccess-gold' : 'text-white'}`}>
@@ -187,12 +187,21 @@ const MerchantSection = () => {
                     </li>
                   ))}
                 </ul>
+                
+                {plan.features.includes("Cross Border Payments Card") && (
+                  <div className="mt-6 flex justify-center">
+                    <div className="relative w-16 h-10 bg-gradient-to-br from-black to-gray-800 rounded-md border border-bitaccess-gold/30 flex items-center justify-center overflow-hidden">
+                      <div className="absolute top-0 w-full h-2 bg-bitaccess-gold/50"></div>
+                      <CreditCard className="h-5 w-5 text-bitaccess-gold/80" />
+                    </div>
+                  </div>
+                )}
               </CardContent>
               <CardFooter className="flex flex-col gap-2">
                 <Button 
                   className={`w-full ${plan.highlighted 
                     ? 'bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black' 
-                    : 'bg-transparent border border-gray-600 hover:border-bitaccess-gold text-gray-300 hover:text-bitaccess-gold'}`}
+                    : 'bg-transparent border border-gray-600 hover:border-bitaccess-gold text-gray-300 hover:text-bitaccess-gold'} transition-transform duration-300 hover:scale-102`}
                   onClick={() => handleSubscribe(plan.name)}
                   disabled={isProcessing || membershipData?.isActive}
                 >
