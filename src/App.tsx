@@ -26,7 +26,6 @@ import Governance from "./pages/Governance";
 import CourseDetails from "./pages/CourseDetails";
 import DexAnalyticsPage from "./pages/DexAnalytics";
 import WhitepaperDetails from "./pages/WhitepaperDetails";
-import Dashboard from "./pages/Dashboard";
 import VideoPortal from "./pages/VideoPortal";
 import VideoDetails from "./pages/VideoDetails";
 import Marketplace from "./pages/Marketplace";
@@ -36,6 +35,7 @@ import OrdersPage from "./pages/OrdersPage";
 import MerchantDashboard from "./pages/MerchantDashboard";
 import MerchantStore from "./pages/MerchantStore";
 import MerchantListing from "./pages/MerchantListing";
+import BecomeAMerchant from "./pages/BecomeAMerchant";
 
 const queryClient = new QueryClient();
 
@@ -55,11 +55,26 @@ const SubscriptionRoute = ({ element }: { element: React.ReactNode }) => {
   return <>{element}</>;
 };
 
+// Merchant route guard for merchant-only content
+const MerchantRoute = ({ element }: { element: React.ReactNode }) => {
+  const { isConnected } = useWallet();
+  const { membershipData, isLoading } = useMembership();
+
+  if (isLoading) {
+    return <div className="p-8 text-center">Loading...</div>;
+  }
+
+  if (!isConnected || !membershipData?.isActive || membershipData?.type !== "Merchant") {
+    return <Navigate to="/become-merchant" />;
+  }
+
+  return <>{element}</>;
+};
+
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Index />} />
-      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/about" element={<About />} />
       <Route path="/airdrop" element={<Airdrop />} />
       <Route path="/presale" element={<Presale />} />
@@ -87,7 +102,8 @@ const AppRoutes = () => {
       <Route path="/marketplace/cart" element={<CartPage />} />
       <Route path="/marketplace/checkout" element={<CheckoutPage />} />
       <Route path="/marketplace/orders" element={<OrdersPage />} />
-      <Route path="/marketplace/merchant/dashboard" element={<MerchantDashboard />} />
+      <Route path="/become-merchant" element={<BecomeAMerchant />} />
+      <Route path="/marketplace/merchant/dashboard" element={<MerchantRoute element={<MerchantDashboard />} />} />
       <Route path="/marketplace/merchant/:merchantId" element={<MerchantStore />} />
       <Route path="/marketplace/merchants" element={<MerchantListing />} />
       <Route path="*" element={<NotFound />} />

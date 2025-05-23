@@ -1,31 +1,29 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useWallet } from "./WalletContext";
+import { storeService } from "@/services/StoreService";
 import { toast } from "@/hooks/use-toast";
-import { ethers } from "ethers";
-import { membershipService, ReferralEarning } from "@/services/MembershipService";
+import { useQueryClient } from "@tanstack/react-query";
 
 export enum MembershipType {
-  None = -1,
-  Regular = 0,
-  Merchant = 1
+  Regular = "Regular",
+  Merchant = "Merchant"
 }
 
-export interface MembershipData {
+interface MembershipData {
+  isActive: boolean;
   type: MembershipType;
   startDate: Date;
   endDate: Date;
-  referrer: string;
   claimedRewards: boolean;
-  isActive: boolean;
   referrals: string[];
 }
 
 interface MembershipStats {
-  totalDeposits: string;
-  totalWithdrawals: string;
   totalSubscribers: number;
   activeSubscriptions: number;
+  totalDeposits: string;
+  totalWithdrawals: string;
   referralEarnings: string;
   availableEarnings: string;
 }
@@ -35,312 +33,343 @@ interface MembershipContextType {
   membershipStats: MembershipStats | null;
   isLoading: boolean;
   loadingStats: boolean;
-  referralEarningsHistory: ReferralEarning[];
   subscribe: (type: MembershipType, referrer?: string) => Promise<boolean>;
   claimRewards: () => Promise<boolean>;
-  withdrawEarnings: () => Promise<boolean>;
   getReferrals: () => Promise<string[]>;
   getReferralsByLevel: (level: number) => Promise<string[]>;
-  refreshMembership: () => Promise<void>;
-  refreshStats: () => Promise<void>;
-  loadReferralEarningsHistory: () => Promise<void>;
+  withdrawEarnings: () => Promise<boolean>;
+  referralEarningsHistory: any[];
 }
 
-const defaultMembershipData: MembershipData = {
-  type: MembershipType.None,
-  startDate: new Date(),
-  endDate: new Date(),
-  referrer: "",
-  claimedRewards: false,
-  isActive: false,
-  referrals: []
-};
+const MembershipContext = createContext<MembershipContextType | undefined>(undefined);
 
-const MembershipContext = createContext<MembershipContextType>({
-  membershipData: defaultMembershipData,
-  membershipStats: null,
-  isLoading: false,
-  loadingStats: false,
-  referralEarningsHistory: [],
-  subscribe: async () => false,
-  claimRewards: async () => false,
-  withdrawEarnings: async () => false,
-  getReferrals: async () => [],
-  getReferralsByLevel: async () => [],
-  refreshMembership: async () => {},
-  refreshStats: async () => {},
-  loadReferralEarningsHistory: async () => {}
-});
-
-interface MembershipProviderProps {
-  children: React.ReactNode;
-}
-
-export function MembershipProvider({ children }: MembershipProviderProps) {
+export const MembershipProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isConnected, address } = useWallet();
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingStats, setLoadingStats] = useState(true);
   const [membershipData, setMembershipData] = useState<MembershipData | null>(null);
   const [membershipStats, setMembershipStats] = useState<MembershipStats | null>(null);
-  const [referralEarningsHistory, setReferralEarningsHistory] = useState<ReferralEarning[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [loadingStats, setLoadingStats] = useState<boolean>(false);
+  const [referralEarningsHistory, setReferralEarningsHistory] = useState<any[]>([]);
+  const queryClient = useQueryClient();
 
-  const subscribe = async (type: MembershipType, referrer: string = ethers.constants.AddressZero): Promise<boolean> => {
-    try {
-      setIsLoading(true);
-      
-      await membershipService.subscribe(type, referrer);
-      
-      toast({
-        title: "Subscription Successful",
-        description: `You have successfully subscribed to the ${type === MembershipType.Regular ? "Regular" : "Merchant"} membership!`,
-      });
-      
-      await refreshMembership();
-      await refreshStats();
-      return true;
-    } catch (error: any) {
-      console.error("Subscription error:", error);
-      toast({
-        title: "Subscription Failed",
-        description: error.message || "An error occurred during subscription",
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const claimRewards = async (): Promise<boolean> => {
-    try {
-      setIsLoading(true);
-      
-      await membershipService.withdrawAllRewards();
-      
-      toast({
-        title: "Rewards Claimed",
-        description: "You have successfully claimed your membership rewards!",
-      });
-      
-      await refreshMembership();
-      return true;
-    } catch (error: any) {
-      console.error("Claiming rewards error:", error);
-      toast({
-        title: "Claiming Failed",
-        description: error.message || "An error occurred while claiming rewards",
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const withdrawEarnings = async (): Promise<boolean> => {
-    try {
-      setIsLoading(true);
-      
-      await membershipService.withdrawEarnings();
-      
-      toast({
-        title: "Earnings Withdrawn",
-        description: "You have successfully withdrawn your referral earnings!",
-      });
-      
-      await refreshStats();
-      return true;
-    } catch (error: any) {
-      console.error("Withdrawing earnings error:", error);
-      toast({
-        title: "Withdrawal Failed",
-        description: error.message || "An error occurred while withdrawing earnings",
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const getReferrals = async (): Promise<string[]> => {
-    try {
-      if (!isConnected || !address) return [];
-      
-      return await membershipService.getUserReferrals(address);
-    } catch (error) {
-      console.error("Error getting referrals:", error);
-      return [];
-    }
-  };
-
-  const getReferralsByLevel = async (level: number): Promise<string[]> => {
-    try {
-      if (!isConnected || !address) return [];
-      
-      return await membershipService.getReferralsByLevel(address, level);
-    } catch (error) {
-      console.error(`Error getting level ${level} referrals:`, error);
-      return [];
-    }
-  };
-
-  const loadReferralEarningsHistory = async (): Promise<void> => {
-    if (!isConnected || !address) {
-      setReferralEarningsHistory([]);
-      return;
-    }
-
-    try {
-      const history = await membershipService.getReferralEarningsHistory(address);
-      setReferralEarningsHistory(history);
-    } catch (error) {
-      console.error("Error loading referral earnings history:", error);
-    }
-  };
-
-  const refreshMembership = async (): Promise<void> => {
-    if (!isConnected || !address) {
-      setMembershipData(null);
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      
-      const isActive = await membershipService.isSubscribed(address);
-      if (!isActive) {
-        setMembershipData({
-          ...defaultMembershipData,
-          isActive: false
-        });
+  // Simulate loading membership data when wallet connects
+  useEffect(() => {
+    const loadMembershipData = async () => {
+      if (!isConnected || !address) {
+        setMembershipData(null);
+        setIsLoading(false);
         return;
       }
-      
-      const subscription = await membershipService.getUserSubscription(address);
-      const referrals = await membershipService.getUserReferrals(address);
-      
-      setMembershipData({
-        type: subscription.mType,
-        startDate: subscription.startDate,
-        endDate: subscription.endDate,
-        referrer: subscription.referrer,
-        claimedRewards: subscription.claimedRewards,
-        isActive,
-        referrals
-      });
+
+      setIsLoading(true);
+      try {
+        // This is mock data - in a real app, we would fetch this from a backend
+        // For merchant functionality, we attempt to check if the user is a merchant
+        const isMerchant = await checkMerchantStatus(address);
+        
+        // Set mock membership data or null if no active membership
+        const mockMembership: MembershipData = {
+          isActive: true,
+          type: isMerchant ? MembershipType.Merchant : MembershipType.Regular,
+          startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+          endDate: new Date(Date.now() + 335 * 24 * 60 * 60 * 1000), // 335 days from now
+          claimedRewards: false,
+          referrals: ["0x123...456", "0x789...012", "0xABC...DEF"]
+        };
+        
+        setMembershipData(mockMembership);
+        
+        // Load membership stats
+        await loadMembershipStats();
+        
+        // Load earnings history
+        await loadEarningsHistory();
+      } catch (error) {
+        console.error("Error loading membership data:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load membership data",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadMembershipData();
+  }, [isConnected, address]);
+  
+  // Check if the user is a merchant
+  const checkMerchantStatus = async (userAddress: string): Promise<boolean> => {
+    try {
+      // In a real app, this would call a contract or API
+      // For now, this is a mock that simulates a merchant check
+      const status = await storeService.getStoreStatus(userAddress);
+      return status > 0;
     } catch (error) {
-      console.error("Error refreshing membership:", error);
-      setMembershipData(null);
-    } finally {
-      setIsLoading(false);
+      console.error("Error checking merchant status:", error);
+      return false;
     }
   };
-
-  const refreshStats = async (): Promise<void> => {
-    if (!isConnected || !address) {
-      setMembershipStats(null);
-      return;
-    }
-
+  
+  // Load membership statistics
+  const loadMembershipStats = async () => {
+    setLoadingStats(true);
     try {
-      setLoadingStats(true);
+      // In a real app, this would fetch from a backend
+      // For now, we'll use mock data
+      const mockStats: MembershipStats = {
+        totalSubscribers: 2345,
+        activeSubscriptions: 1892,
+        totalDeposits: "102500.00",
+        totalWithdrawals: "67892.50",
+        referralEarnings: "120.50",
+        availableEarnings: "45.75"
+      };
       
-      const stats = await membershipService.getTotalStats();
-      const referralEarnings = await membershipService.getReferralEarnings(address);
-      const availableEarnings = await membershipService.getAvailableEarnings(address);
-      
-      setMembershipStats({
-        totalDeposits: stats.deposits,
-        totalWithdrawals: stats.withdrawals,
-        totalSubscribers: stats.subscribers,
-        activeSubscriptions: stats.activeSubscriptions,
-        referralEarnings,
-        availableEarnings
-      });
+      setMembershipStats(mockStats);
     } catch (error) {
-      console.error("Error refreshing stats:", error);
-      setMembershipStats(null);
+      console.error("Error loading membership stats:", error);
     } finally {
       setLoadingStats(false);
     }
   };
-
-  useEffect(() => {
-    if (isConnected && address) {
-      refreshMembership();
-      refreshStats();
-      loadReferralEarningsHistory();
-
-      // Subscribe to membership events
-      const setupEventListeners = async () => {
-        try {
-          await membershipService.subscribeToMembershipEvents((event) => {
-            console.log('Membership event:', event);
-            
-            // Refresh data when events occur
-            if (event.args.user?.toLowerCase() === address?.toLowerCase() || 
-                event.args.referrer?.toLowerCase() === address?.toLowerCase()) {
-              refreshMembership();
-              refreshStats();
-              loadReferralEarningsHistory();
-              
-              if (event.event === "RewardsClaimed") {
-                toast({
-                  title: "Rewards Claimed",
-                  description: `Rewards have been claimed!`
-                });
-              } else if (event.event === "ReferralEarned") {
-                toast({
-                  title: "Referral Bonus Earned",
-                  description: `You earned ${event.args.amount} USDT from a level ${event.args.level} referral`
-                });
-              } else if (event.event === "EarningsWithdrawn") {
-                toast({
-                  title: "Earnings Withdrawn",
-                  description: `${event.args.amount} USDT has been withdrawn to your wallet`
-                });
-              }
-            }
-          });
-        } catch (error) {
-          console.error('Error setting up event listeners:', error);
+  
+  // Load earnings history
+  const loadEarningsHistory = async () => {
+    try {
+      // Mock data for earnings history
+      const mockEarningsHistory = [
+        {
+          user: "0x123...456",
+          amount: "15.00",
+          level: 1,
+          timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+        },
+        {
+          user: "0x789...012",
+          amount: "10.00",
+          level: 1,
+          timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
+        },
+        {
+          user: "0xABC...DEF",
+          amount: "5.25",
+          level: 2,
+          timestamp: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
+        },
+        {
+          user: "0xGHI...JKL",
+          amount: "2.50",
+          level: 3,
+          timestamp: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000)
         }
-      };
+      ];
       
-      setupEventListeners();
-    } else {
-      setMembershipData(null);
-      setMembershipStats(null);
-      setReferralEarningsHistory([]);
+      setReferralEarningsHistory(mockEarningsHistory);
+    } catch (error) {
+      console.error("Error loading earnings history:", error);
+    }
+  };
+  
+  // Subscribe to membership
+  const subscribe = async (type: MembershipType, referrer?: string): Promise<boolean> => {
+    if (!isConnected) {
+      toast({
+        title: "Wallet Not Connected",
+        description: "Please connect your wallet to subscribe",
+        variant: "destructive",
+      });
+      return false;
     }
     
-    return () => {
-      membershipService.cleanup();
+    try {
+      setIsLoading(true);
+      
+      // In a real app, this would call a contract to purchase a subscription
+      // For now, we'll simulate a successful subscription
+      
+      // For merchant subscription, we'll use the StoreService
+      if (type === MembershipType.Merchant) {
+        const duration = 180; // 6 months in days
+        const planName = "Merchant";
+        
+        const result = await storeService.payWithToken(planName, duration, "USDT");
+        
+        if (!result.success) {
+          toast({
+            title: "Subscription Failed",
+            description: result.error || "Transaction failed",
+            variant: "destructive",
+          });
+          return false;
+        }
+      }
+      
+      // Set new membership data
+      const newMembership: MembershipData = {
+        isActive: true,
+        type: type,
+        startDate: new Date(),
+        endDate: new Date(Date.now() + (type === MembershipType.Merchant ? 180 : 365) * 24 * 60 * 60 * 1000),
+        claimedRewards: false,
+        referrals: membershipData?.referrals || []
+      };
+      
+      setMembershipData(newMembership);
+      
+      // Invalidate any queries that might depend on membership status
+      queryClient.invalidateQueries();
+      
+      toast({
+        title: "Subscription Successful",
+        description: `You are now a ${type} member!`,
+      });
+      
+      return true;
+    } catch (error) {
+      console.error("Error subscribing:", error);
+      toast({
+        title: "Subscription Error",
+        description: "An error occurred during subscription",
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Claim membership rewards
+  const claimRewards = async (): Promise<boolean> => {
+    if (!isConnected || !membershipData?.isActive) {
+      return false;
+    }
+    
+    try {
+      setIsLoading(true);
+      
+      // In a real app, this would call a contract to claim rewards
+      // For now, we'll simulate claiming rewards with a delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Update membership data to show claimed rewards
+      setMembershipData({
+        ...membershipData,
+        claimedRewards: true
+      });
+      
+      toast({
+        title: "Rewards Claimed",
+        description: "Your membership rewards have been sent to your wallet",
+      });
+      
+      return true;
+    } catch (error) {
+      console.error("Error claiming rewards:", error);
+      toast({
+        title: "Claim Error",
+        description: "Failed to claim rewards",
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Get referrals
+  const getReferrals = async (): Promise<string[]> => {
+    if (!isConnected || !membershipData?.isActive) {
+      return [];
+    }
+    
+    // In a real app, this would fetch from a backend
+    return membershipData.referrals;
+  };
+  
+  // Get referrals by level
+  const getReferralsByLevel = async (level: number): Promise<string[]> => {
+    if (!isConnected || !membershipData?.isActive) {
+      return [];
+    }
+    
+    // Mock data for different levels
+    const mockReferralsByLevel: Record<number, string[]> = {
+      1: membershipData.referrals,
+      2: ["0xDEF...456", "0xGHI...789"],
+      3: ["0xJKL...012"],
+      4: ["0xMNO...345", "0xPQR...678", "0xSTU...901"],
+      5: ["0xVWX...234"],
+      6: [],
+      7: []
     };
-  }, [isConnected, address]);
+    
+    return mockReferralsByLevel[level] || [];
+  };
+  
+  // Withdraw earnings
+  const withdrawEarnings = async (): Promise<boolean> => {
+    if (!isConnected || !membershipData?.isActive) {
+      return false;
+    }
+    
+    try {
+      setIsLoading(true);
+      
+      // In a real app, this would call a contract to withdraw earnings
+      // For now, we'll simulate a withdrawal with a delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Update stats to show withdrawn earnings
+      if (membershipStats) {
+        setMembershipStats({
+          ...membershipStats,
+          availableEarnings: "0.00"
+        });
+      }
+      
+      toast({
+        title: "Withdrawal Successful",
+        description: "Your earnings have been sent to your wallet",
+      });
+      
+      return true;
+    } catch (error) {
+      console.error("Error withdrawing earnings:", error);
+      toast({
+        title: "Withdrawal Error",
+        description: "Failed to withdraw earnings",
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <MembershipContext.Provider 
-      value={{ 
-        membershipData, 
-        membershipStats,
-        isLoading, 
-        loadingStats,
-        referralEarningsHistory,
-        subscribe, 
-        claimRewards,
-        withdrawEarnings,
-        getReferrals,
-        getReferralsByLevel,
-        refreshMembership,
-        refreshStats,
-        loadReferralEarningsHistory
-      }}
-    >
+    <MembershipContext.Provider value={{ 
+      membershipData, 
+      membershipStats,
+      isLoading, 
+      loadingStats,
+      subscribe,
+      claimRewards,
+      getReferrals,
+      getReferralsByLevel,
+      withdrawEarnings,
+      referralEarningsHistory
+    }}>
       {children}
     </MembershipContext.Provider>
   );
-}
+};
 
-export const useMembership = () => useContext(MembershipContext);
+export const useMembership = (): MembershipContextType => {
+  const context = useContext(MembershipContext);
+  if (context === undefined) {
+    throw new Error("useMembership must be used within a MembershipProvider");
+  }
+  return context;
+};

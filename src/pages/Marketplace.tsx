@@ -1,212 +1,215 @@
-
-import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
-import ProductCard from '@/components/marketplace/ProductCard';
-import CategoryCard from '@/components/marketplace/CategoryCard';
-import MarketplaceFilters from '@/components/marketplace/MarketplaceFilters';
-import { products, categories } from '@/data/marketplaceData';
-import { FilterOptions, Product } from '@/types/marketplace';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Package } from 'lucide-react';
+import { useWallet } from '@/contexts/WalletContext';
+import { useMembership } from '@/contexts/MembershipContext';
+import { Store } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import ProductCard from '@/components/marketplace/ProductCard';
+import { products, categories, featuredStores } from '@/data/marketplaceData';
+import { Search, Filter, ShoppingBag, Tag, TrendingUp } from 'lucide-react';
 
 const Marketplace = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const initialCategory = searchParams.get('category');
+  const navigate = useNavigate();
+  const { isConnected } = useWallet();
+  const { membershipData } = useMembership();
+  
+  const isMerchant = isConnected && membershipData?.isActive && membershipData.type === 'Merchant';
 
-  const [filters, setFilters] = useState<FilterOptions>({
-    category: initialCategory,
-    minPrice: 0,
-    maxPrice: 1500, // This should be dynamic based on your product range
-    sortBy: 'newest',
-    searchQuery: ''
-  });
-
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-
-  // Display only first 5 categories
-  const displayedCategories = categories.slice(0, 5);
-
-  // Update URL when category changes
-  useEffect(() => {
-    const params = new URLSearchParams();
-    if (filters.category) {
-      params.set('category', filters.category);
-    }
-    setSearchParams(params);
-  }, [filters.category, setSearchParams]);
-
-  // Filter products based on current filters
-  useEffect(() => {
-    let result = [...products];
-
-    // Filter by category
-    if (filters.category) {
-      result = result.filter(product => product.category === filters.category);
-    }
-
-    // Filter by price range
-    result = result.filter(product => 
-      product.price >= filters.minPrice && 
-      product.price <= filters.maxPrice
-    );
-
-    // Filter by search query
-    if (filters.searchQuery) {
-      const query = filters.searchQuery.toLowerCase();
-      result = result.filter(product => 
-        product.name.toLowerCase().includes(query) || 
-        product.description.toLowerCase().includes(query) ||
-        product.tags?.some(tag => tag.toLowerCase().includes(query))
-      );
-    }
-
-    // Sort products
-    switch(filters.sortBy) {
-      case 'price-low':
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-high':
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case 'popular':
-        result.sort((a, b) => b.seller.rating - a.seller.rating);
-        break;
-      case 'newest':
-      default:
-        result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    }
-
-    setFilteredProducts(result);
-  }, [filters]);
-
-  const handleFilterChange = (newFilters: FilterOptions) => {
-    setFilters(newFilters);
+  // Function to navigate to the merchant page
+  const goToBecomeMerchant = () => {
+    navigate('/become-merchant');
   };
-
-  const handleCategoryClick = (categoryId: string | null) => {
-    setFilters({ ...filters, category: categoryId });
-  };
-
-  const toggleMobileFilters = () => {
-    setMobileFiltersOpen(!mobileFiltersOpen);
+  
+  // Function to navigate to merchant dashboard
+  const goToMerchantDashboard = () => {
+    navigate('/marketplace/merchant/dashboard');
   };
 
   return (
     <Layout>
-      <div className="container px-4 py-12">
-        <div className="flex justify-between items-center mb-8">
+      <div className="container px-4 py-12 mt-16">
+        {/* Marketplace Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Marketplace</h1>
-            <p className="text-gray-400">Browse and purchase products with cryptocurrency</p>
+            <h1 className="text-3xl font-bold mb-2 bg-gold-gradient text-transparent bg-clip-text">
+              BitAccess Marketplace
+            </h1>
+            <p className="text-gray-400">
+              Discover products and services from our community members
+            </p>
           </div>
           
-          {/* Mobile search and filter buttons */}
-          <div className="flex space-x-2 md:hidden">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="border-bitaccess-gold/30"
-              onClick={toggleMobileFilters}
-            >
-              <Package className="h-4 w-4 text-bitaccess-gold" />
-            </Button>
-            <div className="relative w-full">
-              <Search className="absolute top-3 left-3 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search..."
-                value={filters.searchQuery}
-                onChange={(e) => handleFilterChange({...filters, searchQuery: e.target.value})}
-                className="pl-9 bg-bitaccess-black border-bitaccess-gold/20"
-              />
+          {isConnected && (
+            <div className="mt-4 md:mt-0">
+              {isMerchant ? (
+                <Button 
+                  className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black flex items-center"
+                  onClick={goToMerchantDashboard}
+                >
+                  <Store className="mr-2 h-4 w-4" />
+                  Merchant Dashboard
+                </Button>
+              ) : (
+                <Button 
+                  className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black flex items-center"
+                  onClick={goToBecomeMerchant}
+                >
+                  <Store className="mr-2 h-4 w-4" />
+                  Become a Merchant
+                </Button>
+              )}
             </div>
+          )}
+        </div>
+        
+        {/* Search and Filter */}
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <div className="relative flex-grow">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+            <Input 
+              placeholder="Search products, categories, or merchants..." 
+              className="pl-10 bg-bitaccess-black-light border-gray-700"
+            />
           </div>
+          <Button variant="outline" className="flex items-center gap-2">
+            <Filter className="h-4 w-4" />
+            <span>Filters</span>
+          </Button>
         </div>
 
-        {/* Categories - Displaying only 5 */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-white mb-4">Categories</h2>
+        {/* Featured Categories */}
+        <div className="mb-12">
+          <h2 className="text-xl font-semibold mb-4">Categories</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            <div 
-              className={`
-                p-4 border rounded-lg text-center cursor-pointer transition-colors
-                ${filters.category === null
-                  ? 'border-bitaccess-gold bg-bitaccess-gold/10' 
-                  : 'border-bitaccess-gold/10 hover:bg-bitaccess-black-light'}
-              `}
-              onClick={() => handleCategoryClick(null)}
-            >
-              <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-bitaccess-gold/10 flex items-center justify-center">
-                <Package className="w-6 h-6 text-bitaccess-gold/80" />
-              </div>
-              <h3 className={filters.category === null ? 'text-bitaccess-gold' : 'text-white'}>All Items</h3>
-              <p className="text-sm text-gray-400 mt-1">{products.length} items</p>
-            </div>
-
-            {displayedCategories.map(category => (
-              <CategoryCard 
-                key={category.id} 
-                category={category} 
-                isActive={filters.category === category.id}
-              />
+            {categories.map((category, index) => (
+              <Card 
+                key={index} 
+                className="bg-bitaccess-black-light border-gray-700 hover:border-bitaccess-gold transition-colors cursor-pointer"
+                onClick={() => navigate(`/marketplace?category=${category.slug}`)}
+              >
+                <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                  <div className="w-12 h-12 rounded-full bg-bitaccess-black flex items-center justify-center mb-3">
+                    {category.icon}
+                  </div>
+                  <h3 className="font-medium text-sm">{category.name}</h3>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Filters - Desktop */}
-          <div className="hidden md:block w-72 shrink-0">
-            <MarketplaceFilters 
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              maxPriceLimit={1500}
-              allCategories={categories}
-            />
-          </div>
+        {/* Main Content */}
+        <Tabs defaultValue="trending" className="mb-12">
+          <TabsList>
+            <TabsTrigger value="trending" className="flex gap-2">
+              <TrendingUp className="h-4 w-4" /> Trending
+            </TabsTrigger>
+            <TabsTrigger value="new" className="flex gap-2">
+              <Tag className="h-4 w-4" /> New Arrivals
+            </TabsTrigger>
+            <TabsTrigger value="deals" className="flex gap-2">
+              <ShoppingBag className="h-4 w-4" /> Best Deals
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="trending" className="mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {products.slice(0, 8).map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="new" className="mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {products.slice(8, 16).map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="deals" className="mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {products.filter(p => p.discountPercentage > 0).map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
 
-          {/* Filters - Mobile (collapsible) */}
-          <div className={`
-            md:hidden w-full 
-            ${mobileFiltersOpen ? 'block' : 'hidden'}
-          `}>
-            <MarketplaceFilters 
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              maxPriceLimit={1500}
-              allCategories={categories}
-            />
+        {/* Featured Merchants */}
+        <div className="mb-12">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Featured Merchants</h2>
+            <Button 
+              variant="link" 
+              className="text-bitaccess-gold"
+              onClick={() => navigate('/marketplace/merchants')}
+            >
+              View All
+            </Button>
           </div>
-
-          {/* Products */}
-          <div className="flex-grow">
-            {filteredProducts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProducts.map(product => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <h3 className="text-xl text-white">No products found</h3>
-                <p className="text-gray-400 mt-2">Try adjusting your filters</p>
-                <Button 
-                  onClick={() => handleFilterChange({
-                    category: null,
-                    minPrice: 0,
-                    maxPrice: 1500,
-                    sortBy: 'newest',
-                    searchQuery: ''
-                  })}
-                  className="mt-4 bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black"
-                >
-                  Clear Filters
-                </Button>
-              </div>
-            )}
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {featuredStores.map((store, index) => (
+              <Card 
+                key={index} 
+                className="bg-bitaccess-black-light border-gray-700 hover:border-bitaccess-gold transition-colors cursor-pointer overflow-hidden"
+                onClick={() => navigate(`/marketplace/merchant/${store.id}`)}
+              >
+                <div 
+                  className="h-32 bg-cover bg-center" 
+                  style={{ backgroundImage: `url(${store.coverImage})` }}
+                />
+                <CardContent className="p-4">
+                  <div className="flex items-center mb-2">
+                    <div className="w-10 h-10 rounded-full bg-bitaccess-gold flex items-center justify-center text-black font-bold mr-3">
+                      {store.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h3 className="font-medium">{store.name}</h3>
+                      <div className="flex items-center text-sm text-gray-400">
+                        <span className="flex items-center">
+                          ⭐ {store.rating}
+                        </span>
+                        <span className="mx-2">•</span>
+                        <span>{store.productCount} products</span>
+                      </div>
+                    </div>
+                  </div>
+                  <Badge className="bg-bitaccess-black text-gray-300 hover:bg-bitaccess-black">{store.category}</Badge>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
+
+        {/* Become a Merchant CTA */}
+        {isConnected && !isMerchant && (
+          <Card className="border-bitaccess-gold/30 bg-gradient-to-r from-bitaccess-black to-bitaccess-black-light mb-12">
+            <CardContent className="p-8 flex flex-col md:flex-row items-center justify-between">
+              <div className="mb-4 md:mb-0">
+                <h3 className="text-xl font-bold text-bitaccess-gold mb-2">Become a Merchant</h3>
+                <p className="text-gray-300 max-w-lg">
+                  Start selling your products or services on the BitAccess Marketplace. 
+                  Reach crypto enthusiasts and accept cryptocurrency payments.
+                </p>
+              </div>
+              <Button 
+                className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black"
+                onClick={goToBecomeMerchant}
+              >
+                <Store className="mr-2 h-4 w-4" />
+                Get Started
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </Layout>
   );

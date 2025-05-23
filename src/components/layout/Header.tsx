@@ -2,6 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useWallet } from "@/contexts/WalletContext";
+import { useMembership } from "@/contexts/MembershipContext";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Logo from "@/components/ui/logo";
@@ -13,10 +14,17 @@ import { NAVIGATION_ITEMS } from "./navigationConstants";
 
 const Header = () => {
   const { address, isConnected, connectWallet, disconnectWallet } = useWallet();
+  const { membershipData } = useMembership();
   const isMobile = useIsMobile();
-
-  // Add marketplace to navigation items when wallet is connected
-  const navItems = [...NAVIGATION_ITEMS];
+  
+  // Filter navigation items based on merchant status
+  const navItems = [...NAVIGATION_ITEMS].filter(item => {
+    // Hide "Become A Merchant" if user is already a merchant
+    if (item.href === "/become-merchant" && membershipData?.type === "Merchant") {
+      return false;
+    }
+    return true;
+  });
   
   // Add marketplace to navigation if wallet is connected
   if (isConnected) {
@@ -24,6 +32,16 @@ const Header = () => {
       navItems.push({
         label: "Marketplace",
         href: "/marketplace",
+        requiresWallet: true,
+        hideWhenConnected: false,
+      });
+    }
+    
+    // Add Merchant Dashboard link if user is a merchant
+    if (membershipData?.type === "Merchant" && !navItems.some(item => item.href === "/marketplace/merchant/dashboard")) {
+      navItems.push({
+        label: "Merchant Dashboard",
+        href: "/marketplace/merchant/dashboard",
         requiresWallet: true,
         hideWhenConnected: false,
       });

@@ -1,293 +1,244 @@
 
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { useWallet } from '@/contexts/WalletContext';
-import { useToast } from '@/hooks/use-toast';
-import { 
-  ShoppingBag, 
-  PackageOpen, 
-  Clock, 
-  MessageSquare, 
-  Edit, 
-  Tag, 
-  Store, 
-  PlusCircle
-} from 'lucide-react';
-import MerchantProducts from '@/components/marketplace/merchant/MerchantProducts';
+import { useMembership } from '@/contexts/MembershipContext';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 import MerchantOrders from '@/components/marketplace/merchant/MerchantOrders';
-import MerchantInbox from '@/components/marketplace/merchant/MerchantInbox';
-import MerchantCoupons from '@/components/marketplace/merchant/MerchantCoupons';
-import MerchantSubscription from '@/components/marketplace/merchant/MerchantSubscription';
-import { storeService } from '@/services/StoreService';
+import { Package, Store, MessageSquare, Tag, PlusCircle, Clock } from 'lucide-react';
 
 const MerchantDashboard = () => {
-  const { isConnected, address } = useWallet();
+  const { isConnected } = useWallet();
+  const { membershipData, isLoading } = useMembership();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [loading, setLoading] = useState(true);
-  const [isMerchant, setIsMerchant] = useState(false);
-  const [subscriptionEnd, setSubscriptionEnd] = useState<Date | null>(null);
-  const [availableCredits, setAvailableCredits] = useState(0);
+  const [activeTab, setActiveTab] = useState('products');
 
-  useEffect(() => {
-    const checkMerchantStatus = async () => {
-      if (!isConnected || !address) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const status = await storeService.getStoreStatus(address);
-        setIsMerchant(status > 0);
-        
-        if (status > 0) {
-          // Get subscription end date
-          const endTimestamp = await storeService.getSubscriptionEnd(address);
-          if (endTimestamp > 0) {
-            setSubscriptionEnd(new Date(endTimestamp * 1000));
-            
-            // Mock available credits (in a real app, this would come from the blockchain)
-            setAvailableCredits(10);
-          }
-        }
-      } catch (error) {
-        console.error("Error checking merchant status:", error);
-        // Mock data for development purposes
-        setIsMerchant(true);
-        setSubscriptionEnd(new Date(Date.now() + 180 * 24 * 60 * 60 * 1000)); // 6 months from now
-        setAvailableCredits(10);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkMerchantStatus();
-  }, [isConnected, address]);
-
-  if (!isConnected) {
+  if (!isConnected || isLoading) {
     return (
       <Layout>
-        <div className="container px-4 py-16 text-center">
-          <h1 className="text-3xl font-bold text-white mb-4">Merchant Dashboard</h1>
-          <p className="text-gray-400 mb-8">Please connect your wallet to access the merchant dashboard.</p>
-          <Button 
-            onClick={() => navigate('/')}
-            className="bg-bitaccess-gold text-black hover:bg-bitaccess-gold/90"
-          >
-            Go to Home
-          </Button>
-        </div>
-      </Layout>
-    );
-  }
-
-  if (loading) {
-    return (
-      <Layout>
-        <div className="container px-4 py-16 text-center">
-          <h1 className="text-3xl font-bold text-white mb-4">Merchant Dashboard</h1>
-          <p className="text-gray-400">Loading merchant data...</p>
-        </div>
-      </Layout>
-    );
-  }
-
-  if (!isMerchant) {
-    return (
-      <Layout>
-        <div className="container px-4 py-16">
-          <h1 className="text-3xl font-bold text-white mb-4 text-center">Merchant Dashboard</h1>
-          <p className="text-gray-400 text-center mb-8">You need a merchant subscription to access this dashboard.</p>
-          
-          <div className="max-w-md mx-auto">
-            <MerchantSubscription onSubscriptionComplete={() => setIsMerchant(true)} />
+        <div className="container px-4 py-8 mt-16">
+          <div className="flex justify-center items-center h-64">
+            <p className="text-gray-400">Loading your merchant dashboard...</p>
           </div>
         </div>
       </Layout>
     );
   }
 
-  const isExpired = subscriptionEnd ? subscriptionEnd < new Date() : true;
+  if (!membershipData?.isActive || membershipData.type !== 'Merchant') {
+    navigate('/become-merchant');
+    return null;
+  }
+
+  // Calculate days remaining in subscription
+  const daysLeft = Math.ceil((membershipData.endDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
 
   return (
     <Layout>
-      <div className="container px-4 py-12">
-        <h1 className="text-3xl font-bold text-white mb-2">Merchant Dashboard</h1>
-        
-        {/* Subscription Info */}
-        <div className="bg-bitaccess-black-light p-4 rounded-lg mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
-          <div>
-            <p className="text-gray-400 mb-2">
-              Subscription Status: 
-              <span className={`ml-2 font-medium ${isExpired ? 'text-red-500' : 'text-green-500'}`}>
-                {isExpired ? 'Expired' : 'Active'}
-              </span>
-            </p>
-            {subscriptionEnd && (
-              <p className="text-gray-400">
-                Expires: <span className="text-white">{subscriptionEnd.toLocaleDateString()}</span>
+      <div className="container px-4 py-8 mt-16">
+        <h1 className="text-3xl font-bold mb-2 bg-gold-gradient text-transparent bg-clip-text">
+          Merchant Dashboard
+        </h1>
+        <p className="text-gray-400 mb-8">
+          Manage your store, products, and orders.
+        </p>
+
+        {/* Merchant Summary */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card className="border-gray-700 bg-bitaccess-black">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm text-gray-400">Available Listing Credits</CardTitle>
+              <PlusCircle className="h-5 w-5 text-bitaccess-gold" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-white">10</div>
+              <p className="text-sm text-muted-foreground mt-1">
+                Credits used to list products on the marketplace
               </p>
-            )}
-          </div>
-          <div className="mt-4 md:mt-0">
-            <p className="text-gray-400">
-              Available Listing Credits: <span className="text-white font-bold">{availableCredits}</span>
-            </p>
-            {isExpired && (
-              <Button 
-                className="mt-2 bg-bitaccess-gold text-black hover:bg-bitaccess-gold/90"
-                onClick={() => navigate('/marketplace/merchant/subscription')}
-              >
-                Renew Subscription
-              </Button>
-            )}
-          </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-gray-700 bg-bitaccess-black">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm text-gray-400">Active Products</CardTitle>
+              <Package className="h-5 w-5 text-bitaccess-gold" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-white">0</div>
+              <p className="text-sm text-muted-foreground mt-1">
+                Products currently listed on the marketplace
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-gray-700 bg-bitaccess-black">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm text-gray-400">Subscription Expires In</CardTitle>
+              <Clock className="h-5 w-5 text-bitaccess-gold" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-white">{daysLeft} days</div>
+              <p className="text-sm text-muted-foreground mt-1">
+                Your merchant subscription is active
+              </p>
+            </CardContent>
+          </Card>
         </div>
-        
-        {/* Dashboard Tabs */}
-        <Tabs defaultValue="products" className="w-full">
-          <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
-            <TabsTrigger value="products" className="flex gap-2">
-              <ShoppingBag className="h-4 w-4" /> Products
-            </TabsTrigger>
-            <TabsTrigger value="orders" className="flex gap-2">
-              <PackageOpen className="h-4 w-4" /> Orders
-            </TabsTrigger>
-            <TabsTrigger value="inbox" className="flex gap-2">
-              <MessageSquare className="h-4 w-4" /> Inbox
-            </TabsTrigger>
-            <TabsTrigger value="coupons" className="flex gap-2">
-              <Tag className="h-4 w-4" /> Coupons
-            </TabsTrigger>
-            <TabsTrigger value="mint" className="flex gap-2">
-              <Edit className="h-4 w-4" /> Mint Products
-            </TabsTrigger>
-            <TabsTrigger value="store" className="flex gap-2">
-              <Store className="h-4 w-4" /> My Store
-            </TabsTrigger>
+
+        {/* Main Dashboard Content */}
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-8">
+            <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="orders">Orders</TabsTrigger>
+            <TabsTrigger value="store">Store</TabsTrigger>
+            <TabsTrigger value="messages">Messages</TabsTrigger>
+            <TabsTrigger value="coupons">Coupons</TabsTrigger>
           </TabsList>
           
-          <div className="mt-6">
-            <TabsContent value="products">
-              <MerchantProducts availableCredits={availableCredits} />
-            </TabsContent>
-            <TabsContent value="orders">
-              <MerchantOrders />
-            </TabsContent>
-            <TabsContent value="inbox">
-              <MerchantInbox />
-            </TabsContent>
-            <TabsContent value="coupons">
-              <MerchantCoupons />
-            </TabsContent>
-            <TabsContent value="mint">
-              <Card>
+          <TabsContent value="products">
+            <div className="mb-6 flex justify-between items-center">
+              <h2 className="text-xl font-semibold">Your Products</h2>
+              <Button className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black">
+                <PlusCircle className="mr-2 h-4 w-4" /> Add New Product
+              </Button>
+            </div>
+            
+            <Card className="border-gray-700 bg-bitaccess-black">
+              <CardContent className="p-6 flex flex-col items-center justify-center min-h-[300px]">
+                <Package className="h-16 w-16 text-gray-500 mb-4" />
+                <h3 className="text-xl font-semibold text-white mb-2">No products yet</h3>
+                <p className="text-gray-400 text-center max-w-md mb-6">
+                  You haven't added any products to your store. Add your first product to start selling.
+                </p>
+                <Button className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black">
+                  <PlusCircle className="mr-2 h-4 w-4" /> Add Your First Product
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="orders">
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-2">Recent Orders</h2>
+              <p className="text-gray-400">Manage and track your customer orders.</p>
+            </div>
+            
+            <MerchantOrders />
+          </TabsContent>
+          
+          <TabsContent value="store">
+            <div className="mb-6 flex justify-between items-center">
+              <h2 className="text-xl font-semibold">Store Management</h2>
+              <Button 
+                variant="outline" 
+                className="border-bitaccess-gold text-bitaccess-gold"
+                onClick={() => navigate('/marketplace/merchant/0x123...456')}
+              >
+                <Store className="mr-2 h-4 w-4" /> View Your Store
+              </Button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card className="border-gray-700 bg-bitaccess-black">
                 <CardHeader>
-                  <CardTitle>Mint Products for Ownership</CardTitle>
+                  <CardTitle>Store Information</CardTitle>
+                  <CardDescription>
+                    Manage your store details and appearance
+                  </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-gray-400 mb-4">
-                    Transform your products into NFTs for verified ownership and easier transfers.
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Card className="bg-bitaccess-black-light border border-bitaccess-gold/20">
-                      <CardHeader>
-                        <CardTitle className="text-sm font-medium">Minting Fee</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-2xl font-bold text-bitaccess-gold">0.01 BNB</p>
-                        <p className="text-xs text-gray-400 mt-1">Per product</p>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card className="bg-bitaccess-black-light border border-bitaccess-gold/20">
-                      <CardHeader>
-                        <CardTitle className="text-sm font-medium">Benefits</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="text-sm text-gray-400 space-y-1">
-                          <li>• Verified ownership</li>
-                          <li>• Royalty on transfers</li>
-                          <li>• Enhanced security</li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  </div>
-                  <Button className="mt-4 bg-bitaccess-gold text-black hover:bg-bitaccess-gold/90">
-                    <PlusCircle className="mr-2 h-4 w-4" /> Select Products to Mint
-                  </Button>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="store">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>My Store</span>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      onClick={() => navigate('/marketplace/merchant/store')}
-                      className="border-bitaccess-gold/30 text-bitaccess-gold"
-                    >
-                      View Public Store
-                    </Button>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
+                <CardContent className="pt-0">
                   <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="bg-bitaccess-black-light p-4 rounded-lg">
-                        <h3 className="font-medium text-gray-400 mb-1">Total Products</h3>
-                        <p className="text-2xl font-bold">12</p>
-                      </div>
-                      <div className="bg-bitaccess-black-light p-4 rounded-lg">
-                        <h3 className="font-medium text-gray-400 mb-1">Active Listings</h3>
-                        <p className="text-2xl font-bold">8</p>
-                      </div>
-                      <div className="bg-bitaccess-black-light p-4 rounded-lg">
-                        <h3 className="font-medium text-gray-400 mb-1">Total Sales</h3>
-                        <p className="text-2xl font-bold">24</p>
-                      </div>
+                    <div>
+                      <p className="text-sm text-gray-400 mb-1">Store Name</p>
+                      <p className="font-medium">Crypto Gadget Store</p>
                     </div>
-                    
-                    <div className="mt-6">
-                      <h3 className="font-medium mb-2">Store Settings</h3>
-                      <div className="grid grid-cols-1 gap-4">
-                        <div className="flex justify-between items-center p-4 bg-bitaccess-black-light rounded-lg">
-                          <div>
-                            <h4 className="font-medium">Store Name</h4>
-                            <p className="text-sm text-gray-400">Crypto Gadgets Shop</p>
-                          </div>
-                          <Button size="sm" variant="outline">Edit</Button>
-                        </div>
-                        
-                        <div className="flex justify-between items-center p-4 bg-bitaccess-black-light rounded-lg">
-                          <div>
-                            <h4 className="font-medium">Store Description</h4>
-                            <p className="text-sm text-gray-400">Best crypto-related gadgets and accessories</p>
-                          </div>
-                          <Button size="sm" variant="outline">Edit</Button>
-                        </div>
-                        
-                        <div className="flex justify-between items-center p-4 bg-bitaccess-black-light rounded-lg">
-                          <div>
-                            <h4 className="font-medium">Store Banner</h4>
-                            <p className="text-sm text-gray-400">banner-image.jpg</p>
-                          </div>
-                          <Button size="sm" variant="outline">Change</Button>
-                        </div>
-                      </div>
+                    <div>
+                      <p className="text-sm text-gray-400 mb-1">Store Description</p>
+                      <p className="text-sm text-gray-300">Premium crypto gadgets and accessories for blockchain enthusiasts.</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400 mb-1">Store Category</p>
+                      <p>Hardware & Accessories</p>
+                    </div>
+                    <Button variant="outline" size="sm" className="mt-2">
+                      Edit Store Details
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="border-gray-700 bg-bitaccess-black">
+                <CardHeader>
+                  <CardTitle>Store Statistics</CardTitle>
+                  <CardDescription>
+                    Insights and analytics for your store
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center py-2 border-b border-gray-800">
+                      <span className="text-gray-400">Store Views</span>
+                      <span className="font-medium">0</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-800">
+                      <span className="text-gray-400">Product Views</span>
+                      <span className="font-medium">0</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-800">
+                      <span className="text-gray-400">Completed Orders</span>
+                      <span className="font-medium">0</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2">
+                      <span className="text-gray-400">Conversion Rate</span>
+                      <span className="font-medium">0%</span>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            </TabsContent>
-          </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="messages">
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-2">Customer Messages</h2>
+              <p className="text-gray-400">Communicate with your customers.</p>
+            </div>
+            
+            <Card className="border-gray-700 bg-bitaccess-black">
+              <CardContent className="p-6 flex flex-col items-center justify-center min-h-[300px]">
+                <MessageSquare className="h-16 w-16 text-gray-500 mb-4" />
+                <h3 className="text-xl font-semibold text-white mb-2">No messages yet</h3>
+                <p className="text-gray-400 text-center max-w-md">
+                  When customers send you messages, they will appear here.
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="coupons">
+            <div className="mb-6 flex justify-between items-center">
+              <h2 className="text-xl font-semibold">Discount Coupons</h2>
+              <Button className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black">
+                <PlusCircle className="mr-2 h-4 w-4" /> Create New Coupon
+              </Button>
+            </div>
+            
+            <Card className="border-gray-700 bg-bitaccess-black">
+              <CardContent className="p-6 flex flex-col items-center justify-center min-h-[300px]">
+                <Tag className="h-16 w-16 text-gray-500 mb-4" />
+                <h3 className="text-xl font-semibold text-white mb-2">No coupons yet</h3>
+                <p className="text-gray-400 text-center max-w-md mb-6">
+                  You haven't created any discount coupons. Create a coupon to offer special deals to your customers.
+                </p>
+                <Button className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black">
+                  <PlusCircle className="mr-2 h-4 w-4" /> Create Your First Coupon
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
     </Layout>
