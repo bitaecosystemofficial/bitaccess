@@ -3,7 +3,7 @@ import React from 'react';
 import { useCart } from '@/contexts/CartContext';
 import CartItem from './CartItem';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Trash2 } from 'lucide-react';
+import { ShoppingCart as CartIcon, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ShoppingCart: React.FC = () => {
@@ -13,7 +13,7 @@ const ShoppingCart: React.FC = () => {
   if (cart.length === 0) {
     return (
       <div className="py-12 text-center">
-        <ShoppingCart className="h-16 w-16 mx-auto text-gray-500 mb-4" />
+        <CartIcon className="h-16 w-16 mx-auto text-gray-500 mb-4" />
         <h2 className="text-xl font-semibold text-white mb-2">Your cart is empty</h2>
         <p className="text-gray-400 mb-6">Start shopping to add items to your cart</p>
         <Button 
