@@ -139,7 +139,7 @@ const MembershipCard = () => {
               >
                 <CardContent className="p-0 h-full relative">
                   {/* Golden border decoration at top */}
-                  <div className="w-full h-8 bg-gradient-to-r from-bitaccess-gold/80 via-bitaccess-gold to-bitaccess-gold/80 border-b border-bitaccess-gold/30"></div>
+                  <div className="w-full h-4 bg-gradient-to-r from-bitaccess-gold/80 via-bitaccess-gold to-bitaccess-gold/80 border-b border-bitaccess-gold/30"></div>
                   
                   {/* Card content */}
                   <div className="p-6 h-full flex flex-col justify-between">
@@ -199,7 +199,7 @@ const MembershipCard = () => {
               >
                 <CardContent className="p-0 h-full relative">
                   {/* Golden border decoration at top */}
-                  <div className="w-full h-8 bg-gradient-to-r from-bitaccess-gold/80 via-bitaccess-gold to-bitaccess-gold/80"></div>
+                  <div className="w-full h-4 bg-gradient-to-r from-bitaccess-gold/80 via-bitaccess-gold to-bitaccess-gold/80"></div>
                   
                   {/* Card content */}
                   <div className="p-6 h-full flex flex-col justify-between">
