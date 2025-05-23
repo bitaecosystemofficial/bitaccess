@@ -21,17 +21,17 @@ const Logo: React.FC<LogoProps> = ({ className }) => {
     );
   }
   
-  // Use the circular logo design for desktop view
+  // Use the circular logo design for desktop view with updated styling to match footer
   return (
     <div className={`flex items-center ${className || ''}`}>
-      <div className="h-8 w-8 mr-2">
+      <div className="h-10 w-10 mr-2 overflow-hidden">
         <img 
           src="https://github.com/bitaecosystemofficial/BIT-Logo/raw/main/logo.png" 
           alt="BitAccess Logo" 
-          className="h-full w-auto"
+          className="h-full w-full object-contain"
         />
       </div>
-      <span className="font-bold text-lg text-white">Bit Access Ecosystem</span>
+      <span className="font-bold text-xl text-white">Bit Access Ecosystem</span>
     </div>
   );
 };

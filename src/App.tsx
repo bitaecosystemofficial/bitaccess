@@ -33,6 +33,9 @@ import Marketplace from "./pages/Marketplace";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrdersPage from "./pages/OrdersPage";
+import MerchantDashboard from "./pages/MerchantDashboard";
+import MerchantStore from "./pages/MerchantStore";
+import MerchantListing from "./pages/MerchantListing";
 
 const queryClient = new QueryClient();
 
@@ -84,6 +87,9 @@ const AppRoutes = () => {
       <Route path="/marketplace/cart" element={<CartPage />} />
       <Route path="/marketplace/checkout" element={<CheckoutPage />} />
       <Route path="/marketplace/orders" element={<OrdersPage />} />
+      <Route path="/marketplace/merchant/dashboard" element={<MerchantDashboard />} />
+      <Route path="/marketplace/merchant/:merchantId" element={<MerchantStore />} />
+      <Route path="/marketplace/merchants" element={<MerchantListing />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
