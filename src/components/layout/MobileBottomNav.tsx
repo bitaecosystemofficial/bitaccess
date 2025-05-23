@@ -40,7 +40,6 @@ const MobileBottomNav = () => {
   // Add icons to navigation items for mobile
   const navItems: NavItemWithIcon[] = [
     { label: "Home", icon: <Home className="h-6 w-6" />, href: "/", requiresWallet: false, hideWhenConnected: false },
-    { label: "Dashboard", icon: <BarChart3 className="h-6 w-6" />, href: "/dashboard", requiresWallet: true, hideWhenConnected: false },
     { label: "About", icon: <Info className="h-6 w-6" />, href: "/about", requiresWallet: false, hideWhenConnected: true },
     { label: "Education", icon: <BookOpen className="h-6 w-6" />, href: "/education", requiresWallet: false, hideWhenConnected: true },
     { label: "Videos", icon: <Video className="h-6 w-6" />, href: "/videos", requiresWallet: false, hideWhenConnected: true, requiresSubscription: true },

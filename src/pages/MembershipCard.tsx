@@ -208,7 +208,7 @@ const MembershipCard = () => {
                       </div>
                     </div>
                     
-                    <div className="flex justify-between items-end mt-4">
+                    <div className="flex justify-between items-end">
                       <div>
                         <p className="text-xs text-gray-400">MEMBER SINCE</p>
                         <p className="text-sm font-medium text-gray-200">{startDate}</p>
