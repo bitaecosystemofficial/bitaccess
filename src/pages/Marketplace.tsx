@@ -26,6 +26,9 @@ const Marketplace = () => {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
+  // Display only first 5 categories
+  const displayedCategories = categories.slice(0, 5);
+
   // Update URL when category changes
   useEffect(() => {
     const params = new URLSearchParams();
@@ -122,7 +125,7 @@ const Marketplace = () => {
           </div>
         </div>
 
-        {/* Categories */}
+        {/* Categories - Displaying only 5 */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-white mb-4">Categories</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -142,7 +145,7 @@ const Marketplace = () => {
               <p className="text-sm text-gray-400 mt-1">{products.length} items</p>
             </div>
 
-            {categories.map(category => (
+            {displayedCategories.map(category => (
               <CategoryCard 
                 key={category.id} 
                 category={category} 
@@ -159,6 +162,7 @@ const Marketplace = () => {
               filters={filters}
               onFilterChange={handleFilterChange}
               maxPriceLimit={1500}
+              allCategories={categories}
             />
           </div>
 
@@ -171,6 +175,7 @@ const Marketplace = () => {
               filters={filters}
               onFilterChange={handleFilterChange}
               maxPriceLimit={1500}
+              allCategories={categories}
             />
           </div>
 

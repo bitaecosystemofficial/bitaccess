@@ -5,18 +5,20 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FilterOptions, SortOption } from '@/types/marketplace';
+import { FilterOptions, SortOption, Category } from '@/types/marketplace';
 
 interface MarketplaceFiltersProps {
   filters: FilterOptions;
   onFilterChange: (filters: FilterOptions) => void;
   maxPriceLimit: number;
+  allCategories: Category[];
 }
 
 const MarketplaceFilters: React.FC<MarketplaceFiltersProps> = ({
   filters,
   onFilterChange,
-  maxPriceLimit
+  maxPriceLimit,
+  allCategories
 }) => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onFilterChange({ ...filters, searchQuery: e.target.value });
@@ -24,6 +26,10 @@ const MarketplaceFilters: React.FC<MarketplaceFiltersProps> = ({
 
   const handleSortChange = (value: SortOption) => {
     onFilterChange({ ...filters, sortBy: value });
+  };
+
+  const handleCategoryChange = (value: string) => {
+    onFilterChange({ ...filters, category: value === "all" ? null : value });
   };
 
   const handlePriceChange = (value: number[]) => {
@@ -55,6 +61,26 @@ const MarketplaceFilters: React.FC<MarketplaceFiltersProps> = ({
           onChange={handleSearchChange}
           className="bg-bitaccess-black border-bitaccess-gold/20"
         />
+      </div>
+
+      <div>
+        <Label htmlFor="category" className="text-white mb-2 block">Category</Label>
+        <Select
+          value={filters.category || "all"}
+          onValueChange={handleCategoryChange}
+        >
+          <SelectTrigger id="category" className="bg-bitaccess-black border-bitaccess-gold/20">
+            <SelectValue placeholder="Select Category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            {allCategories.map(category => (
+              <SelectItem key={category.id} value={category.id}>
+                {category.name} ({category.count})
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div>

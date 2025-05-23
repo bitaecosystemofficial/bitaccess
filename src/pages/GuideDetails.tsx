@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import Layout from "@/components/layout/Layout";
@@ -7,7 +8,6 @@ import { guidesContent } from "@/data/guidesContent";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 
-// Remove the separate interface and use Record<string, string> type directly
 const GuideDetails = () => {
   const { guideId } = useParams<{ guideId: string }>();
   const navigate = useNavigate();

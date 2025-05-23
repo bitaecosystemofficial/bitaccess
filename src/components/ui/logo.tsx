@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -25,7 +26,7 @@ const Logo: React.FC<LogoProps> = ({ className }) => {
     <div className={`flex items-center ${className || ''}`}>
       <div className="h-8 w-8 mr-2">
         <img 
-          src="/lovable-uploads/76777d14-6829-4372-a4ca-691c8eee3f34.png" 
+          src="https://github.com/bitaecosystemofficial/BIT-Logo/raw/main/logo.png" 
           alt="BitAccess Logo" 
           className="h-full w-auto"
         />
