@@ -13,8 +13,34 @@ const MembershipCard = () => {
   const { isConnected, address } = useWallet();
   const { membershipData } = useMembership();
   const [isFlipped, setIsFlipped] = useState(false);
+  const [rotation, setRotation] = useState({ x: 0, y: 0 });
 
   const toggleFlip = () => setIsFlipped(!isFlipped);
+  
+  // 3D effect on mouse move
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isFlipped) return; // Disable tilt effect when card is flipped
+    
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    
+    // Calculate mouse position relative to card center
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+    
+    // Calculate rotation (limited to +/- 10 degrees)
+    const rotateY = ((mouseX - centerX) / rect.width) * 10;
+    const rotateX = ((centerY - mouseY) / rect.height) * 10;
+    
+    setRotation({ x: rotateX, y: rotateY });
+  };
+  
+  const handleMouseLeave = () => {
+    // Reset rotation when mouse leaves
+    setRotation({ x: 0, y: 0 });
+  };
 
   if (!isConnected) {
     return (
@@ -93,13 +119,20 @@ const MembershipCard = () => {
           {/* Card Container with 3D flip effect */}
           <div className="perspective-1000 w-full max-w-md mx-auto h-64 cursor-pointer">
             <div 
-              className={`relative w-full h-full transition-transform duration-700 transform-style-3d ${
+              className={`relative w-full h-full transition-transform duration-700 transform-style-3d card-flip-animation ${
                 isFlipped ? "rotate-y-180" : ""
               }`}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+              style={{ 
+                transform: isFlipped 
+                  ? `rotateY(180deg)` 
+                  : `rotateY(${rotation.y}deg) rotateX(${rotation.x}deg)`
+              }}
             >
               {/* Front Side */}
               <Card 
-                className={`absolute w-full h-full backface-hidden ${
+                className={`absolute w-full h-full backface-hidden card-3d card-depth ${
                   isFlipped ? "invisible" : ""
                 } bg-gradient-to-br from-bitaccess-black to-black text-white border border-bitaccess-gold/30 rounded-xl overflow-hidden`}
               >
@@ -115,13 +148,13 @@ const MembershipCard = () => {
                       </div>
                       
                       <div className="text-right">
-                        <h3 className="font-bold text-xl text-bitaccess-gold">BIT ACCESS</h3>
+                        <h3 className="font-bold text-xl text-bitaccess-gold card-emboss">BIT ACCESS</h3>
                         <p className="text-bitaccess-gold/80 text-sm">BIT</p>
                       </div>
                     </div>
                     
                     <div className="my-4 text-center">
-                      <p className="text-xl font-mono tracking-widest text-gray-200">
+                      <p className="text-xl font-mono tracking-widest text-gray-200 card-number">
                         {formatCardNumber(address || "")}
                       </p>
                     </div>
@@ -145,12 +178,16 @@ const MembershipCard = () => {
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Holographic effect overlay */}
+                  <div className="holographic-effect"></div>
+                  <div className="card-shine"></div>
                 </CardContent>
               </Card>
               
               {/* Back Side */}
               <Card 
-                className={`absolute w-full h-full backface-hidden rotate-y-180 ${
+                className={`absolute w-full h-full backface-hidden rotate-y-180 card-3d card-depth ${
                   !isFlipped ? "invisible" : ""
                 } bg-gradient-to-br from-black to-bitaccess-black-light text-white border border-bitaccess-gold/30 rounded-xl overflow-hidden`}
               >
@@ -166,7 +203,7 @@ const MembershipCard = () => {
                     </div>
                     
                     <div className="flex justify-center my-2">
-                      <div className="w-24 h-24 bg-white p-2 rounded-md flex items-center justify-center">
+                      <div className="w-24 h-24 bg-white p-2 rounded-md flex items-center justify-center shadow-lg">
                         <QrCode className="h-20 w-20 text-black" />
                       </div>
                     </div>
@@ -183,6 +220,10 @@ const MembershipCard = () => {
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Holographic effect overlay */}
+                  <div className="holographic-effect"></div>
+                  <div className="card-shine"></div>
                 </CardContent>
               </Card>
             </div>
