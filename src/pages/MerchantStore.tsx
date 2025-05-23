@@ -8,11 +8,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useWallet } from '@/contexts/WalletContext';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import ProductCard from '@/components/marketplace/ProductCard';
-import { mapRange } from '@/lib/utils';
+import { cn } from '@/lib/utils'; // Changed from mapRange to cn which is available
 import { products } from '@/data/marketplaceData';
 import { ChevronLeft, Store, Grid3X3, ListFilter, MessageSquare, Star } from 'lucide-react';
 
+// Fixed the interface to satisfy the Record<string, string> constraint
 interface StoreParams {
+  [key: string]: string | undefined;
   merchantId?: string;
 }
 
@@ -25,7 +27,8 @@ interface StoreReview {
 }
 
 const MerchantStore = () => {
-  const { merchantId } = useParams<StoreParams>();
+  // Fix the typecast to match the updated interface
+  const { merchantId } = useParams<keyof StoreParams>();
   const navigate = useNavigate();
   const { isConnected } = useWallet();
   
