@@ -167,8 +167,8 @@ const MembershipCard = () => {
                     
                     <div className="flex justify-between items-end">
                       <div>
-                        <p className="text-xs text-gray-400">ID NUMBER</p>
-                        <p className="text-sm font-mono">{formatIdNumber(address || "")}</p>
+                        <p className="text-xs text-gray-400">ID:  <span className="text-sm font-mono"><{formatIdNumber(address || "")}</span></p>
+       
                       </div>
                       
                       <div>
