@@ -44,6 +44,7 @@ const MobileBottomNav = () => {
     { label: "Education", icon: <BookOpen className="h-6 w-6" />, href: "/education", requiresWallet: false, hideWhenConnected: true },
     { label: "Videos", icon: <Video className="h-6 w-6" />, href: "/videos", requiresWallet: false, hideWhenConnected: true, requiresSubscription: true },
     { label: "Marketplace", icon: <ShoppingCart className="h-6 w-6" />, href: "/marketplace", requiresWallet: false, hideWhenConnected: true },
+    { label: "Buy Token", icon: <Coins className="h-6 w-6" />, href: "/buy-token", requiresWallet: true, hideWhenConnected: false },
     { label: "Airdrop", icon: <Gift className="h-6 w-6" />, href: "/airdrop", requiresWallet: true, hideWhenConnected: false },
     { label: "Presale", icon: <Coins className="h-6 w-6" />, href: "/presale", requiresWallet: true, hideWhenConnected: false },
     { label: "Staking", icon: <RefreshCw className="h-6 w-6" />, href: "/staking", requiresWallet: true, hideWhenConnected: false },

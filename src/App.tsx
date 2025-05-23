@@ -31,7 +31,6 @@ import Marketplace from "./pages/Marketplace";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrdersPage from "./pages/OrdersPage";
-import MerchantDashboard from "./pages/MerchantDashboard";
 import MerchantStore from "./pages/MerchantStore";
 import MerchantListing from "./pages/MerchantListing";
 import BecomeAMerchant from "./pages/BecomeAMerchant";
@@ -105,7 +104,6 @@ const AppRoutes = () => {
       <Route path="/marketplace/checkout" element={<CheckoutPage />} />
       <Route path="/marketplace/orders" element={<OrdersPage />} />
       <Route path="/become-merchant" element={<BecomeAMerchant />} />
-      <Route path="/marketplace/merchant/dashboard" element={<MerchantRoute element={<MerchantDashboard />} />} />
       <Route path="/marketplace/merchant/:merchantId" element={<MerchantStore />} />
       <Route path="/marketplace/merchants" element={<MerchantListing />} />
       <Route path="*" element={<NotFound />} />
