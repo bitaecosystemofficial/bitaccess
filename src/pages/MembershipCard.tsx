@@ -199,7 +199,7 @@ const MembershipCard = () => {
                   <div className="p-6 h-full flex flex-col justify-between">
                     <div className="text-center mb-2">
                       <p className="text-xs text-gray-400">SMART CONTRACT ADDRESS</p>
-                      <p className="text-sm font-mono text-gray-300">0x0002...</p>
+                      <p className="text-sm font-mono text-gray-300">0xd3bde17ebd27739cf5505cd58ecf31cb628e469c</p>
                     </div>
                     
                     <div className="flex justify-center my-2">
