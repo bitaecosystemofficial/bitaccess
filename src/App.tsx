@@ -36,7 +36,6 @@ import MerchantStore from "./pages/MerchantStore";
 import MerchantListing from "./pages/MerchantListing";
 import BecomeAMerchant from "./pages/BecomeAMerchant";
 import MembershipCard from "./pages/MembershipCard";
-import BuyToken from "./pages/BuyToken";
 
 const queryClient = new QueryClient();
 
@@ -81,7 +80,6 @@ const AppRoutes = () => {
       <Route path="/presale" element={<Presale />} />
       <Route path="/staking" element={<Staking />} />
       <Route path="/swap" element={<Swap />} />
-      <Route path="/buy-token" element={<BuyToken />} />
       <Route path="/membership-card" element={<MembershipCard />} />
       <Route path="/docs" element={<Docs />} />
       <Route path="/guides/:guideId" element={<GuideDetails />} />

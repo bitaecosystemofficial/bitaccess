@@ -5,8 +5,7 @@ import {
   Users,
   BookOpen,
   Link,
-  MessageCircle,
-  CreditCard
+  MessageCircle
 } from "lucide-react";
 import { tokenFeatures } from "./tokenDistributionData";
 
@@ -16,8 +15,7 @@ const getIconComponent = (iconName: string) => {
     Users: <Users size={24} />,
     BookOpen: <BookOpen size={24} />,
     Link: <Link size={24} />,
-    MessageCircle: <MessageCircle size={24} />,
-    CreditCard: <CreditCard size={24} />
+    MessageCircle: <MessageCircle size={24} />
   };
   
   return iconMap[iconName as keyof typeof iconMap];

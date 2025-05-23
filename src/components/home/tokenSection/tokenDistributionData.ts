@@ -56,11 +56,6 @@ export const tokenFeatures = [
     title: "Community Engagement",
     description: "Participate in community events, challenges and earn rewards.",
     icon: "MessageCircle"
-  },
-  {
-    title: "Cross Border Payments",
-    description: "Send and receive payments globally without traditional banking barriers using BIT tokens.",
-    icon: "CreditCard"
   }
 ];
 
