@@ -12,10 +12,10 @@ import { cn } from '@/lib/utils'; // Changed from mapRange to cn which is availa
 import { products } from '@/data/marketplaceData';
 import { ChevronLeft, Store, Grid3X3, ListFilter, MessageSquare, Star } from 'lucide-react';
 
-// Fixed the interface to satisfy the Record<string, string> constraint
+// Define the interface correctly to match what react-router-dom's useParams expects
 interface StoreParams {
   [key: string]: string | undefined;
-  merchantId?: string;
+  merchantId: string;
 }
 
 interface StoreReview {
@@ -27,8 +27,8 @@ interface StoreReview {
 }
 
 const MerchantStore = () => {
-  // Fix the typecast to match the updated interface
-  const { merchantId } = useParams<keyof StoreParams>();
+  // Use the proper type for useParams
+  const { merchantId } = useParams<string>();
   const navigate = useNavigate();
   const { isConnected } = useWallet();
   
