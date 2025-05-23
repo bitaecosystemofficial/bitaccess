@@ -17,7 +17,7 @@ const CardBack: React.FC<CardBackProps> = ({ startDate, endDate }) => {
 
   return (
     <Card 
-      className="absolute w-full h-full backface-hidden rotate-y-180 bg-gradient-to-br from-black to-bitaccess-black-light text-white border border-bitaccess-gold/30 rounded-xl overflow-hidden"
+      className="absolute w-full h-full rotate-y-180 bg-gradient-to-br from-black to-bitaccess-black-light text-white border border-bitaccess-gold/30 rounded-xl overflow-hidden"
     >
       <CardContent className="p-0 h-full relative">
         {/* Magnetic stripe */}
