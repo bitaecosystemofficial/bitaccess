@@ -159,7 +159,7 @@ const MembershipCard = () => {
                       </div>
                     </div>
                     
-                    <div className="text-center">
+                    <div className="my-4 text-center">
                       <p className="text-xl font-mono tracking-widest text-gray-200 card-number">
                         {formatCardNumber(address || "")}
                       </p>
@@ -167,7 +167,7 @@ const MembershipCard = () => {
                     
                     <div className="flex justify-between items-end">
                       <div>
-                        <p className="text-xs text-gray-400">{formatIdNumber(address || "")}</p>
+                        <p className="text-xs text-gray-400">ID NUMBER</p>
                         <p className="text-sm font-mono">{formatIdNumber(address || "")}</p>
                       </div>
                       
