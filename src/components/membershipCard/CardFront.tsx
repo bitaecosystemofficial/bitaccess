@@ -32,7 +32,7 @@ const CardFront: React.FC<CardFrontProps> = ({ address, membershipType }) => {
 
   return (
     <Card 
-      className="absolute w-full h-full backface-hidden bg-gradient-to-br from-bitaccess-black to-black text-white border border-bitaccess-gold/30 rounded-xl overflow-hidden"
+      className="absolute w-full h-full bg-gradient-to-br from-bitaccess-black to-black text-white border border-bitaccess-gold/30 rounded-xl overflow-hidden"
     >
       <CardContent className="p-0 h-full relative">
         {/* Golden border decoration at top */}
