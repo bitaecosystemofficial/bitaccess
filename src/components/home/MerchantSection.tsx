@@ -1,24 +1,16 @@
 
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import SectionHeading from "@/components/ui/section-heading";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { Check, AlertCircle, Globe, CreditCard } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { useMembership } from "@/contexts/MembershipContext";
 import { toast } from "@/hooks/use-toast";
 import { useMemberSubscription, SubscriptionPlan } from "@/hooks/useMemberSubscription";
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
+import SubscriptionPlan from "@/components/membership/SubscriptionPlan";
+import ReferrerInput from "@/components/membership/ReferrerInput";
 
 const MerchantSection = () => {
-  const { isConnected, address, connectWallet, disconnectWallet } = useWallet();
+  const { isConnected, connectWallet, disconnectWallet } = useWallet();
   const { membershipData } = useMembership();
   const { subscribeToMembership, isProcessing } = useMemberSubscription();
   const [referrerAddress, setReferrerAddress] = useState("");
@@ -139,86 +131,23 @@ const MerchantSection = () => {
         </div>
         
         {isConnected && showReferrer && (
-          <div className="max-w-md mx-auto mb-8 animate-fade-in">
-            <div className="mb-2 text-sm text-gray-400">Enter Referrer Address (Optional)</div>
-            <div className="flex gap-2">
-              <Input 
-                placeholder="0x..." 
-                value={referrerAddress}
-                onChange={(e) => setReferrerAddress(e.target.value)}
-                className="bg-bitaccess-black border-gray-700 focus:border-bitaccess-gold/50"
-              />
-            </div>
-            {referrerAddress && !referrerAddress.startsWith('0x') && (
-              <div className="flex items-center gap-1 mt-1 text-xs text-red-400">
-                <AlertCircle className="h-3 w-3" />
-                <span>Address must start with 0x</span>
-              </div>
-            )}
-          </div>
+          <ReferrerInput 
+            referrerAddress={referrerAddress} 
+            onChange={setReferrerAddress} 
+          />
         )}
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {plans.map((plan, index) => (
-            <Card 
-              key={index} 
-              className={`border ${plan.highlighted ? 'border-bitaccess-gold' : 'border-gray-700'} bg-bitaccess-black hover:shadow-lg hover:shadow-bitaccess-gold/10 transition-all duration-300 animate-fade-in animation-delay-${index * 200}`}
-            >
-              <CardHeader>
-                <CardTitle className={`text-xl ${plan.highlighted ? 'text-bitaccess-gold' : 'text-white'}`}>
-                  {plan.name} Subscription
-                </CardTitle>
-                <CardDescription className="text-gray-400">
-                  {plan.description}
-                </CardDescription>
-                <div className="mt-4">
-                  <span className={`text-3xl font-bold ${plan.highlighted ? 'text-bitaccess-gold' : 'text-white'}`}>
-                    {plan.price} {plan.currency}
-                  </span>
-                  <span className="text-gray-400 ml-1">/{plan.duration}</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <Check className={`w-5 h-5 mt-0.5 ${plan.highlighted ? 'text-bitaccess-gold' : 'text-gray-400'}`} />
-                      <span className="text-gray-300 text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                
-                {plan.features.includes("Cross Border Payments Card") && (
-                  <div className="mt-6 flex justify-center">
-                    <div className="relative w-16 h-10 bg-gradient-to-br from-black to-gray-800 rounded-md border border-bitaccess-gold/30 flex items-center justify-center overflow-hidden">
-                      <div className="absolute top-0 w-full h-2 bg-bitaccess-gold/50"></div>
-                      <CreditCard className="h-5 w-5 text-bitaccess-gold/80" />
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-              <CardFooter className="flex flex-col gap-2">
-                <Button 
-                  className={`w-full ${plan.highlighted 
-                    ? 'bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black' 
-                    : 'bg-transparent border border-gray-600 hover:border-bitaccess-gold text-gray-300 hover:text-bitaccess-gold'} transition-transform duration-300 hover:scale-102`}
-                  onClick={() => handleSubscribe(plan.name)}
-                  disabled={isProcessing || membershipData?.isActive}
-                >
-                  {isProcessing ? "Processing..." : membershipData?.isActive ? "Already Subscribed" : "Subscribe Now"}
-                </Button>
-                
-                {isConnected && !showReferrer && (
-                  <Button 
-                    variant="link" 
-                    onClick={toggleReferrerInput} 
-                    className="text-sm text-gray-400 hover:text-bitaccess-gold"
-                  >
-                    Have a referrer? Click here
-                  </Button>
-                )}
-              </CardFooter>
-            </Card>
+            <SubscriptionPlan
+              key={index}
+              plan={plan}
+              isProcessing={isProcessing}
+              isSubscribed={!!membershipData?.isActive}
+              showReferrer={showReferrer}
+              toggleReferrerInput={toggleReferrerInput}
+              onSubscribe={handleSubscribe}
+            />
           ))}
         </div>
       </div>
