@@ -20,6 +20,7 @@ export const PresaleABI = [
   // Transaction functions
   "function buyWithBNB() payable returns (bool)",
   "function buyWithUSDT(uint256 usdtAmount) returns (bool)",
+  "function approveUSDT(uint256 amount) returns (bool)",
   
   // Events
   "event TokensPurchased(address indexed buyer, uint256 amount, uint256 paidAmount, bool isUSDT, uint256 bonus)",
