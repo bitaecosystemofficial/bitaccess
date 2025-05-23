@@ -1,4 +1,3 @@
-
 import { ethers } from 'ethers';
 import { contractAddresses } from '@/constants/contracts';
 import { PresaleABI } from '@/contracts/abis/PresaleABI';
@@ -18,6 +17,12 @@ export class PresaleService extends BaseContractService {
   async buyWithUSDT(amount: ethers.BigNumber) {
     const contract = await this.getPresaleContract();
     const tx = await contract.buyWithUSDT(amount);
+    return tx.wait();
+  }
+  
+  async approveUSDT(amount: ethers.BigNumber) {
+    const contract = await this.getPresaleContract();
+    const tx = await contract.approveUSDT(amount);
     return tx.wait();
   }
 
