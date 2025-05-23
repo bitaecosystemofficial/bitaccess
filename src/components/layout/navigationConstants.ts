@@ -4,7 +4,6 @@ import { NavItem } from "./NavigationItems";
 export const NAVIGATION_ITEMS: NavItem[] = [
   { label: "Home", href: "/", requiresWallet: false, hideWhenConnected: false },
   { label: "Buy Token", href: "/buy-token", requiresWallet: true, hideWhenConnected: false },
-  { label: "Dashboard", href: "/dashboard", requiresWallet: true, hideWhenConnected: false },
   { label: "About", href: "/about", requiresWallet: false, hideWhenConnected: true },
   { label: "Education", href: "/education", requiresWallet: false, hideWhenConnected: true },
   { label: "Videos", href: "/videos", requiresWallet: false, hideWhenConnected: true, requiresSubscription: true },
