@@ -8,6 +8,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
   { label: "Videos", href: "/videos", requiresWallet: false, hideWhenConnected: true, requiresSubscription: true },
   { label: "Marketplace", href: "/marketplace", requiresWallet: false, hideWhenConnected: true },
   { label: "Become A Merchant", href: "/become-merchant", requiresWallet: true, hideWhenConnected: false },
+  { label: "Buy Token", href: "/buy-token", requiresWallet: true, hideWhenConnected: false },
   { label: "Airdrop", href: "/airdrop", requiresWallet: true, hideWhenConnected: false },
   { label: "Presale", href: "/presale", requiresWallet: true, hideWhenConnected: false },
   { label: "Staking", href: "/staking", requiresWallet: true, hideWhenConnected: false },
