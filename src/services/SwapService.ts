@@ -29,15 +29,19 @@ export class SwapService extends BaseContractService {
       let feeDenominator = 10000; // Default denominator
       
       try {
-        fee = await contract.swapFee();
-        feeDenominator = await contract.FEE_DENOMINATOR();
+        const feeResult = await contract.swapFee();
+        const feeDenomResult = await contract.FEE_DENOMINATOR();
+        
+        // Safely convert BigNumber to number if they are BigNumber instances
+        fee = ethers.BigNumber.isBigNumber(feeResult) ? feeResult.toNumber() : Number(feeResult) || fee;
+        feeDenominator = ethers.BigNumber.isBigNumber(feeDenomResult) ? feeDenomResult.toNumber() : Number(feeDenomResult) || feeDenominator;
       } catch (error) {
         console.warn("Could not fetch swap fee from contract, using default values", error);
       }
       
       return {
-        fee: typeof fee === 'number' ? fee : fee.toNumber(),
-        feeDenominator: typeof feeDenominator === 'number' ? feeDenominator : feeDenominator.toNumber()
+        fee,
+        feeDenominator
       };
     } catch (error) {
       console.error("Error in getSwapFee:", error);
