@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
-import { Copy, CheckCircle2, Settings } from "lucide-react";
+import { Copy, CheckCircle2, ChartLine } from "lucide-react";
 import { useTokenData } from "@/hooks/useTokenData";
 import { toast } from "@/hooks/use-toast";
 import { useTokenBalance } from "@/hooks/useSwap";
@@ -91,10 +91,10 @@ const WalletDisplay = ({ address, handleDisconnectWallet }: WalletDisplayProps) 
             </div>
             <div className="flex justify-between items-center">
               <NavLink 
-                to="/settings"
+                to="/dex-analytics"
                 className="text-sm text-bitaccess-gold hover:underline flex items-center gap-1"
               >
-                <Settings className="h-3 w-3" /> Settings
+                <ChartLine className="h-3 w-3" /> Charts
               </NavLink>
               <div>
                 <p className="text-xs text-gray-400">USDT Balance</p>
