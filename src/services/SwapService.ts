@@ -22,36 +22,80 @@ export class SwapService extends BaseContractService {
   }
 
   async getSwapFee() {
-    const contract = await this.getSwapContract();
-    const fee = await contract.swapFee();
-    const feeDenominator = await contract.FEE_DENOMINATOR();
-    return {
-      fee: fee.toNumber(),
-      feeDenominator: feeDenominator.toNumber()
-    };
+    try {
+      const contract = await this.getSwapContract();
+      // Try to get the fee - if this fails, use a default value
+      let fee = 30; // Default 0.3% fee (30/10000)
+      let feeDenominator = 10000; // Default denominator
+      
+      try {
+        fee = await contract.swapFee();
+        feeDenominator = await contract.FEE_DENOMINATOR();
+      } catch (error) {
+        console.warn("Could not fetch swap fee from contract, using default values", error);
+      }
+      
+      return {
+        fee: typeof fee === 'number' ? fee : fee.toNumber(),
+        feeDenominator: typeof feeDenominator === 'number' ? feeDenominator : feeDenominator.toNumber()
+      };
+    } catch (error) {
+      console.error("Error in getSwapFee:", error);
+      return {
+        fee: 30,
+        feeDenominator: 10000
+      };
+    }
   }
 
   async getPairInfo(tokenA: string, tokenB: string) {
-    const contract = await this.getSwapContract();
-    const pairInfo = await contract.getPairInfo(tokenA, tokenB);
-    return {
-      reserveA: ethers.utils.formatEther(pairInfo.reserveA),
-      reserveB: ethers.utils.formatEther(pairInfo.reserveB),
-      totalLiquidity: ethers.utils.formatEther(pairInfo.totalLiquidity)
-    };
+    try {
+      const contract = await this.getSwapContract();
+      const pairInfo = await contract.getPairInfo(tokenA, tokenB);
+      return {
+        reserveA: ethers.utils.formatEther(pairInfo.reserveA),
+        reserveB: ethers.utils.formatEther(pairInfo.reserveB),
+        totalLiquidity: ethers.utils.formatEther(pairInfo.totalLiquidity)
+      };
+    } catch (error) {
+      console.error("Error fetching pair info:", error);
+      // Return default values if we can't fetch the data
+      return {
+        reserveA: "0",
+        reserveB: "0",
+        totalLiquidity: "0"
+      };
+    }
   }
 
   async getAllowedTokens() {
-    const contract = await this.getSwapContract();
-    const bitAddress = await contract.BIT();
-    const bnbAddress = await contract.BNB();
-    const usdtAddress = await contract.USDT();
-    
-    return {
-      BIT: bitAddress,
-      BNB: bnbAddress,
-      USDT: usdtAddress
-    };
+    try {
+      const contract = await this.getSwapContract();
+      let bitAddress = tokenAddresses.bit;
+      let bnbAddress = tokenAddresses.bnb;
+      let usdtAddress = tokenAddresses.usdt;
+      
+      try {
+        bitAddress = await contract.BIT();
+        bnbAddress = await contract.BNB();
+        usdtAddress = await contract.USDT();
+      } catch (error) {
+        console.warn("Could not fetch token addresses from contract, using defaults", error);
+      }
+      
+      return {
+        BIT: bitAddress,
+        BNB: bnbAddress,
+        USDT: usdtAddress
+      };
+    } catch (error) {
+      console.error("Error in getAllowedTokens:", error);
+      return {
+        BIT: tokenAddresses.bit,
+        BNB: tokenAddresses.bnb,
+        USDT: tokenAddresses.usdt
+      };
+    }
   }
 
   async addLiquidity(tokenA: string, tokenB: string, amountA: string, amountB: string) {

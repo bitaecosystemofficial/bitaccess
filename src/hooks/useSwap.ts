@@ -98,26 +98,45 @@ export const useSwapData = (): SwapDataType => {
       }
 
       try {
-        // Get fee data
+        // Get fee data - this now has error handling built in
         const { fee, feeDenominator } = await swapService.getSwapFee();
         const feePercentage = (fee / feeDenominator) * 100;
 
-        // Get pair info for BNB-BIT
-        const bnbBitPair = await swapService.getPairInfo(
-          tokenAddresses.bnb,
-          tokenAddresses.bit
-        );
+        // Get pair info for BNB-BIT with better error handling
+        let bnbBitPair = { reserveA: "0", reserveB: "0", totalLiquidity: "0" };
+        let usdtBitPair = { reserveA: "0", reserveB: "0", totalLiquidity: "0" };
+        
+        try {
+          bnbBitPair = await swapService.getPairInfo(
+            tokenAddresses.bnb,
+            tokenAddresses.bit
+          );
+        } catch (error) {
+          console.error("Error fetching BNB-BIT pair:", error);
+        }
+        
+        // Get pair info for USDT-BIT with better error handling
+        try {
+          usdtBitPair = await swapService.getPairInfo(
+            tokenAddresses.usdt,
+            tokenAddresses.bit
+          );
+        } catch (error) {
+          console.error("Error fetching USDT-BIT pair:", error);
+        }
 
-        // Get pair info for USDT-BIT
-        const usdtBitPair = await swapService.getPairInfo(
-          tokenAddresses.usdt,
-          tokenAddresses.bit
-        );
-
-        // Calculate rates
-        const bnbBitRate = parseFloat(bnbBitPair.reserveB) / parseFloat(bnbBitPair.reserveA);
-        const usdtBitRate = parseFloat(usdtBitPair.reserveB) / parseFloat(usdtBitPair.reserveA);
-        const usdtBnbRate = parseFloat(usdtBitPair.reserveA) / parseFloat(bnbBitPair.reserveA);
+        // Calculate rates with safeguards against division by zero
+        const bnbBitRate = parseFloat(bnbBitPair.reserveA) > 0 
+          ? parseFloat(bnbBitPair.reserveB) / parseFloat(bnbBitPair.reserveA)
+          : 0;
+          
+        const usdtBitRate = parseFloat(usdtBitPair.reserveA) > 0
+          ? parseFloat(usdtBitPair.reserveB) / parseFloat(usdtBitPair.reserveA)
+          : 0;
+          
+        const usdtBnbRate = parseFloat(bnbBitPair.reserveA) > 0
+          ? parseFloat(usdtBitPair.reserveA) / parseFloat(bnbBitPair.reserveA)
+          : 0;
 
         // Prepare data
         setSwapData({
@@ -164,12 +183,12 @@ export const useSwapData = (): SwapDataType => {
         setSwapData(prevData => ({
           ...prevData,
           isLoading: false,
-          error: error instanceof Error ? error.message : 'Unknown error fetching swap data'
+          error: "Failed to load swap data. Please check your connection and try again."
         }));
         
         toast({
           title: "Failed to fetch swap data",
-          description: "Could not connect to the swap contract",
+          description: "Using default values - some features may be limited",
           variant: "destructive",
         });
       }

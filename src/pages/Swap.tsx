@@ -7,13 +7,13 @@ import { useWallet } from "@/contexts/WalletContext";
 import { tokenAddresses, networkInfo } from "@/constants/contracts";
 import { switchNetwork } from "@/utils/blockchainUtils";
 import { toast } from "@/hooks/use-toast";
-import { useSwapData, useTokenBalance } from "@/hooks/useSwap";
+import { useSwapData, useTokenBalance, swapTokens } from "@/hooks/useSwap";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowDownUp, Info } from "lucide-react";
+import { ArrowDownUp, Info, AlertCircle, Loader2 } from "lucide-react";
 import { parseBigNumber, formatBigNumber } from "@/utils/contractUtils";
 
 const Swap = () => {
@@ -84,8 +84,13 @@ const Swap = () => {
           rate = 1 / pair.rate;
         }
         
-        const calculatedAmount = (fromValue * rate).toFixed(6);
-        setToAmount(calculatedAmount);
+        // Avoid NaN values
+        if (!isNaN(rate) && !isNaN(fromValue)) {
+          const calculatedAmount = (fromValue * rate).toFixed(6);
+          setToAmount(calculatedAmount);
+        } else {
+          setToAmount("0");
+        }
       } catch (error) {
         console.error("Error calculating swap amount:", error);
         setToAmount("");
@@ -128,24 +133,40 @@ const Swap = () => {
   };
   
   const handleSwap = async () => {
+    if (!fromAmount || parseFloat(fromAmount) <= 0 || !toAmount || parseFloat(toAmount) <= 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid amount to swap",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setSwapping(true);
     try {
-      // Mock implementation - would call actual swap function
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const result = await swapTokens(fromToken, toToken, fromAmount, slippage);
       
-      toast({
-        title: "Swap Successful",
-        description: `Swapped ${fromAmount} ${getTokenSymbol(fromToken)} for ${toAmount} ${getTokenSymbol(toToken)}`,
-      });
-      
-      // Reset form
-      setFromAmount("");
-      setToAmount("");
+      if (result.success) {
+        toast({
+          title: "Swap Successful",
+          description: `Swapped ${fromAmount} ${getTokenSymbol(fromToken)} for ${toAmount} ${getTokenSymbol(toToken)}`,
+        });
+        
+        // Reset form
+        setFromAmount("");
+        setToAmount("");
+      } else {
+        toast({
+          title: "Swap Failed",
+          description: result.error || "There was an error processing your swap",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       console.error("Swap error:", error);
       toast({
         title: "Swap Failed",
-        description: "There was an error processing your swap",
+        description: error instanceof Error ? error.message : "There was an error processing your swap",
         variant: "destructive",
       });
     } finally {
@@ -179,9 +200,17 @@ const Swap = () => {
             
             <div className="space-y-6">
               {error ? (
-                <div className="p-4 bg-red-900/20 text-red-500 rounded-lg">
-                  <p className="text-center">Failed to load swap data. Please try again later.</p>
-                  <p className="text-center text-sm">{error}</p>
+                <div className="p-4 bg-red-900/20 text-red-500 rounded-lg flex items-center gap-2 justify-center">
+                  <AlertCircle size={18} />
+                  <div>
+                    <p className="text-center font-medium">Failed to load swap data. Please try again later.</p>
+                    <p className="text-center text-sm mt-1">Using default values - swap rates may not be accurate</p>
+                  </div>
+                </div>
+              ) : pairsLoading ? (
+                <div className="p-6 flex justify-center items-center">
+                  <Loader2 className="h-6 w-6 animate-spin text-bitaccess-gold mr-2" />
+                  <span>Loading swap data...</span>
                 </div>
               ) : (
                 <>
