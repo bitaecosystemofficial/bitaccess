@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -88,14 +87,9 @@ const AppRoutes = () => {
       <Route path="/whitepaper" element={<WhitepaperDetails />} />
       <Route path="/education" element={<Education />} />
       <Route path="/education/:courseId" element={<CourseDetails />} />
-      <Route 
-        path="/videos" 
-        element={<SubscriptionRoute element={<VideoPortal />} />} 
-      />
-      <Route 
-        path="/video/:videoId" 
-        element={<SubscriptionRoute element={<VideoDetails />} />} 
-      />
+      {/* Updated video routes to be publicly accessible */}
+      <Route path="/videos" element={<VideoPortal />} />
+      <Route path="/video/:videoId" element={<VideoDetails />} />
       <Route path="/community" element={<Community />} />
       <Route path="/governance" element={<Governance />} />
       <Route path="/contact" element={<Contact />} />
