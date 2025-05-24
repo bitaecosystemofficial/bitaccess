@@ -1,4 +1,5 @@
 
+import { useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,9 +10,30 @@ import StakingContract from "@/components/staking/StakingContract";
 import StakingTiers from "@/components/staking/StakingTiers";
 import WalletConnectPrompt from "@/components/ui/wallet-connect-prompt";
 import { useWallet } from "@/contexts/WalletContext";
+import { networkInfo } from "@/constants/contracts";
+import { switchNetwork } from "@/utils/blockchainUtils";
+import { toast } from "@/hooks/use-toast";
 
 const Staking = () => {
   const { isConnected, connectWallet } = useWallet();
+  
+  // Check for correct network on component mount
+  useEffect(() => {
+    if (isConnected) {
+      const checkAndSwitchNetwork = async () => {
+        const isCorrectNetwork = await switchNetwork();
+        if (!isCorrectNetwork) {
+          toast({
+            title: "Network Required",
+            description: `Please switch to ${networkInfo.name} to access staking features`,
+            variant: "destructive",
+          });
+        }
+      };
+      
+      checkAndSwitchNetwork();
+    }
+  }, [isConnected]);
   
   if (!isConnected) {
     return (

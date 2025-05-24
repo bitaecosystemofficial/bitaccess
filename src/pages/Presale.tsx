@@ -1,4 +1,5 @@
 
+import { useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
 import PresaleStats from "@/components/presale/PresaleStats";
@@ -7,10 +8,31 @@ import PresaleForm from "@/components/presale/PresaleForm";
 import WalletConnectPrompt from "@/components/ui/wallet-connect-prompt";
 import { usePresaleData } from "@/utils/presale/presaleHooks";
 import { useWallet } from "@/contexts/WalletContext";
+import { contractAddresses, networkInfo } from "@/constants/contracts";
+import { switchNetwork } from "@/utils/blockchainUtils";
+import { toast } from "@/hooks/use-toast";
 
 const Presale = () => {
   const presaleData = usePresaleData();
   const { isConnected } = useWallet();
+  
+  // Check for correct network on component mount
+  useEffect(() => {
+    if (isConnected) {
+      const checkAndSwitchNetwork = async () => {
+        const isCorrectNetwork = await switchNetwork();
+        if (!isCorrectNetwork) {
+          toast({
+            title: "Network Required",
+            description: `Please switch to ${networkInfo.name} to participate in the presale`,
+            variant: "destructive",
+          });
+        }
+      };
+      
+      checkAndSwitchNetwork();
+    }
+  }, [isConnected]);
   
   if (!isConnected) {
     return (
@@ -57,7 +79,7 @@ const Presale = () => {
         <div className="container px-4 md:px-8">
           <SectionHeading
             title="BitAccess Token Presale"
-            subtitle="Secure your BIT tokens using BNB or USDT before public listing"
+            subtitle={`Secure your BIT tokens using ${networkInfo.currency} or USDT before public listing`}
             centered
           />
           
@@ -76,7 +98,16 @@ const Presale = () => {
             <PresaleForm />
 
             <div className="mt-6 text-center text-sm text-gray-400">
-              <p>Running on Binance Smart Chain (BSC) | View contract on <a href={`https://bscscan.com/address/${presaleData.address}`} target="_blank" rel="noopener noreferrer" className="text-bitaccess-gold hover:underline">BscScan</a></p>
+              <p>Running on {networkInfo.name} | 
+                <a 
+                  href={`${networkInfo.blockExplorerUrl}/address/${contractAddresses.presale}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-bitaccess-gold ml-1 hover:underline"
+                >
+                  View on {networkInfo.testnet ? 'Testnet ' : ''}BscScan
+                </a>
+              </p>
             </div>
           </div>
         </div>

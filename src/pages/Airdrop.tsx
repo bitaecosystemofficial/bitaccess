@@ -8,7 +8,9 @@ import AirdropHero from "@/components/airdrop/AirdropHero";
 import WalletConnectPrompt from "@/components/ui/wallet-connect-prompt";
 import { useAirdropData } from "@/utils/airdrop/airdropHooks";
 import { useWallet } from "@/contexts/WalletContext";
-import { contractAddresses } from "@/constants/contracts";
+import { contractAddresses, networkInfo } from "@/constants/contracts";
+import { switchNetwork } from "@/utils/blockchainUtils";
+import { toast } from "@/hooks/use-toast";
 
 const Airdrop = () => {
   const { airdropData, updateTaskCompletionStatus } = useAirdropData();
@@ -18,6 +20,24 @@ const Airdrop = () => {
   const isAllTasksCompleted = airdropData.tasks.every(task => task.completed);
   const completedTasks = airdropData.tasks.filter(task => task.completed).length;
   const eligibilityPercentage = Math.floor((completedTasks / airdropData.tasks.length) * 100);
+
+  // Check for correct network on component mount
+  useEffect(() => {
+    if (isConnected) {
+      const checkAndSwitchNetwork = async () => {
+        const isCorrectNetwork = await switchNetwork();
+        if (!isCorrectNetwork) {
+          toast({
+            title: "Network Required",
+            description: `Please switch to ${networkInfo.name} to participate in the airdrop`,
+            variant: "destructive",
+          });
+        }
+      };
+      
+      checkAndSwitchNetwork();
+    }
+  }, [isConnected]);
 
   if (!isConnected) {
     return (
@@ -65,7 +85,15 @@ const Airdrop = () => {
           
           <div className="mt-8 text-center text-sm text-gray-400">
             <p>
-              Running on Binance Smart Chain (BSC) | Contract address: {contractAddresses.airdrop.substring(0, 6)}...{contractAddresses.airdrop.substring(contractAddresses.airdrop.length - 4)}
+              Running on {networkInfo.name} | Contract address: {contractAddresses.airdrop.substring(0, 6)}...{contractAddresses.airdrop.substring(contractAddresses.airdrop.length - 4)} |
+              <a 
+                href={`${networkInfo.blockExplorerUrl}/address/${contractAddresses.airdrop}`} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-bitaccess-gold ml-1 hover:underline"
+              >
+                View on {networkInfo.testnet ? 'Testnet ' : ''}BscScan
+              </a>
             </p>
           </div>
         </div>

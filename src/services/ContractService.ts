@@ -7,11 +7,13 @@ import { TokenABI } from "../contracts/abis/TokenABI";
 import { AirdropABI } from "../contracts/abis/AirdropABI";
 import { SwapABI } from "../contracts/abis/SwapABI";
 import { GOVERNANCE_ABI } from "../contracts/abis/GovernanceABI";
+import { MEMBERSHIP_ABI } from "../contracts/abis/MembershipABI";
 import { contractAddresses } from "../constants/contracts";
 
 export type ContractType = 
   'presale' | 'staking' | 'marketplace' | 'token' | 
-  'airdrop' | 'swap' | 'governance' | 'merchants' | 'membership' | 'education';
+  'airdrop' | 'swap' | 'governance' | 'merchants' | 
+  'membership' | 'education';
 
 export const getContractABI = (contractType: ContractType) => {
   switch(contractType) {
@@ -29,6 +31,14 @@ export const getContractABI = (contractType: ContractType) => {
       return SwapABI;
     case 'governance':
       return GOVERNANCE_ABI;
+    case 'membership':
+      return MEMBERSHIP_ABI;
+    case 'education':
+      // Add education ABI when available
+      return [];
+    case 'merchants':
+      // Add merchants ABI when available
+      return [];
     default:
       throw new Error(`Contract ABI not found for ${contractType}`);
   }

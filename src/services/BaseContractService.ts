@@ -18,14 +18,14 @@ export class BaseContractService {
         this.initializeProviderEvents();
       } catch (error) {
         console.error('Error initializing Ethereum provider:', error);
-        // Create fallback provider for read-only operations
+        // Create fallback provider for BSC Testnet
         this.provider = new ethers.providers.JsonRpcProvider(
           'https://data-seed-prebsc-1-s1.binance.org:8545/'
         );
         this.signer = new ethers.VoidSigner("0x0000000000000000000000000000000000000000", this.provider);
       }
     } else {
-      // Fallback for environments without ethereum
+      // Fallback for environments without ethereum - use BSC Testnet
       this.provider = new ethers.providers.JsonRpcProvider(
         'https://data-seed-prebsc-1-s1.binance.org:8545/'
       );

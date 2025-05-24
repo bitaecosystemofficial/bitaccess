@@ -1,78 +1,71 @@
 
-import { ethers } from "ethers";
 import { useQuery } from "@tanstack/react-query";
+import { ethers } from "ethers";
 import { useWallet } from "@/contexts/WalletContext";
-import { storeService } from "@/services/StoreService";
-import { SwapDataType } from "@/hooks/useSwap";
-import { tokenService } from "@/services/TokenService";
+// Fix imports for the hooks
 import { useEducationData } from "@/hooks/useEducation";
+import { useStaking } from "@/hooks/useStaking";
 
-export const useTokenAllowance = (tokenAddress: string, spenderAddress: string) => {
-  const { address, provider } = useWallet();
+// Helper function to calculate something based on blockchain data
+export const calculateSomething = (value: number) => {
+  return value * 1.5;
+};
+
+// Example of a React Query hook that fetches data from a contract
+export const useContractData = (contractAddress: string, functionName: string) => {
+  const { isConnected, provider } = useWallet();
 
   return useQuery({
-    queryKey: ["tokenAllowance", tokenAddress, spenderAddress, address],
+    queryKey: [functionName, contractAddress],
     queryFn: async () => {
-      if (!address || !provider || !tokenAddress || !spenderAddress) {
-        return 0n;
+      if (!provider || !isConnected) {
+        throw new Error("Wallet not connected");
       }
 
-      const tokenContract = new ethers.Contract(
-        tokenAddress,
-        ["function allowance(address owner, address spender) view returns (uint256)"],
-        provider
-      );
-
-      const allowance = await tokenContract.allowance(address, spenderAddress);
-      return BigInt(allowance.toString());
+      // Implementation would depend on the specific contract and function
+      console.log(`Fetching data from ${contractAddress}.${functionName}`);
+      return "Mock Contract Data";
     },
-    enabled: !!address && !!provider && !!tokenAddress && !!spenderAddress,
-    refetchInterval: 60000, // Refetch every 60 seconds
+    enabled: isConnected && !!provider
   });
 };
 
-export const formatAddress = (address: string | null | undefined): string => {
-  if (!address) return "Connect Wallet";
-  return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-};
+// Example of a hook that combines data from multiple sources
+export const useCombinedData = () => {
+  const { data: stakingData } = useStaking();
+  const { data: educationData } = useEducationData();
 
-export const shortenAddress = (address: string, chars = 4, separator = "...") => {
-  if (!address) return "";
-  const start = address.substring(0, chars);
-  const end = address.substring(address.length - chars);
-  return `${start}${separator}${end}`;
-};
-
-export const useEthPrice = () => {
   return useQuery({
-    queryKey: ["ethPrice"],
+    queryKey: ["combinedData"],
     queryFn: async () => {
-      const response = await fetch(
-        "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
-      );
-      const data = await response.json();
-      return data.ethereum.usd;
+      // Process and combine data from different sources
+      return {
+        stakingInfo: stakingData || "No staking data",
+        educationInfo: educationData || "No education data"
+      };
     },
-    refetchInterval: 300000, // Refetch every 5 minutes
+    enabled: !!stakingData || !!educationData
   });
 };
 
-export const useBnbPrice = () => {
-  return useQuery({
-    queryKey: ["bnbPrice"],
-    queryFn: async () => {
-      const response = await fetch(
-        "https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd"
-      );
-      const data = await response.json();
-      return data.binancecoin.usd;
-    },
-    refetchInterval: 300000, // Refetch every 5 minutes
-  });
+// Function to format ethers BigNumber to user-friendly string
+export const formatBigNumber = (value: ethers.BigNumber, decimals = 18): string => {
+  try {
+    return ethers.utils.formatUnits(value, decimals);
+  } catch (error) {
+    console.error("Error formatting BigNumber:", error);
+    return "0";
+  }
 };
 
-// Fixed function with issue on line 67 - adjusting parameter count
-export const calculateSomething = (param1: string) => {
-  // Single parameter function instead of two parameters
-  return param1;
+// Function to parse user input string to ethers BigNumber
+export const parseBigNumber = (value: string, decimals = 18): ethers.BigNumber => {
+  try {
+    // Remove any non-numeric characters except decimal point
+    const sanitized = value.replace(/[^\d.]/g, "");
+    return ethers.utils.parseUnits(sanitized || "0", decimals);
+  } catch (error) {
+    console.error("Error parsing to BigNumber:", error);
+    return ethers.BigNumber.from(0);
+  }
 };

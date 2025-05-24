@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useWallet } from "@/contexts/WalletContext";
 import { useMembership } from "@/contexts/MembershipContext";
 import Layout from '@/components/layout/Layout';
@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button";
 import { CreditCard, BarChart2 } from "lucide-react";
 import WalletConnectPrompt from '@/components/ui/wallet-connect-prompt';
 import { format } from "date-fns";
+import { networkInfo } from '@/constants/contracts';
+import { switchNetwork } from '@/utils/blockchainUtils';
+import { toast } from '@/hooks/use-toast';
 import "../components/ui/card-flip.css";
 
 const MembershipCard = () => {
@@ -15,6 +18,24 @@ const MembershipCard = () => {
   const { membershipData } = useMembership();
   const [isFlipped, setIsFlipped] = useState(false);
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
+
+  // Check for correct network on component mount
+  useEffect(() => {
+    if (isConnected) {
+      const checkAndSwitchNetwork = async () => {
+        const isCorrectNetwork = await switchNetwork();
+        if (!isCorrectNetwork) {
+          toast({
+            title: "Network Required",
+            description: `Please switch to ${networkInfo.name} to view your membership card`,
+            variant: "destructive",
+          });
+        }
+      };
+      
+      checkAndSwitchNetwork();
+    }
+  }, [isConnected]);
 
   const toggleFlip = () => setIsFlipped(!isFlipped);
   
@@ -108,7 +129,7 @@ const MembershipCard = () => {
             BitAccess Membership Card
           </h1>
           <p className="text-gray-400 mb-8">
-            Your digital membership card grants you access to exclusive benefits
+            Your digital membership card grants you access to exclusive benefits on {networkInfo.name}
           </p>
 
           <div className="flex justify-center mb-8">
@@ -206,6 +227,8 @@ const MembershipCard = () => {
                     <div className="text-center mb-2">
                       <p className="text-xs text-gray-400">SMART CONTRACT ADDRESS</p>
                       <p className="text-sm font-mono text-gray-300">0xd3bde17ebd27739cf5505cd58ecf31cb628e469c</p>
+                      <p className="text-xs text-gray-400 mt-1">NETWORK</p>
+                      <p className="text-sm font-mono text-gray-300">{networkInfo.name}</p>
                     </div>
                     
                     <div className="flex justify-center my-2">
