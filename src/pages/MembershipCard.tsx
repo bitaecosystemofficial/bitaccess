@@ -227,8 +227,6 @@ const MembershipCard = () => {
                     <div className="text-center mb-2">
                       <p className="text-xs text-gray-400">SMART CONTRACT ADDRESS</p>
                       <p className="text-sm font-mono text-gray-300">0xd3bde17ebd27739cf5505cd58ecf31cb628e469c</p>
-                      <p className="text-xs text-gray-400 mt-1">NETWORK</p>
-                      <p className="text-sm font-mono text-gray-300">{networkInfo.name}</p>
                     </div>
                     
                     <div className="flex justify-center my-2">
