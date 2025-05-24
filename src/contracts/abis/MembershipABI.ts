@@ -15,6 +15,10 @@ export const MEMBERSHIP_ABI = [
   "function getReferralEarningsByLevel(address referrer, uint256 level) external view returns (tuple(address referrer, address user, uint256 level, uint256 amount, uint256 timestamp)[])",
   "function membershipPlans(uint8 mType) external view returns (uint256 price, uint256 duration, uint256 btcbReward, uint256 usdtReward, uint256 bnbReward, uint256 bitReward)",
   "function bitRate() external view returns (uint256)",
+  "function getMembershipCard(address user) external view returns (tuple(string cardNumber, uint256 expiryDate, bool isActive, uint8 membershipType))",
+  "function getCardStatus(address user) external view returns (bool)",
+  "function activateCard(address user) external returns (bool)",
+  "function deactivateCard(address user) external returns (bool)",
   
   // Write functions
   "function subscribe(uint8 mType, address referrer) external",
@@ -24,6 +28,8 @@ export const MEMBERSHIP_ABI = [
   "function withdrawFunds(address token, uint256 amount) external",
   "function updateTokenAddresses(address _usdt, address _btcb, address _bnb, address _bit) external",
   "function updateMembershipPlan(uint8 mType, uint256 price, uint256 duration, uint256 btcbReward, uint256 usdtReward, uint256 bnbReward, uint256 bitRewardInUsdt) external",
+  "function claimMembershipRewards() external returns (bool)",
+  "function extendMembership(uint256 duration) external returns (bool)",
   
   // Events
   "event Subscribed(address indexed user, uint8 mType, address referrer, uint256 amount)",
@@ -32,5 +38,8 @@ export const MEMBERSHIP_ABI = [
   "event EarningsWithdrawn(address indexed user, uint256 amount)",
   "event FundsWithdrawn(address indexed owner, address token, uint256 amount)",
   "event BitRateUpdated(uint256 newRate)",
-  "event RewardsDistributed(address indexed user, uint256 btcbAmount, uint256 usdtAmount, uint256 bnbAmount, uint256 bitAmount)"
+  "event RewardsDistributed(address indexed user, uint256 btcbAmount, uint256 usdtAmount, uint256 bnbAmount, uint256 bitAmount)",
+  "event CardActivated(address indexed user, string cardNumber)",
+  "event CardDeactivated(address indexed user, string cardNumber)",
+  "event MembershipExtended(address indexed user, uint256 newExpiryDate)"
 ];

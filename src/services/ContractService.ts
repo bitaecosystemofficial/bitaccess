@@ -1,4 +1,3 @@
-
 import { ethers } from "ethers";
 import { PresaleABI } from "../contracts/abis/PresaleABI";
 import { StakingABI } from "../contracts/abis/StakingABI";
@@ -8,12 +7,14 @@ import { AirdropABI } from "../contracts/abis/AirdropABI";
 import { SwapABI } from "../contracts/abis/SwapABI";
 import { GOVERNANCE_ABI } from "../contracts/abis/GovernanceABI";
 import { MEMBERSHIP_ABI } from "../contracts/abis/MembershipABI";
+import { DASHBOARD_ABI } from "../contracts/abis/DashboardABI";
+import { WELCOME_ABI } from "../contracts/abis/WelcomeABI";
 import { contractAddresses } from "../constants/contracts";
 
 export type ContractType = 
   'presale' | 'staking' | 'marketplace' | 'token' | 
   'airdrop' | 'swap' | 'governance' | 'merchants' | 
-  'membership' | 'education';
+  'membership' | 'education' | 'dashboard' | 'welcome';
 
 export const getContractABI = (contractType: ContractType) => {
   switch(contractType) {
@@ -33,6 +34,10 @@ export const getContractABI = (contractType: ContractType) => {
       return GOVERNANCE_ABI;
     case 'membership':
       return MEMBERSHIP_ABI;
+    case 'dashboard':
+      return DASHBOARD_ABI;
+    case 'welcome':
+      return WELCOME_ABI;
     case 'education':
       // Add education ABI when available
       return [];
@@ -66,6 +71,10 @@ export const getContractAddress = (contractType: ContractType): string => {
       return contractAddresses.membership;
     case 'education':
       return contractAddresses.education;
+    case 'dashboard':
+      return contractAddresses.membership; // Dashboard uses membership contract
+    case 'welcome':
+      return contractAddresses.membership; // Welcome uses membership contract
     default:
       throw new Error(`Contract address not found for ${contractType}`);
   }
@@ -108,6 +117,45 @@ export const contractService = {
       const signer = provider.getSigner();
       const contract = createContract('airdrop', provider).connect(signer);
       const tx = await contract.verifyTask(address, taskId);
+      return await tx.wait();
+    }
+    throw new Error('Ethereum provider not available');
+  }
+};
+
+// Add new service methods for dashboard and welcome functionality
+export const dashboardService = {
+  getDashboardContract: async () => {
+    if (typeof window.ethereum !== 'undefined') {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      return createContract('dashboard', provider);
+    }
+    throw new Error('Ethereum provider not available');
+  },
+  getUserDashboardData: async (address: string) => {
+    if (typeof window.ethereum !== 'undefined') {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const contract = createContract('dashboard', provider);
+      return await contract.getUserDashboardData(address);
+    }
+    throw new Error('Ethereum provider not available');
+  }
+};
+
+export const welcomeService = {
+  getWelcomeContract: async () => {
+    if (typeof window.ethereum !== 'undefined') {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      return createContract('welcome', provider);
+    }
+    throw new Error('Ethereum provider not available');
+  },
+  recordWelcomeVisit: async (address: string) => {
+    if (typeof window.ethereum !== 'undefined') {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = createContract('welcome', provider).connect(signer);
+      const tx = await contract.recordWelcomeVisit(address);
       return await tx.wait();
     }
     throw new Error('Ethereum provider not available');

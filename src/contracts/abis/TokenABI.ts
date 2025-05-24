@@ -15,8 +15,21 @@ export const TokenABI = [
   "event Transfer(address indexed from, address indexed to, uint amount)",
   "event Approval(address indexed owner, address indexed spender, uint256 value)",
   
-  // Custom BitAccess Token Functions (if they exist)
+  // BitAccess Token Functions
   "function getCirculatingSupply() view returns (uint256)",
   "function getBurnedTokens() view returns (uint256)",
-  "function getTokenomicsData() view returns (uint256[10])"
+  "function getTokenomicsData() view returns (uint256[10])",
+  "function getHolders() view returns (uint256)",
+  "function getMarketCap() view returns (uint256)",
+  "function getPrice() view returns (uint256)",
+  "function getLiquidity() view returns (uint256)",
+  "function getVolume24h() view returns (uint256)",
+  "function getPriceChange24h() view returns (int256)",
+  
+  // Utility functions
+  "function pause() external",
+  "function unpause() external",
+  "function mint(address to, uint256 amount) external",
+  "function burn(uint256 amount) external",
+  "function burnFrom(address from, uint256 amount) external"
 ];
