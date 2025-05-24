@@ -2,16 +2,18 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useWallet } from "@/contexts/WalletContext";
 import { useMembership } from "@/contexts/MembershipContext";
 import { useTokenData } from "@/hooks/useTokenData";
 import { useStaking } from "@/hooks/useStaking";
-import { Wallet, CreditCard, Gift, TrendingUp, Calendar, Coins } from "lucide-react";
+import { Wallet, CreditCard, Gift, TrendingUp, Calendar, Coins, DollarSign, ShoppingCart, Star, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
+import { toast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
   const { isConnected, balance, isMembershipActivated } = useWallet();
-  const { membershipData } = useMembership();
+  const { membershipData, withdrawEarnings } = useMembership();
   const { tokenData } = useTokenData();
   const { stakingData } = useStaking();
 
@@ -31,6 +33,32 @@ const Dashboard = () => {
     claimed: false,
     claimAmount: "500.00",
     eligibleAmount: "500.00"
+  };
+
+  const handleWithdrawEarnings = async () => {
+    try {
+      const success = await withdrawEarnings();
+      if (success) {
+        toast({
+          title: "Withdrawal Initiated",
+          description: "Your earnings withdrawal has been processed successfully!",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Withdrawal Failed",
+        description: "Failed to process withdrawal. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleBuyDCASH = () => {
+    window.open("https://pancakeswap.finance/swap?outputCurrency=0xd3bde17ebd27739cf5505cd58ecf31cb628e469c", "_blank");
+  };
+
+  const handleBuyBIT = () => {
+    window.open("https://pancakeswap.finance/swap?outputCurrency=" + tokenData.address, "_blank");
   };
 
   return (
@@ -208,6 +236,147 @@ const Dashboard = () => {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Action Cards Section */}
+      <div className="mt-12">
+        <h3 className="text-xl font-bold mb-6 text-white">Quick Actions</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          {/* Withdraw Earnings */}
+          <Card className="bg-bitaccess-black-light border-bitaccess-gold/20 hover:border-bitaccess-gold/40 transition-colors">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-400">Withdraw Earnings</CardTitle>
+              <DollarSign className="h-4 w-4 text-bitaccess-gold" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-300">Available</span>
+                  <span className="text-sm font-semibold text-white">
+                    {membershipData?.earnings || "0.00"} BIT
+                  </span>
+                </div>
+                <Button 
+                  onClick={handleWithdrawEarnings}
+                  className="w-full bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black"
+                  disabled={!membershipData?.earnings || parseFloat(membershipData.earnings) <= 0}
+                >
+                  Withdraw Now
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Buy DCASH */}
+          <Card className="bg-bitaccess-black-light border-bitaccess-gold/20 hover:border-bitaccess-gold/40 transition-colors">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-400">Buy DCASH</CardTitle>
+              <ShoppingCart className="h-4 w-4 text-bitaccess-gold" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <p className="text-sm text-gray-300">
+                  Get DCASH tokens for cross-border payments and exclusive benefits
+                </p>
+                <Button 
+                  onClick={handleBuyDCASH}
+                  className="w-full bg-transparent border border-bitaccess-gold hover:bg-bitaccess-gold/10 text-bitaccess-gold"
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  Buy on PancakeSwap
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Buy BIT Token */}
+          <Card className="bg-bitaccess-black-light border-bitaccess-gold/20 hover:border-bitaccess-gold/40 transition-colors">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-400">Buy BIT Token</CardTitle>
+              <Coins className="h-4 w-4 text-bitaccess-gold" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <p className="text-sm text-gray-300">
+                  Increase your BIT holdings for staking and governance
+                </p>
+                <Button 
+                  onClick={handleBuyBIT}
+                  className="w-full bg-transparent border border-bitaccess-gold hover:bg-bitaccess-gold/10 text-bitaccess-gold"
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  Buy BIT Token
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Recommendations */}
+          <Card className="bg-bitaccess-black-light border-bitaccess-gold/20 hover:border-bitaccess-gold/40 transition-colors md:col-span-2 lg:col-span-1">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-400">Recommendations</CardTitle>
+              <Star className="h-4 w-4 text-bitaccess-gold" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <p className="text-xs text-gray-400">Based on your membership:</p>
+                  <ul className="text-sm text-gray-300 space-y-1">
+                    <li>• Stake BIT tokens for rewards</li>
+                    <li>• Refer friends to earn commissions</li>
+                    <li>• Explore marketplace for exclusive deals</li>
+                    {membershipData?.type === "Merchant" && (
+                      <li>• Set up your merchant store</li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Marketplace Quick Access */}
+          <Card className="bg-bitaccess-black-light border-bitaccess-gold/20 hover:border-bitaccess-gold/40 transition-colors">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-400">Marketplace</CardTitle>
+              <ShoppingCart className="h-4 w-4 text-bitaccess-gold" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <p className="text-sm text-gray-300">
+                  Explore exclusive products and services from verified merchants
+                </p>
+                <Button 
+                  onClick={() => window.location.href = '/marketplace'}
+                  className="w-full bg-transparent border border-bitaccess-gold hover:bg-bitaccess-gold/10 text-bitaccess-gold"
+                >
+                  Visit Marketplace
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Governance */}
+          <Card className="bg-bitaccess-black-light border-bitaccess-gold/20 hover:border-bitaccess-gold/40 transition-colors">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-400">Governance</CardTitle>
+              <TrendingUp className="h-4 w-4 text-bitaccess-gold" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <p className="text-sm text-gray-300">
+                  Participate in community governance and voting
+                </p>
+                <Button 
+                  onClick={() => window.location.href = '/governance'}
+                  className="w-full bg-transparent border border-bitaccess-gold hover:bg-bitaccess-gold/10 text-bitaccess-gold"
+                >
+                  View Proposals
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

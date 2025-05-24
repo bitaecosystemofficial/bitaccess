@@ -9,28 +9,17 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
-import { Check, AlertCircle, Globe } from "lucide-react";
-import { useWallet } from "@/contexts/WalletContext";
-import { useMembership } from "@/contexts/MembershipContext";
-import { toast } from "@/hooks/use-toast";
-import { useMemberSubscription, SubscriptionPlan } from "@/hooks/useMemberSubscription";
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
+import { Check, ExternalLink, Globe } from "lucide-react";
 
 const MerchantSection = () => {
-  const { isConnected, address, connectWallet, disconnectWallet } = useWallet();
-  const { membershipData } = useMembership();
-  const { subscribeToMembership, isProcessing } = useMemberSubscription();
-  const [referrerAddress, setReferrerAddress] = useState("");
-  const [showReferrer, setShowReferrer] = useState(false);
-  
   const plans = [
     {
-      name: "Membership" as SubscriptionPlan,
+      name: "Membership",
       price: "20",
       currency: "USDT",
       duration: "365 days",
       description: "Access exclusive benefits and education",
+      externalUrl: "https://bitaccess.io/membership",
       features: [
         "Access to Blockchain Education & Technical Training",
         "$1 USDT worth of BTCB Reward",
@@ -43,11 +32,12 @@ const MerchantSection = () => {
       ]
     },
     {
-      name: "Merchant" as SubscriptionPlan,
+      name: "Merchant",
       price: "100",
       currency: "USDT",
       duration: "365 days",
       description: "Full business solution with promotional benefits",
+      externalUrl: "https://bitaccess.io/merchant",
       features: [
         "Blockchain Education and Technical Training",
         "$1 USDT worth of BTCB Reward",
@@ -63,52 +53,8 @@ const MerchantSection = () => {
     }
   ];
 
-  const handleSubscribe = async (plan: SubscriptionPlan) => {
-    if (!isConnected) {
-      toast({
-        title: "Wallet not connected",
-        description: "Please connect your wallet first",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    if (membershipData?.isActive) {
-      toast({
-        title: "Already Subscribed",
-        description: "You already have an active membership",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    try {
-      const result = await subscribeToMembership(plan, referrerAddress || undefined);
-      
-      if (result.success) {
-        toast({
-          title: "Subscription Successful",
-          description: `You have successfully subscribed to the ${plan} plan!`,
-        });
-      } else {
-        toast({
-          title: "Subscription Failed",
-          description: result.error || "Something went wrong",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Subscription error:", error);
-      toast({
-        title: "Subscription Error",
-        description: "An error occurred during subscription process",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const toggleReferrerInput = () => {
-    setShowReferrer(!showReferrer);
+  const handleSubscribe = (externalUrl: string) => {
+    window.open(externalUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -119,44 +65,6 @@ const MerchantSection = () => {
           subtitle="Join our ecosystem and access powerful tools, education and rewards through our membership program"
           centered
         />
-        
-        <div className="flex justify-center mb-8">
-          {!isConnected ? (
-            <Button 
-              onClick={connectWallet}
-              className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black"
-            >
-              Connect Wallet
-            </Button>
-          ) : (
-            <Button 
-              onClick={disconnectWallet}
-              className="bg-transparent border border-bitaccess-gold hover:bg-bitaccess-gold/10 text-bitaccess-gold"
-            >
-              Disconnect Wallet
-            </Button>
-          )}
-        </div>
-        
-        {isConnected && showReferrer && (
-          <div className="max-w-md mx-auto mb-8">
-            <div className="mb-2 text-sm text-gray-400">Enter Referrer Address (Optional)</div>
-            <div className="flex gap-2">
-              <Input 
-                placeholder="0x..." 
-                value={referrerAddress}
-                onChange={(e) => setReferrerAddress(e.target.value)}
-                className="bg-bitaccess-black border-gray-700"
-              />
-            </div>
-            {referrerAddress && !referrerAddress.startsWith('0x') && (
-              <div className="flex items-center gap-1 mt-1 text-xs text-red-400">
-                <AlertCircle className="h-3 w-3" />
-                <span>Address must start with 0x</span>
-              </div>
-            )}
-          </div>
-        )}
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {plans.map((plan, index) => (
@@ -193,24 +101,21 @@ const MerchantSection = () => {
                   className={`w-full ${plan.highlighted 
                     ? 'bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black' 
                     : 'bg-transparent border border-gray-600 hover:border-bitaccess-gold text-gray-300 hover:text-bitaccess-gold'}`}
-                  onClick={() => handleSubscribe(plan.name)}
-                  disabled={isProcessing || membershipData?.isActive}
+                  onClick={() => handleSubscribe(plan.externalUrl)}
                 >
-                  {isProcessing ? "Processing..." : membershipData?.isActive ? "Already Subscribed" : "Subscribe Now"}
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  Subscribe Now
                 </Button>
-                
-                {isConnected && !showReferrer && (
-                  <Button 
-                    variant="link" 
-                    onClick={toggleReferrerInput} 
-                    className="text-sm text-gray-400 hover:text-bitaccess-gold"
-                  >
-                    Have a referrer? Click here
-                  </Button>
-                )}
               </CardFooter>
             </Card>
           ))}
+        </div>
+        
+        <div className="text-center mt-8">
+          <p className="text-sm text-gray-400 flex items-center justify-center gap-2">
+            <Globe className="w-4 h-4" />
+            Secure payments powered by BitAccess ecosystem
+          </p>
         </div>
       </div>
     </section>
