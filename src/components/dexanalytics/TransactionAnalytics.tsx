@@ -158,53 +158,58 @@ const TransactionAnalytics = ({ transactions = [] }: TransactionAnalyticsProps) 
         
         <TransactionFilters onFilterChange={setFilters} />
         
-        <ChartContainer
-          className="h-80"
-          config={{
-            buys: {
-              theme: { light: "#22c55e", dark: "#22c55e" },
-              label: "Buys"
-            },
-            sells: {
-              theme: { light: "#ef4444", dark: "#ef4444" },
-              label: "Sells"
-            },
-            volume: {
-              theme: { light: "#F9D975", dark: "#F9D975" },
-              label: "Volume ($)"
-            }
-          }}
-        >
-          <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={filteredChartData}>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-              <XAxis dataKey="date" tick={{ fill: "#A0AEC0" }} />
-              <YAxis yAxisId="left" tick={{ fill: "#A0AEC0" }} />
-              <YAxis yAxisId="right" orientation="right" tick={{ fill: "#A0AEC0" }} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: "#1A1A1A", 
-                  borderColor: "#F9D975", 
-                  color: "white" 
-                }}
-              />
-              <Legend 
-                formatter={(value) => <span style={{ color: 'white' }}>{value}</span>}
-              />
-              <Bar yAxisId="left" dataKey="buys" name="Buys" fill="#22c55e" />
-              <Bar yAxisId="left" dataKey="sells" name="Sells" fill="#ef4444" />
-              <Line 
-                yAxisId="right" 
-                type="monotone" 
-                dataKey="volume" 
-                name="Volume ($)" 
-                stroke="#F9D975" 
-                strokeWidth={2} 
-                dot={false}
-              />
-            </ComposedChart>
-          </ResponsiveContainer>
-        </ChartContainer>
+        {/* Increased height from h-80 to h-96 and added full width container */}
+        <div className="w-full -mx-6">
+          <div className="px-6">
+            <ChartContainer
+              className="h-96"
+              config={{
+                buys: {
+                  theme: { light: "#22c55e", dark: "#22c55e" },
+                  label: "Buys"
+                },
+                sells: {
+                  theme: { light: "#ef4444", dark: "#ef4444" },
+                  label: "Sells"
+                },
+                volume: {
+                  theme: { light: "#F9D975", dark: "#F9D975" },
+                  label: "Volume ($)"
+                }
+              }}
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <ComposedChart data={filteredChartData}>
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                  <XAxis dataKey="date" tick={{ fill: "#A0AEC0" }} />
+                  <YAxis yAxisId="left" tick={{ fill: "#A0AEC0" }} />
+                  <YAxis yAxisId="right" orientation="right" tick={{ fill: "#A0AEC0" }} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: "#1A1A1A", 
+                      borderColor: "#F9D975", 
+                      color: "white" 
+                    }}
+                  />
+                  <Legend 
+                    formatter={(value) => <span style={{ color: 'white' }}>{value}</span>}
+                  />
+                  <Bar yAxisId="left" dataKey="buys" name="Buys" fill="#22c55e" />
+                  <Bar yAxisId="left" dataKey="sells" name="Sells" fill="#ef4444" />
+                  <Line 
+                    yAxisId="right" 
+                    type="monotone" 
+                    dataKey="volume" 
+                    name="Volume ($)" 
+                    stroke="#F9D975" 
+                    strokeWidth={2} 
+                    dot={false}
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </div>
+        </div>
       </div>
       
       <div className="bg-bitaccess-black-light p-6 rounded-xl border border-bitaccess-gold/20">
