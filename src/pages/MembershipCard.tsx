@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useWallet } from "@/contexts/WalletContext";
 import { useMembership } from "@/contexts/MembershipContext";
 import Layout from '@/components/layout/Layout';
+import Dashboard from '@/components/dashboard/Dashboard';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CreditCard, BarChart2, Lock } from "lucide-react";
@@ -289,6 +289,9 @@ const MembershipCard = () => {
               </Card>
             </div>
           </div>
+
+          {/* Add Dashboard Component */}
+          <Dashboard />
 
           <div className="mt-12">
             <h2 className="text-xl font-bold mb-4">Membership Benefits</h2>
