@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -36,7 +35,6 @@ import MerchantStore from "./pages/MerchantStore";
 import MerchantListing from "./pages/MerchantListing";
 import BecomeAMerchant from "./pages/BecomeAMerchant";
 import MembershipCard from "./pages/MembershipCard";
-import BuyToken from "./pages/BuyToken";
 
 const queryClient = new QueryClient();
 
@@ -82,7 +80,6 @@ const AppRoutes = () => {
       <Route path="/staking" element={<Staking />} />
       <Route path="/swap" element={<Swap />} />
       <Route path="/membership-card" element={<MembershipCard />} />
-      <Route path="/buy-token" element={<BuyToken />} />
       <Route path="/docs" element={<Docs />} />
       <Route path="/guides/:guideId" element={<GuideDetails />} />
       <Route path="/whitepaper" element={<WhitepaperDetails />} />

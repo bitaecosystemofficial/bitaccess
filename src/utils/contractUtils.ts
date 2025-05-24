@@ -32,8 +32,8 @@ export const useContractData = (contractAddress: string, functionName: string) =
 
 // Example of a hook that combines data from multiple sources
 export const useCombinedData = () => {
-  const { data: stakingData } = useStaking();
-  const { data: educationData } = useEducationData();
+  const { stakingData } = useStaking();
+  const { courses, videos } = useEducationData();
 
   return useQuery({
     queryKey: ["combinedData"],
@@ -41,10 +41,10 @@ export const useCombinedData = () => {
       // Process and combine data from different sources
       return {
         stakingInfo: stakingData || "No staking data",
-        educationInfo: educationData || "No education data"
+        educationInfo: courses.length > 0 ? courses : "No education data"
       };
     },
-    enabled: !!stakingData || !!educationData
+    enabled: !!stakingData || (courses && courses.length > 0)
   });
 };
 
