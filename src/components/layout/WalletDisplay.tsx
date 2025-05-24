@@ -1,10 +1,12 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
-import { Copy, CheckCircle2 } from "lucide-react";
+import { Copy, CheckCircle2, Settings } from "lucide-react";
 import { useTokenData } from "@/hooks/useTokenData";
 import { toast } from "@/hooks/use-toast";
+import { useTokenBalance } from "@/hooks/useSwap";
+import { tokenAddresses } from "@/constants/contracts";
 
 interface WalletDisplayProps {
   address: string | null;
@@ -15,6 +17,7 @@ const WalletDisplay = ({ address, handleDisconnectWallet }: WalletDisplayProps) 
   const [showWalletInfo, setShowWalletInfo] = useState(false);
   const [copied, setCopied] = useState(false);
   const { tokenData } = useTokenData();
+  const { balance: usdtBalance, isLoading: usdtLoading } = useTokenBalance(tokenAddresses.usdt);
 
   const copyToClipboard = async () => {
     if (address) {
@@ -88,17 +91,17 @@ const WalletDisplay = ({ address, handleDisconnectWallet }: WalletDisplayProps) 
             </div>
             <div className="flex justify-between items-center">
               <NavLink 
-                to="/spin-wheel"
-                className="text-sm text-bitaccess-gold hover:underline"
+                to="/settings"
+                className="text-sm text-bitaccess-gold hover:underline flex items-center gap-1"
               >
-                Spin Wheel
+                <Settings className="h-3 w-3" /> Settings
               </NavLink>
-              <NavLink 
-                to="/swap"
-                className="text-sm text-bitaccess-gold hover:underline"
-              >
-                Swap
-              </NavLink>
+              <div>
+                <p className="text-xs text-gray-400">USDT Balance</p>
+                <p className="text-sm text-green-500">
+                  {usdtLoading ? "Loading..." : `${parseFloat(usdtBalance).toFixed(2)} USDT`}
+                </p>
+              </div>
             </div>
             <Button
               variant="destructive"

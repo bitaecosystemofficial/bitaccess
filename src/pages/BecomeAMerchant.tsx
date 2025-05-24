@@ -4,6 +4,7 @@ import Layout from '@/components/layout/Layout';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '@/contexts/WalletContext';
 import { useMembership } from '@/contexts/MembershipContext';
+import { useMemberSubscription } from '@/hooks/useMemberSubscription';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check, AlertCircle, Store, ShieldCheck, Clock, Coins } from 'lucide-react';
@@ -17,9 +18,9 @@ import WalletConnectPrompt from '@/components/ui/wallet-connect-prompt';
 const BecomeAMerchant = () => {
   const navigate = useNavigate();
   const { isConnected, address } = useWallet();
-  const { membershipData, isLoading, subscribe } = useMembership();
+  const { membershipData, isLoading: membershipLoading } = useMembership();
+  const { subscribeToMembership, isProcessing } = useMemberSubscription();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
   const [referrer, setReferrer] = useState('');
   const { toast } = useToast();
   
@@ -45,10 +46,9 @@ const BecomeAMerchant = () => {
 
   const handleSubscribe = async () => {
     try {
-      setIsProcessing(true);
-      const success = await subscribe(MembershipType.Merchant, referrer || undefined);
+      const result = await subscribeToMembership('Merchant', referrer || undefined);
       
-      if (success) {
+      if (result.success) {
         toast({
           title: "Subscription Successful",
           description: "You are now a merchant! Redirecting to merchant dashboard.",
@@ -57,7 +57,7 @@ const BecomeAMerchant = () => {
       } else {
         toast({
           title: "Subscription Failed",
-          description: "There was an error processing your subscription.",
+          description: result.error || "There was an error processing your subscription.",
           variant: "destructive",
         });
       }
@@ -69,7 +69,6 @@ const BecomeAMerchant = () => {
         variant: "destructive",
       });
     } finally {
-      setIsProcessing(false);
       setIsDialogOpen(false);
     }
   };
@@ -84,6 +83,16 @@ const BecomeAMerchant = () => {
       </Layout>
     );
   }
+
+  const isSubscriptionButtonDisabled = isProcessing || membershipLoading || membershipData?.type === MembershipType.Merchant;
+  const subscriptionButtonText = 
+    membershipData?.type === MembershipType.Merchant
+      ? "Already a Merchant"
+      : membershipLoading
+      ? "Loading..."
+      : isProcessing
+      ? "Processing..."
+      : "Subscribe as Merchant";
 
   return (
     <Layout>
@@ -151,13 +160,9 @@ const BecomeAMerchant = () => {
               <Button 
                 className="w-full bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-bitaccess-black"
                 onClick={handleOpenSubscriptionDialog}
-                disabled={isLoading || membershipData?.type === MembershipType.Merchant}
+                disabled={isSubscriptionButtonDisabled}
               >
-                {membershipData?.type === MembershipType.Merchant
-                  ? "Already a Merchant"
-                  : isLoading
-                  ? "Loading..."
-                  : "Subscribe as Merchant"}
+                {subscriptionButtonText}
               </Button>
             </CardFooter>
           </Card>

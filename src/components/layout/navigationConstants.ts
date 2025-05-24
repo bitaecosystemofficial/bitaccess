@@ -12,6 +12,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
   { label: "Presale", href: "/presale", requiresWallet: true, hideWhenConnected: false },
   { label: "Staking", href: "/staking", requiresWallet: true, hideWhenConnected: false },
   { label: "Swap", href: "/swap", requiresWallet: true, hideWhenConnected: false },
+  { label: "Settings", href: "/settings", requiresWallet: true, hideWhenConnected: false },
   { label: "Membership Card", href: "/membership-card", requiresWallet: true, hideWhenConnected: false },
   { label: "Docs", href: "/docs", requiresWallet: false, hideWhenConnected: true },
   { label: "Community", href: "/community", requiresWallet: false, hideWhenConnected: true },

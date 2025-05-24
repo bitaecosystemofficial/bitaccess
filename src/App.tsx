@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +15,7 @@ import Airdrop from "./pages/Airdrop";
 import Presale from "./pages/Presale";
 import Staking from "./pages/Staking";
 import Swap from "./pages/Swap";
+import Settings from "./pages/Settings";
 import Docs from "./pages/Docs";
 import GuideDetails from "./pages/GuideDetails";
 import Contact from "./pages/Contact";
@@ -79,6 +81,7 @@ const AppRoutes = () => {
       <Route path="/presale" element={<Presale />} />
       <Route path="/staking" element={<Staking />} />
       <Route path="/swap" element={<Swap />} />
+      <Route path="/settings" element={<Settings />} />
       <Route path="/membership-card" element={<MembershipCard />} />
       <Route path="/docs" element={<Docs />} />
       <Route path="/guides/:guideId" element={<GuideDetails />} />
