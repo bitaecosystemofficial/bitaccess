@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -58,7 +57,7 @@ const Dashboard = () => {
   };
 
   const handleBuyBIT = () => {
-    window.open("https://pancakeswap.finance/swap?outputCurrency=" + tokenData.address, "_blank");
+    window.open("https://pancakeswap.finance/swap?outputCurrency=" + tokenData.contractAddress, "_blank");
   };
 
   return (
