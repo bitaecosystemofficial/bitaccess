@@ -1,8 +1,11 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 const HeroSection = () => {
+  const handleAffiliateRedirect = () => {
+    window.open("https://bitaccess.io/affiliates", "_blank");
+  };
+
   return (
     <section className="relative bg-hero-pattern pt-24 md:pt-32 pb-20 md:pb-32 overflow-hidden">
       <div className="absolute inset-0 z-0 overflow-hidden">
@@ -23,8 +26,12 @@ const HeroSection = () => {
             Empowering blockchain education and merchant adoption through our comprehensive ecosystem and BIT utility token.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in animation-delay-300">
-            <Button size="lg" className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium">
-              Join Presale
+            <Button 
+              size="lg" 
+              className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium"
+              onClick={handleAffiliateRedirect}
+            >
+              Bit Access Affiliates
             </Button>
             <Button size="lg" variant="outline" className="border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10">
               Explore Ecosystem <ArrowRight size={16} className="ml-2" />

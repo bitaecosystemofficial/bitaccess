@@ -3,6 +3,10 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 const CtaSection = () => {
+  const handleAffiliateRedirect = () => {
+    window.open("https://bitaccess.io/affiliates", "_blank");
+  };
+
   return (
     <section className="py-16 md:py-24 bg-bitaccess-black-dark border-t border-bitaccess-gold/20">
       <div className="container px-4 md:px-8">
@@ -19,8 +23,12 @@ const CtaSection = () => {
               Don't miss out on exclusive presale opportunities, airdrops, and early access to our complete ecosystem of blockchain tools and services.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button size="lg" className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium">
-                Join Presale Now
+              <Button 
+                size="lg" 
+                className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium"
+                onClick={handleAffiliateRedirect}
+              >
+                Bit Access Affiliates
               </Button>
               <Button size="lg" variant="outline" className="border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10">
                 Explore Documentation <ArrowRight size={16} className="ml-2" />

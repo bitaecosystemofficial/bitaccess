@@ -26,19 +26,19 @@ const WelcomeLandingModal: React.FC<WelcomeLandingModalProps> = ({
       title: "Welcome to BitAccess Ecosystem",
       subtitle: "Your Gateway to Blockchain Innovation",
       content: "Join thousands of users in the revolutionary BitAccess ecosystem. Experience seamless blockchain education, merchant services, and exclusive rewards.",
-      icon: <Sparkles className="w-12 h-12 text-bitaccess-gold" />
+      icon: <Sparkles className="w-8 h-8 md:w-12 md:h-12 text-bitaccess-gold" />
     },
     {
       title: "Exclusive Membership Benefits",
       subtitle: "Unlock Premium Features",
       content: "Get access to blockchain education, cross-border payment cards, referral commissions, and exclusive merchant discounts.",
-      icon: <Star className="w-12 h-12 text-bitaccess-gold" />
+      icon: <Star className="w-8 h-8 md:w-12 md:h-12 text-bitaccess-gold" />
     },
     {
       title: "Merchant Ecosystem",
       subtitle: "Grow Your Business",
       content: "Join our merchant network to promote your business, accept crypto payments, and reach a global audience of crypto enthusiasts.",
-      icon: <Users className="w-12 h-12 text-bitaccess-gold" />
+      icon: <Users className="w-8 h-8 md:w-12 md:h-12 text-bitaccess-gold" />
     }
   ];
 
@@ -69,30 +69,30 @@ const WelcomeLandingModal: React.FC<WelcomeLandingModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl bg-bitaccess-black border-bitaccess-gold/20 text-white">
-        <DialogHeader>
-          <DialogTitle className="text-center">
-            <div className="flex items-center justify-center mb-4">
-              <div className="w-16 h-16 bg-bitaccess-gold/10 rounded-full flex items-center justify-center mb-4">
+      <DialogContent className="max-w-4xl max-h-[95vh] bg-bitaccess-black border-bitaccess-gold/20 text-white overflow-y-auto">
+        <DialogHeader className="text-center">
+          <DialogTitle>
+            <div className="flex items-center justify-center mb-2 md:mb-4">
+              <div className="w-12 h-12 md:w-16 md:h-16 bg-bitaccess-gold/10 rounded-full flex items-center justify-center mb-2 md:mb-4">
                 {welcomeSteps[currentStep].icon}
               </div>
             </div>
-            <h1 className="text-3xl font-bold bg-gold-gradient text-transparent bg-clip-text">
+            <h1 className="text-xl md:text-3xl font-bold bg-gold-gradient text-transparent bg-clip-text">
               {welcomeSteps[currentStep].title}
             </h1>
-            <p className="text-lg text-gray-400 mt-2">
+            <p className="text-sm md:text-lg text-gray-400 mt-2">
               {welcomeSteps[currentStep].subtitle}
             </p>
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           {/* Progress Indicator */}
           <div className="flex justify-center space-x-2">
             {welcomeSteps.map((_, index) => (
               <div
                 key={index}
-                className={`w-3 h-3 rounded-full ${
+                className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${
                   index === currentStep ? 'bg-bitaccess-gold' : 'bg-gray-600'
                 }`}
               />
@@ -101,22 +101,22 @@ const WelcomeLandingModal: React.FC<WelcomeLandingModalProps> = ({
 
           {/* Main Content */}
           <Card className="bg-bitaccess-black-light border-bitaccess-gold/20">
-            <CardContent className="p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <CardContent className="p-4 md:p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-center">
                 {/* Left Side - Content */}
-                <div className="space-y-6">
-                  <p className="text-lg text-gray-300 leading-relaxed">
+                <div className="space-y-4 md:space-y-6 order-2 md:order-1">
+                  <p className="text-sm md:text-lg text-gray-300 leading-relaxed">
                     {welcomeSteps[currentStep].content}
                   </p>
 
                   {currentStep === 0 && (
                     <div className="space-y-3">
-                      <h3 className="text-xl font-semibold text-bitaccess-gold">
+                      <h3 className="text-lg md:text-xl font-semibold text-bitaccess-gold">
                         What You Get:
                       </h3>
                       <div className="grid grid-cols-1 gap-2">
                         {features.slice(0, 3).map((feature, index) => (
-                          <div key={index} className="flex items-center text-gray-300">
+                          <div key={index} className="flex items-center text-gray-300 text-sm md:text-base">
                             <span className="mr-2">{feature}</span>
                           </div>
                         ))}
@@ -128,7 +128,7 @@ const WelcomeLandingModal: React.FC<WelcomeLandingModalProps> = ({
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 gap-3">
                         {features.slice(3).map((feature, index) => (
-                          <div key={index} className="flex items-center text-gray-300">
+                          <div key={index} className="flex items-center text-gray-300 text-sm md:text-base">
                             <span className="mr-2">{feature}</span>
                           </div>
                         ))}
@@ -138,11 +138,11 @@ const WelcomeLandingModal: React.FC<WelcomeLandingModalProps> = ({
 
                   {currentStep === 2 && (
                     <div className="space-y-4">
-                      <Badge className="bg-bitaccess-gold text-black">
-                        <Gift className="w-4 h-4 mr-2" />
+                      <Badge className="bg-bitaccess-gold text-black text-xs md:text-sm">
+                        <Gift className="w-3 h-3 md:w-4 md:h-4 mr-2" />
                         Welcome Bonus Available
                       </Badge>
-                      <p className="text-gray-300">
+                      <p className="text-gray-300 text-sm md:text-base">
                         Start your journey today and receive exclusive welcome rewards!
                       </p>
                     </div>
@@ -150,15 +150,15 @@ const WelcomeLandingModal: React.FC<WelcomeLandingModalProps> = ({
                 </div>
 
                 {/* Right Side - Visual */}
-                <div className="flex flex-col items-center space-y-4">
-                  <div className="w-32 h-32 bg-gradient-to-br from-bitaccess-gold/20 to-bitaccess-gold/5 rounded-full flex items-center justify-center">
+                <div className="flex flex-col items-center space-y-4 order-1 md:order-2">
+                  <div className="w-24 h-24 md:w-32 md:h-32 bg-gradient-to-br from-bitaccess-gold/20 to-bitaccess-gold/5 rounded-full flex items-center justify-center">
                     {welcomeSteps[currentStep].icon}
                   </div>
                   
                   {currentStep === 2 && (
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-bitaccess-gold">500K+</p>
-                      <p className="text-gray-400">Active Members</p>
+                      <p className="text-xl md:text-2xl font-bold text-bitaccess-gold">500K+</p>
+                      <p className="text-gray-400 text-sm md:text-base">Active Members</p>
                     </div>
                   )}
                 </div>
@@ -167,32 +167,32 @@ const WelcomeLandingModal: React.FC<WelcomeLandingModalProps> = ({
           </Card>
 
           {/* Navigation */}
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center gap-2">
             <Button
               variant="outline"
               onClick={handlePrevious}
               disabled={currentStep === 0}
-              className="border-gray-600 text-gray-400 hover:border-bitaccess-gold hover:text-bitaccess-gold"
+              className="border-gray-600 text-gray-400 hover:border-bitaccess-gold hover:text-bitaccess-gold text-xs md:text-sm px-2 md:px-4"
             >
               Previous
             </Button>
 
-            <div className="flex space-x-4">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 md:space-x-4">
               {currentStep < welcomeSteps.length - 1 ? (
                 <Button
                   onClick={handleNext}
-                  className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black"
+                  className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black text-xs md:text-sm px-2 md:px-4"
                 >
-                  Next <ArrowRight className="w-4 h-4 ml-2" />
+                  Next <ArrowRight className="w-3 h-3 md:w-4 md:h-4 ml-1 md:ml-2" />
                 </Button>
               ) : (
                 <>
                   <Button
                     onClick={handleAffiliateRedirect}
                     variant="outline"
-                    className="border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
+                    className="border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10 text-xs md:text-sm px-2 md:px-4"
                   >
-                    <ExternalLink className="w-4 h-4 mr-2" />
+                    <ExternalLink className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
                     BitAccess Affiliates
                   </Button>
                   <Button
@@ -200,9 +200,9 @@ const WelcomeLandingModal: React.FC<WelcomeLandingModalProps> = ({
                       onGetStarted();
                       onClose();
                     }}
-                    className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black"
+                    className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black text-xs md:text-sm px-2 md:px-4"
                   >
-                    Get Started <ArrowRight className="w-4 h-4 ml-2" />
+                    Get Started <ArrowRight className="w-3 h-3 md:w-4 md:h-4 ml-1 md:ml-2" />
                   </Button>
                 </>
               )}
@@ -211,7 +211,7 @@ const WelcomeLandingModal: React.FC<WelcomeLandingModalProps> = ({
 
           {/* Footer */}
           <div className="text-center pt-4 border-t border-gray-700">
-            <p className="text-sm text-gray-400">
+            <p className="text-xs md:text-sm text-gray-400">
               Join the future of blockchain technology with BitAccess
             </p>
             {!isConnected && (
