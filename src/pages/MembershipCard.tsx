@@ -5,7 +5,7 @@ import { useMembership } from "@/contexts/MembershipContext";
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, BarChart2 } from "lucide-react";
+import { CreditCard, BarChart2, Lock } from "lucide-react";
 import WalletConnectPrompt from '@/components/ui/wallet-connect-prompt';
 import { format } from "date-fns";
 import { networkInfo } from '@/constants/contracts';
@@ -14,7 +14,7 @@ import { toast } from '@/hooks/use-toast';
 import "../components/ui/card-flip.css";
 
 const MembershipCard = () => {
-  const { isConnected, address } = useWallet();
+  const { isConnected, address, isMembershipActivated } = useWallet();
   const { membershipData } = useMembership();
   const [isFlipped, setIsFlipped] = useState(false);
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
@@ -71,6 +71,37 @@ const MembershipCard = () => {
           title="Membership Card Access Required"
           description="Please connect your wallet to view your membership card"
         />
+      </Layout>
+    );
+  }
+
+  if (!isMembershipActivated) {
+    return (
+      <Layout>
+        <div className="container px-4 py-24 mt-16">
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="w-24 h-24 mx-auto mb-6 bg-red-900/20 rounded-full flex items-center justify-center">
+              <Lock className="w-12 h-12 text-red-500" />
+            </div>
+            <h1 className="text-3xl font-bold mb-6 text-white">Membership Card Not Activated</h1>
+            <p className="mb-8 text-gray-400">
+              Your membership card needs to be activated before you can access it. 
+              Please activate your membership by paying the one-time activation fee of 0.01 BNB.
+            </p>
+            <div className="bg-bitaccess-black-light p-6 rounded-xl border border-red-500/20 mb-8">
+              <h3 className="text-lg font-semibold text-red-400 mb-2">Activation Required</h3>
+              <p className="text-gray-400 text-sm">
+                Connect your wallet and complete the activation process to unlock your digital membership card
+              </p>
+            </div>
+            <Button 
+              onClick={() => window.location.href = '/'}
+              className="bg-bitaccess-gold text-black hover:bg-bitaccess-gold/90"
+            >
+              Go Back to Home
+            </Button>
+          </div>
+        </div>
       </Layout>
     );
   }

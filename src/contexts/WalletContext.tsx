@@ -1,7 +1,7 @@
-
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { ethers } from "ethers";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
+import MembershipActivationModal from "@/components/membership/MembershipActivationModal";
 
 // Add ethereum to Window interface
 declare global {
@@ -20,6 +20,8 @@ interface WalletContextType {
   provider: ethers.providers.Web3Provider | null;
   signer: ethers.Signer | null;
   chainId: number | null;
+  isMembershipActivated: boolean;
+  setMembershipActivated: (activated: boolean) => void;
 }
 
 const WalletContext = createContext<WalletContextType>({
@@ -32,6 +34,8 @@ const WalletContext = createContext<WalletContextType>({
   provider: null,
   signer: null,
   chainId: null,
+  isMembershipActivated: false,
+  setMembershipActivated: () => {},
 });
 
 interface WalletProviderProps {
@@ -51,6 +55,14 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   } = useWalletConnection();
   
   const [balance, setBalance] = useState<number>(0);
+  const [showActivationModal, setShowActivationModal] = useState(false);
+  const [isMembershipActivated, setIsMembershipActivated] = useState(() => {
+    // Check localStorage for activation status
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('membershipActivated') === 'true';
+    }
+    return false;
+  });
   
   // Fetch token balance when address changes
   useEffect(() => {
@@ -75,12 +87,34 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
     }
   }, [address, isConnected, provider]);
 
+  // Show activation modal when wallet connects and membership isn't activated
+  useEffect(() => {
+    if (isConnected && address && !isMembershipActivated) {
+      const timer = setTimeout(() => {
+        setShowActivationModal(true);
+      }, 1000); // Show modal 1 second after connection
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isConnected, address, isMembershipActivated]);
+
   const connectWallet = async () => {
     await connect();
   };
 
   const disconnectWallet = () => {
     disconnect();
+  };
+
+  const setMembershipActivated = (activated: boolean) => {
+    setIsMembershipActivated(activated);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('membershipActivated', activated.toString());
+    }
+  };
+
+  const handleMembershipActivated = () => {
+    setMembershipActivated(true);
   };
 
   return (
@@ -93,9 +127,17 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       disconnectWallet,
       provider,
       signer,
-      chainId
+      chainId,
+      isMembershipActivated,
+      setMembershipActivated
     }}>
       {children}
+      
+      <MembershipActivationModal
+        isOpen={showActivationModal}
+        onClose={() => setShowActivationModal(false)}
+        onActivated={handleMembershipActivated}
+      />
     </WalletContext.Provider>
   );
 };

@@ -135,52 +135,57 @@ const PriceChart = () => {
         </div>
       </div>
       
-      <ChartContainer
-        className="h-80"
-        config={{
-          price: {
-            theme: {
-              light: "#F9D975",
-              dark: "#F9D975"
-            }
-          }
-        }}
-      >
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={filteredData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-            <XAxis 
-              dataKey="date" 
-              tickFormatter={(date) => {
-                const d = new Date(date);
-                return `${d.getMonth() + 1}/${d.getDate()}`;
-              }} 
-              tick={{ fill: "#A0AEC0" }}
-            />
-            <YAxis 
-              domain={['auto', 'auto']}
-              tickFormatter={(value) => `$${value.toFixed(9)}`} 
-              tick={{ fill: "#A0AEC0" }}
-            />
-            <Line 
-              type="monotone" 
-              dataKey="price" 
-              name="price"
-              stroke="url(#goldGradient)" 
-              strokeWidth={2} 
-              dot={false} 
-              activeDot={{ r: 8, stroke: "#F9D975", fill: "#F9D975" }} 
-            />
-            <defs>
-              <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#F9D975" stopOpacity={1}/>
-                <stop offset="100%" stopColor="#F9D975" stopOpacity={0.8}/>
-              </linearGradient>
-            </defs>
-            <Tooltip content={<CustomTooltip />} />
-          </LineChart>
-        </ResponsiveContainer>
-      </ChartContainer>
+      {/* Full width container with increased height */}
+      <div className="w-full -mx-6">
+        <div className="px-6">
+          <ChartContainer
+            className="h-96"
+            config={{
+              price: {
+                theme: {
+                  light: "#F9D975",
+                  dark: "#F9D975"
+                }
+              }
+            }}
+          >
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={filteredData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                <XAxis 
+                  dataKey="date" 
+                  tickFormatter={(date) => {
+                    const d = new Date(date);
+                    return `${d.getMonth() + 1}/${d.getDate()}`;
+                  }} 
+                  tick={{ fill: "#A0AEC0" }}
+                />
+                <YAxis 
+                  domain={['auto', 'auto']}
+                  tickFormatter={(value) => `$${value.toFixed(9)}`} 
+                  tick={{ fill: "#A0AEC0" }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="price" 
+                  name="price"
+                  stroke="url(#goldGradient)" 
+                  strokeWidth={2} 
+                  dot={false} 
+                  activeDot={{ r: 8, stroke: "#F9D975", fill: "#F9D975" }} 
+                />
+                <defs>
+                  <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#F9D975" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="#F9D975" stopOpacity={0.8}/>
+                  </linearGradient>
+                </defs>
+                <Tooltip content={<CustomTooltip />} />
+              </LineChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        </div>
+      </div>
     </div>
   );
 };
