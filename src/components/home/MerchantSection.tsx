@@ -15,7 +15,7 @@ const MerchantSection = () => {
   const plans = [
     {
       name: "Membership",
-      price: "20",
+      price: "50",
       currency: "USDT",
       duration: "365 days",
       description: "Access exclusive benefits and education",
@@ -25,10 +25,10 @@ const MerchantSection = () => {
         "$1 USDT worth of BTCB Reward",
         "$1 USDT worth of USDT Reward",
         "$1 USDT worth of BNB Reward",
-        "$2 USDT worth of BIT Token Rewards",
+        "$10 USDT worth of BIT Token Rewards",
         "Discounts from all our Products & Services",
         "Cross Border Payments Card",
-        "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level, 2.5% - 4th to 7th Level"
+        "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level, 2% - 4th to 6th Level and 1% - 7th to 10th level"
       ]
     },
     {
@@ -47,7 +47,7 @@ const MerchantSection = () => {
         "Premium Cross Border Payments Card",
         "Bit Merchant Stickers",
         "Promotions and Advertisements on BIT Community",
-        "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level, 2.5% - 4th to 7th Level"
+        "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level, 2.5% - 4th to 6th Level and and 1% - 7th to 10th level"
       ],
       highlighted: true
     }
