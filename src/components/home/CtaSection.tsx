@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 
 const CtaSection = () => {
   const handleAffiliateRedirect = () => {
-    window.open("https://bitaccess.io/affiliates", "_blank");
+    window.open("https://portal.bitaecosystem.org/login", "_blank");
   };
 
   return (
@@ -17,7 +17,7 @@ const CtaSection = () => {
           
           <div className="relative z-10 text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4 bg-gold-gradient text-transparent bg-clip-text">
-              Ready to Join the BitAccess Ecosystem?
+              Ready to Join the Bit Access Ecosystem?
             </h2>
             <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
               Don't miss out on exclusive presale opportunities, airdrops, and early access to our complete ecosystem of blockchain tools and services.

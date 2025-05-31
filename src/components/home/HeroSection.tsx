@@ -1,9 +1,10 @@
+
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 const HeroSection = () => {
   const handleAffiliateRedirect = () => {
-    window.open("https://bitaccess.io/affiliates", "_blank");
+    window.open("https://portal.bitaecosystem.org/login", "_blank");
   };
 
   return (
@@ -17,10 +18,10 @@ const HeroSection = () => {
       <div className="container relative z-10 px-4 md:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-block mb-3 py-1 px-3 bg-bitaccess-gold/10 border border-bitaccess-gold/20 rounded-full">
-            <span className="text-sm text-bitaccess-gold">BitAccess Ecosystem - Powering the future of digital transactions</span>
+            <span className="text-sm text-bitaccess-gold">Bit Access Ecosystem - Powering the future of digital transactions</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white animate-fade-in">
-            Welcome to the <span className="bg-gold-gradient text-transparent bg-clip-text">BitAccess</span> Ecosystem
+            Welcome to the <span className="bg-gold-gradient text-transparent bg-clip-text">Bit Access</span> Ecosystem
           </h1>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto animate-fade-in animation-delay-200">
             Empowering blockchain education and merchant adoption through our comprehensive ecosystem and BIT utility token.

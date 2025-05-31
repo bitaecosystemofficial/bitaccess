@@ -54,7 +54,7 @@ export const useWelcome = () => {
 
   // Get affiliate link
   const getAffiliateLink = () => {
-    return "https://bitaccess.io/affiliates";
+    return "https://portal.bitaecosystem.org/login";
   };
 
   return {

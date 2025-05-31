@@ -21,7 +21,7 @@ const AirdropHero = ({
     <div className="mb-10">
       <div className="text-center mb-8">
         <h1 className="text-4xl md:text-5xl font-bold mb-3 bg-gold-gradient text-transparent bg-clip-text">
-          BitAccess Airdrop Program
+          Bit Access Airdrop Program
         </h1>
         <p className="text-lg text-gray-400 max-w-2xl mx-auto">
           Complete social media tasks and receive free BIT tokens. Join our community and participate in the token distribution event.

@@ -19,7 +19,7 @@ const MerchantSection = () => {
       currency: "USDT",
       duration: "365 days",
       description: "Access exclusive benefits and education",
-      externalUrl: "https://bitaccess.io/membership",
+      externalUrl: "https://portal.bitaecosystem.org/login",
       features: [
         "Access to Blockchain Education & Technical Training",
         "$1 USDT worth of BTCB Reward",
@@ -37,7 +37,7 @@ const MerchantSection = () => {
       currency: "USDT",
       duration: "365 days",
       description: "Full business solution with promotional benefits",
-      externalUrl: "https://bitaccess.io/merchant",
+      externalUrl: "https://portal.bitaecosystem.org/login",
       features: [
         "Blockchain Education and Technical Training",
         "$1 USDT worth of BTCB Reward",
@@ -114,7 +114,7 @@ const MerchantSection = () => {
         <div className="text-center mt-8">
           <p className="text-sm text-gray-400 flex items-center justify-center gap-2">
             <Globe className="w-4 h-4" />
-            Secure payments powered by BitAccess ecosystem
+            Secure payments powered by Bit Access ecosystem
           </p>
         </div>
       </div>
