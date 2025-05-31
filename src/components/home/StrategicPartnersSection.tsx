@@ -5,21 +5,15 @@ import { ExternalLink } from "lucide-react";
 
 const partners = [
   {
-    name: "BIIT Corp",
+    name: "BIIT",
     logo: "/placeholder.svg",
-    description: "Blockchain Integrated International Technology Corporation specializing in comprehensive blockchain education and development.",
+    description: "Blockchain Integrated International Technology a corporate company specializing in comprehensive blockchain education and development.",
     website: "#"
   },
   {
     name: "BIT Merchant",
     logo: "/placeholder.svg",
     description: "Specialized platform for merchants integrating blockchain payment solutions across various industries.",
-    website: "#"
-  },
-  {
-    name: "CITFEE",
-    logo: "/placeholder.svg",
-    description: "Center for Innovative Technology in Financial and Educational Excellence, focusing on financial education and literacy.",
     website: "#"
   },
   {
