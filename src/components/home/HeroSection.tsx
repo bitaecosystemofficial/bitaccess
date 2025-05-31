@@ -46,7 +46,7 @@ const HeroSection = () => {
             <p className="text-sm text-gray-400">Community Members</p>
           </div>
           <div className="text-center p-4 rounded-lg bg-bitaccess-black-light bg-opacity-50 backdrop-blur-sm border border-bitaccess-gold/10 hover:border-bitaccess-gold/30 transition-all duration-300">
-            <p className="text-3xl font-bold text-bitaccess-gold mb-1">1.2M</p>
+            <p className="text-3xl font-bold text-bitaccess-gold mb-1">100B</p>
             <p className="text-sm text-gray-400">BIT Tokens</p>
           </div>
           <div className="text-center p-4 rounded-lg bg-bitaccess-black-light bg-opacity-50 backdrop-blur-sm border border-bitaccess-gold/10 hover:border-bitaccess-gold/30 transition-all duration-300">
