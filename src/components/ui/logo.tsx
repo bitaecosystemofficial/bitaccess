@@ -16,12 +16,12 @@ const Logo: React.FC<LogoProps> = ({ className }) => {
         <div className="bg-bitaccess-gold rounded-md w-8 h-8 flex items-center justify-center mr-2">
           <span className="font-bold text-black">BA</span>
         </div>
-        <span className="font-bold text-lg text-white">BitAccess</span>
+        <span className="font-bold text-lg bg-gold-gradient text-transparent bg-clip-text">BitAccess</span>
       </div>
     );
   }
   
-  // Use the circular logo design for desktop view with updated styling to match footer
+  // Use the circular logo design for desktop view with gold gradient text to match footer
   return (
     <div className={`flex items-center ${className || ''}`}>
       <div className="h-10 w-10 mr-2 overflow-hidden">
@@ -31,7 +31,7 @@ const Logo: React.FC<LogoProps> = ({ className }) => {
           className="h-full w-full object-contain"
         />
       </div>
-      <span className="font-bold text-xl text-white">Bit Access Ecosystem</span>
+      <span className="font-bold text-xl bg-gold-gradient text-transparent bg-clip-text">Bit Access Ecosystem</span>
     </div>
   );
 };
