@@ -37,7 +37,7 @@ interface Video {
   description: string;
   duration: string;
   category: string;
-  level: string;
+  level?: string;
   thumbnail: string;
   requiresMembership: boolean;
   instructor: string;
