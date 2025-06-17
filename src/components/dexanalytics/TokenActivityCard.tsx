@@ -38,12 +38,12 @@ const TokenActivityCard = () => {
 
   if (isLoading) {
     return (
-      <Card className="border-bitaccess-gold/20 bg-bitaccess-black-light">
+      <Card className="border-bitaccess-gold/20 bg-bitaccess-black-light w-full">
         <CardHeader>
           <CardTitle className="text-bitaccess-gold">24h Transfer Activity</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-6">
             {[...Array(3)].map((_, i) => (
               <Skeleton key={i} className="h-16 w-full" />
             ))}
@@ -56,7 +56,7 @@ const TokenActivityCard = () => {
   if (!activity) return null;
 
   return (
-    <Card className="border-bitaccess-gold/20 bg-bitaccess-black-light">
+    <Card className="border-bitaccess-gold/20 bg-bitaccess-black-light w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-bitaccess-gold">
           <Activity className="w-5 h-5" />
@@ -64,8 +64,8 @@ const TokenActivityCard = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-4">
-          <div className="bg-bitaccess-black rounded-lg p-4">
+        <div className="grid grid-cols-3 gap-8">
+          <div className="bg-bitaccess-black rounded-lg p-6">
             <div className="flex items-center gap-2 mb-2">
               <ArrowUpDown className="w-4 h-4 text-blue-400" />
               <span className="text-gray-400 text-sm">Total Transfers</span>
@@ -75,7 +75,7 @@ const TokenActivityCard = () => {
             </p>
           </div>
           
-          <div className="bg-bitaccess-black rounded-lg p-4">
+          <div className="bg-bitaccess-black rounded-lg p-6">
             <div className="flex items-center gap-2 mb-2">
               <Users className="w-4 h-4 text-purple-400" />
               <span className="text-gray-400 text-sm">Active Addresses</span>
@@ -85,7 +85,7 @@ const TokenActivityCard = () => {
             </p>
           </div>
           
-          <div className="bg-bitaccess-black rounded-lg p-4">
+          <div className="bg-bitaccess-black rounded-lg p-6">
             <div className="flex items-center gap-2 mb-2">
               <Clock className="w-4 h-4 text-orange-400" />
               <span className="text-gray-400 text-sm">Avg per Hour</span>

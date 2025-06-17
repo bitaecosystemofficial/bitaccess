@@ -75,7 +75,8 @@ const DexChartAnalytics = () => {
               <Top10HoldersChart />
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+            {/* Full width TokenActivityCard */}
+            <div className="mt-8">
               <TokenActivityCard />
             </div>
             
