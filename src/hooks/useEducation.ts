@@ -18,6 +18,38 @@ interface Certificate {
   certificateHash: string;
 }
 
+interface Course {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  level: string;
+  enrolledStudents: number;
+  modules?: Array<{
+    title: string;
+    description: string;
+  }>;
+}
+
+interface Video {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  category: string;
+  level?: string;
+  thumbnail: string;
+  requiresMembership: boolean;
+  instructor: string;
+  likes: number;
+  views: number;
+}
+
+interface EducationData {
+  courses: Course[];
+  videos: Video[];
+}
+
 export const useEducation = () => {
   const { address, isConnected } = useWallet();
   const [courseProgress, setCourseProgress] = useState<CourseProgress[]>([]);
@@ -139,4 +171,81 @@ export const useEducation = () => {
     issueCertificate,
     loadStudentProgress
   };
+};
+
+// Export education data hook
+export const useEducationData = (): EducationData => {
+  return {
+    courses: [
+      {
+        id: "blockchain-basics",
+        title: "Blockchain Fundamentals",
+        description: "Learn the basics of blockchain technology and how it works",
+        duration: "4 weeks",
+        level: "Beginner",
+        enrolledStudents: 1250,
+        modules: [
+          {
+            title: "Introduction to Blockchain",
+            description: "Understanding the core concepts"
+          },
+          {
+            title: "Cryptography Basics",
+            description: "How encryption secures the blockchain"
+          }
+        ]
+      },
+      {
+        id: "defi-advanced",
+        title: "DeFi Advanced Concepts",
+        description: "Deep dive into decentralized finance protocols",
+        duration: "6 weeks",
+        level: "Advanced",
+        enrolledStudents: 892
+      }
+    ],
+    videos: [
+      {
+        id: "video-1",
+        title: "Introduction to Cryptocurrency",
+        description: "A beginner's guide to understanding digital currencies",
+        duration: "15:30",
+        category: "beginner",
+        thumbnail: "/placeholder.svg",
+        requiresMembership: false,
+        instructor: "BIT Team",
+        likes: 2500,
+        views: 15000
+      },
+      {
+        id: "video-2",
+        title: "Advanced Trading Strategies",
+        description: "Professional trading techniques for experienced users",
+        duration: "25:45",
+        category: "advanced",
+        thumbnail: "/placeholder.svg",
+        requiresMembership: true,
+        instructor: "BIT Team",
+        likes: 1850,
+        views: 8500
+      }
+    ]
+  };
+};
+
+// Export enrollment function
+export const enrollInCourse = async (courseId: string, address: string): Promise<{success: boolean, error?: string}> => {
+  try {
+    // Simulate enrollment process
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    console.log(`Enrolling ${address} in course ${courseId}`);
+    
+    return { success: true };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Enrollment failed' 
+    };
+  }
 };

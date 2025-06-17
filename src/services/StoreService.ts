@@ -29,6 +29,40 @@ export class StoreService extends BaseContractService {
     );
   }
 
+  async getStoreStatus(address: string): Promise<number> {
+    try {
+      if (!this.merchantContract) {
+        await this.initializeContracts();
+      }
+      // Simulate merchant status check
+      return Math.floor(Math.random() * 3); // 0 = not merchant, 1 = active, 2 = suspended
+    } catch (error) {
+      console.error('Error getting store status:', error);
+      return 0;
+    }
+  }
+
+  async payWithToken(planName: string, duration: number, token: string): Promise<{success: boolean, error?: string}> {
+    try {
+      if (!this.signer) {
+        throw new Error('Wallet not connected');
+      }
+      
+      // Simulate payment process
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      console.log(`Payment for ${planName} plan (${duration} days) with ${token}`);
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Payment error:', error);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Payment failed' 
+      };
+    }
+  }
+
   async registerMerchant(name: string, email: string) {
     if (!this.merchantContract) {
       await this.initializeContracts();
