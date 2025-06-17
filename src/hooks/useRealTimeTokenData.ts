@@ -11,28 +11,28 @@ export const useRealTimeTokenData = () => {
   const [lastUpdate, setLastUpdate] = useState(new Date());
   const { toast } = useToast();
 
-  const fetchAllData = async () => {
+  const fetchAllRealTimeData = async () => {
     try {
       setIsLoading(true);
-      console.log('Fetching real-time data from BSCScan...');
+      console.log('Fetching comprehensive real-time data from BSCScan...');
       
-      const [info, holders, activityData] = await Promise.all([
-        bscscanService.getTokenInfo(),
-        bscscanService.getTop10Holders(),
-        bscscanService.getTokenActivity()
-      ]);
+      const realTimeData = await bscscanService.getRealTimeTokenData();
 
-      setTokenInfo(info);
-      setTopHolders(holders);
-      setActivity(activityData);
-      setLastUpdate(new Date());
+      setTokenInfo(realTimeData.tokenInfo);
+      setTopHolders(realTimeData.topHolders);
+      setActivity(realTimeData.activity);
+      setLastUpdate(realTimeData.timestamp);
       
-      console.log('Real-time data updated:', { info, holders: holders.length, activityData });
+      console.log('Real-time data updated:', { 
+        holders: realTimeData.tokenInfo?.holders,
+        topHoldersCount: realTimeData.topHolders.length,
+        activity: realTimeData.activity 
+      });
     } catch (error) {
       console.error('Error fetching real-time token data:', error);
       toast({
         title: "Data Fetch Error",
-        description: "Failed to fetch real-time data from BSCScan",
+        description: "Failed to fetch real-time data from BSCScan API",
         variant: "destructive",
       });
     } finally {
@@ -42,19 +42,19 @@ export const useRealTimeTokenData = () => {
 
   useEffect(() => {
     // Initial fetch
-    fetchAllData();
+    fetchAllRealTimeData();
     
-    // Set up polling every 4 hours (14400000 ms)
-    const interval = setInterval(fetchAllData, 14400000);
+    // Set up polling every 4 hours (14400000 ms) as requested
+    const interval = setInterval(fetchAllRealTimeData, 14400000);
     
     return () => clearInterval(interval);
   }, []);
 
   const refreshData = async () => {
-    await fetchAllData();
+    await fetchAllRealTimeData();
     toast({
       title: "Data Refreshed",
-      description: "Token data has been updated with latest information",
+      description: "Real-time token data has been updated from BSCScan",
     });
   };
 

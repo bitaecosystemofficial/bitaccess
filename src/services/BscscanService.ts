@@ -24,6 +24,7 @@ export interface TokenHolder {
   address: string;
   balance: string;
   percentage: number;
+  rank: number;
 }
 
 export interface TokenActivity {
@@ -40,7 +41,7 @@ export class BscscanService {
           ...params,
           apikey: API_KEY
         },
-        timeout: 10000
+        timeout: 15000
       });
       
       if (response.data.status === '0' && response.data.message === 'NOTOK') {
@@ -56,7 +57,7 @@ export class BscscanService {
 
   async getTokenInfo(): Promise<TokenInfo> {
     try {
-      console.log('Fetching token info from BSCScan API...');
+      console.log('Fetching real-time token info from BSCScan API...');
       
       // Get token supply
       const supplyData = await this.makeRequest({
@@ -65,8 +66,8 @@ export class BscscanService {
         contractaddress: TOKEN_ADDRESS
       });
       
-      // Get actual holders count from BSCScan
-      const holdersCount = await this.getActualHoldersCount();
+      // Get real-time holders count
+      const holdersCount = await this.getRealTimeHoldersCount();
       
       return {
         totalSupply: supplyData.result,
@@ -74,40 +75,56 @@ export class BscscanService {
       };
     } catch (error) {
       console.error('Error fetching token info:', error);
-      // Return actual known data as fallback
       return {
         totalSupply: '100000000000000000000000000000',
-        holders: 3193 // Current actual holders count
+        holders: 3193 // Current known count as fallback
       };
     }
   }
 
-  private async getActualHoldersCount(): Promise<number> {
+  private async getRealTimeHoldersCount(): Promise<number> {
     try {
-      // Use token holder list API to get accurate count
-      const data = await this.makeRequest({
-        module: 'token',
-        action: 'tokenholderlist',
-        contractaddress: TOKEN_ADDRESS,
-        page: 1,
-        offset: 1000
-      });
+      console.log('Fetching real-time holders count from BSCScan...');
       
-      if (data.result && Array.isArray(data.result)) {
-        console.log(`Actual holders count from BSCScan: ${data.result.length}`);
-        return data.result.length;
+      // Get all holders using pagination to get accurate count
+      let totalHolders = 0;
+      let page = 1;
+      const pageSize = 10000; // Maximum allowed by BSCScan
+      
+      while (true) {
+        const data = await this.makeRequest({
+          module: 'token',
+          action: 'tokenholderlist',
+          contractaddress: TOKEN_ADDRESS,
+          page: page,
+          offset: pageSize
+        });
+        
+        if (!data.result || !Array.isArray(data.result) || data.result.length === 0) {
+          break;
+        }
+        
+        totalHolders += data.result.length;
+        
+        // If we got less than pageSize, we've reached the end
+        if (data.result.length < pageSize) {
+          break;
+        }
+        
+        page++;
       }
       
-      return 3193; // Fallback to known count
+      console.log(`Real-time holders count from BSCScan: ${totalHolders}`);
+      return totalHolders || 3193;
     } catch (error) {
-      console.error('Error fetching actual holders count:', error);
+      console.error('Error fetching real-time holders count:', error);
       return 3193; // Fallback to known count
     }
   }
   
   async getTokenTransactions(page: number = 1, offset: number = 100): Promise<TokenTransaction[]> {
     try {
-      console.log(`Fetching token transactions (page ${page}, offset ${offset})...`);
+      console.log(`Fetching real-time token transactions (page ${page}, offset ${offset})...`);
       
       const data = await this.makeRequest({
         module: 'account',
@@ -125,50 +142,49 @@ export class BscscanService {
     }
   }
 
-  async getTop10Holders(): Promise<TokenHolder[]> {
+  async getRealTimeTopHolders(limit: number = 1000): Promise<TokenHolder[]> {
     try {
-      console.log('Fetching top holders from BSCScan...');
+      console.log(`Fetching real-time top ${limit} holders from BSCScan...`);
       
       const data = await this.makeRequest({
         module: 'token',
         action: 'tokenholderlist',
         contractaddress: TOKEN_ADDRESS,
         page: 1,
-        offset: 10
+        offset: limit
       });
       
       if (data.result && Array.isArray(data.result)) {
-        const totalSupply = 100000000000; // 100B tokens
+        // Calculate total supply for percentage calculation (100B tokens with 9 decimals)
+        const totalSupplyNumber = 100000000000; // 100B tokens
         
-        return data.result.map((holder: any) => ({
-          address: holder.TokenHolderAddress,
-          balance: holder.TokenHolderQuantity,
-          percentage: (parseFloat(holder.TokenHolderQuantity) / totalSupply) * 100
-        }));
+        return data.result.map((holder: any, index: number) => {
+          const balance = parseFloat(holder.TokenHolderQuantity);
+          const percentage = (balance / totalSupplyNumber) * 100;
+          
+          return {
+            address: holder.TokenHolderAddress,
+            balance: holder.TokenHolderQuantity,
+            percentage: percentage,
+            rank: index + 1
+          };
+        });
       }
       
-      // Fallback mock data
-      return [
-        { address: '0x1234567890123456789012345678901234567890', balance: '5000000000', percentage: 5.0 },
-        { address: '0x2345678901234567890123456789012345678901', balance: '4500000000', percentage: 4.5 },
-        { address: '0x3456789012345678901234567890123456789012', balance: '4000000000', percentage: 4.0 },
-        { address: '0x4567890123456789012345678901234567890123', balance: '3500000000', percentage: 3.5 },
-        { address: '0x5678901234567890123456789012345678901234', balance: '3000000000', percentage: 3.0 },
-        { address: '0x6789012345678901234567890123456789012345', balance: '2500000000', percentage: 2.5 },
-        { address: '0x7890123456789012345678901234567890123456', balance: '2000000000', percentage: 2.0 },
-        { address: '0x8901234567890123456789012345678901234567', balance: '1500000000', percentage: 1.5 },
-        { address: '0x9012345678901234567890123456789012345678', balance: '1000000000', percentage: 1.0 },
-        { address: '0x0123456789012345678901234567890123456789', balance: '500000000', percentage: 0.5 }
-      ];
+      return [];
     } catch (error) {
-      console.error('Error fetching top holders:', error);
+      console.error('Error fetching real-time top holders:', error);
       return [];
     }
   }
 
+  async getTop10Holders(): Promise<TokenHolder[]> {
+    return this.getRealTimeTopHolders(10);
+  }
+
   async getTokenActivity(): Promise<TokenActivity> {
     try {
-      console.log('Fetching 24h token activity...');
+      console.log('Fetching real-time 24h token activity...');
       
       const transactions = await this.getTokenTransactions(1, 1000);
       const now = Date.now() / 1000;
@@ -205,6 +221,29 @@ export class BscscanService {
         volume24h: '0',
         uniqueAddresses24h: 0
       };
+    }
+  }
+
+  // New method to get comprehensive real-time data
+  async getRealTimeTokenData() {
+    try {
+      console.log('Fetching comprehensive real-time token data...');
+      
+      const [tokenInfo, topHolders, activity] = await Promise.all([
+        this.getTokenInfo(),
+        this.getRealTimeTopHolders(1000), // Get top 1000 holders
+        this.getTokenActivity()
+      ]);
+
+      return {
+        tokenInfo,
+        topHolders,
+        activity,
+        timestamp: new Date()
+      };
+    } catch (error) {
+      console.error('Error fetching comprehensive real-time data:', error);
+      throw error;
     }
   }
 }
