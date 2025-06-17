@@ -5,8 +5,6 @@ import { contractAddresses } from "@/constants/contracts";
 import { useContractEvents } from "@/hooks/useContractEvents";
 import { useToast } from "@/components/ui/use-toast";
 import TokenInfoCard from "./TokenInfoCard";
-import TokenHoldersCard from "./TokenHoldersCard";
-import TopHoldersCard from "./TopHoldersCard";
 import TokenActivityCard from "./TokenActivityCard";
 import TransferTransactionsCard from "./TransferTransactionsCard";
 import { useRealTimeTokenData } from "@/hooks/useRealTimeTokenData";
@@ -36,8 +34,8 @@ const DexChartAnalytics = () => {
     network: "Binance Smart Chain (BSC)",
     decimal: 9,
     standard: "BEP20",
-    totalSupply: tokenInfo?.totalSupply || "100,000,000,000",
-    holders: tokenInfo?.holders || 3193 // Use actual BSCScan data
+    totalSupply: "100 Billion BIT",
+    holders: 3194
   };
   
   return (
@@ -71,10 +69,8 @@ const DexChartAnalytics = () => {
           <>
             <TokenInfoCard tokenInfo={tokenInfoData} />
             
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-              <TokenHoldersCard holdersCount={tokenInfo?.holders || 3193} />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
               <TokenActivityCard />
-              <TopHoldersCard />
             </div>
             
             <TransferTransactionsCard />
