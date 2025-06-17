@@ -6,6 +6,7 @@ import { useContractEvents } from "@/hooks/useContractEvents";
 import { useToast } from "@/components/ui/use-toast";
 import TokenInfoCard from "./TokenInfoCard";
 import TokenHoldersCard from "./TokenHoldersCard";
+import TopHoldersCard from "./TopHoldersCard";
 import TokenActivityCard from "./TokenActivityCard";
 import TransferTransactionsCard from "./TransferTransactionsCard";
 import { useRealTimeTokenData } from "@/hooks/useRealTimeTokenData";
@@ -70,9 +71,10 @@ const DexChartAnalytics = () => {
           <>
             <TokenInfoCard tokenInfo={tokenInfoData} />
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
               <TokenHoldersCard holdersCount={tokenInfo?.holders || 3193} />
               <TokenActivityCard />
+              <TopHoldersCard />
             </div>
             
             <TransferTransactionsCard />

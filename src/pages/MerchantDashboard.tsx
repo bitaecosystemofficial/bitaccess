@@ -6,7 +6,6 @@ import { useWallet } from '@/contexts/WalletContext';
 import { useMembership } from '@/contexts/MembershipContext';
 import WalletConnectPrompt from '@/components/ui/wallet-connect-prompt';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
 import { 
   MerchantProducts, 
   MerchantOrders, 
@@ -18,7 +17,7 @@ import { PackageOpen, ShoppingBag, MessageSquare, Tag, CreditCard } from 'lucide
 
 const MerchantDashboard = () => {
   const { isConnected } = useWallet();
-  const { membershipData, isLoading } = useMembership();
+  const { membershipData } = useMembership();
   const [activeTab, setActiveTab] = useState("products");
   
   if (!isConnected) {
@@ -28,30 +27,6 @@ const MerchantDashboard = () => {
           title="Merchant Dashboard Access Required"
           description="Please connect your wallet to access the merchant dashboard"
         />
-      </Layout>
-    );
-  }
-  
-  // Show loading skeleton while membership data is being fetched
-  if (isLoading) {
-    return (
-      <Layout>
-        <div className="container px-4 py-12 mt-16">
-          <div className="space-y-4">
-            <Skeleton className="h-8 w-64" />
-            <Skeleton className="h-4 w-96" />
-            <div className="grid grid-cols-5 gap-2 mt-8">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-10" />
-              ))}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton key={i} className="h-32" />
-              ))}
-            </div>
-          </div>
-        </div>
       </Layout>
     );
   }
