@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import TokenInfoCard from "./TokenInfoCard";
 import TokenActivityCard from "./TokenActivityCard";
 import TransferTransactionsCard from "./TransferTransactionsCard";
+import Top10HoldersChart from "./Top10HoldersChart";
 import { useRealTimeTokenData } from "@/hooks/useRealTimeTokenData";
 
 const DexChartAnalytics = () => {
@@ -68,6 +69,11 @@ const DexChartAnalytics = () => {
         ) : (
           <>
             <TokenInfoCard tokenInfo={tokenInfoData} />
+            
+            {/* Top 10 Holders Pie Chart */}
+            <div className="mt-8">
+              <Top10HoldersChart />
+            </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
               <TokenActivityCard />
