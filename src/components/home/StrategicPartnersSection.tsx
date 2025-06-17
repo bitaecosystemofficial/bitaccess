@@ -5,7 +5,7 @@ const partners = [
   {
     name: "Biit",
     logo: "https://storage.googleapis.com/hostinger-horizons-assets-prod/694d5dba-5a0b-4632-bef4-156b08369d2d/78342456301e206b15a59ff87b70c988.png",
-    description: "Digital Asset Platform"
+    description: "Blockchain Education Platform"
   },
   {
     name: "BSCScan",
@@ -69,7 +69,7 @@ const StrategicPartnersSection = () => {
     <section className="py-16 md:py-24 bg-bitaccess-black">
       <div className="container px-4 md:px-8">
         <SectionHeading
-          title="Blockchain Integrative Partners"
+          title="Blockchain Strategic Partners"
           subtitle="Strategic partnerships across major blockchain ecosystems, exchanges, and analytics platforms"
           centered
         />
