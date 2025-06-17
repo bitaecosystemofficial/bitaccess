@@ -9,7 +9,7 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
-import { Check, ExternalLink, Globe } from "lucide-react";
+import { Check, ExternalLink, Globe, QrCode, Sticker } from "lucide-react";
 
 const MerchantSection = () => {
   const plans = [
@@ -25,9 +25,8 @@ const MerchantSection = () => {
         "$1 USDT worth of BTCB Reward",
         "$1 USDT worth of USDT Reward",
         "$1 USDT worth of BNB Reward",
-        "$10 USDT worth of BIT Token Rewards",
+        "$5 USDT worth of BIT Token Rewards",
         "Discounts from all our Products & Services",
-        "Cross Border Payments Card",
         "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level, 2% - 4th to 6th Level and 1% - 7th to 10th level"
       ]
     },
@@ -44,8 +43,7 @@ const MerchantSection = () => {
         "$1 USDT worth of USDT Reward",
         "$1 USDT worth of BNB Reward",
         "$10 USDT worth of BIT Token Rewards",
-        "Premium Cross Border Payments Card",
-        "Bit Merchant Stickers",
+        "Bit Merchant Stickers with QR Codes",
         "Promotions and Advertisements on BIT Community",
         "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level, 2.5% - 4th to 6th Level and and 1% - 7th to 10th level"
       ],
@@ -90,7 +88,14 @@ const MerchantSection = () => {
                 <ul className="space-y-2">
                   {plan.features.map((feature, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <Check className={`w-5 h-5 mt-0.5 ${plan.highlighted ? 'text-bitaccess-gold' : 'text-gray-400'}`} />
+                      {feature.includes("Bit Merchant Stickers with QR Codes") ? (
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <Sticker className={`w-4 h-4 ${plan.highlighted ? 'text-bitaccess-gold' : 'text-gray-400'}`} />
+                          <QrCode className={`w-4 h-4 ${plan.highlighted ? 'text-bitaccess-gold' : 'text-gray-400'}`} />
+                        </div>
+                      ) : (
+                        <Check className={`w-5 h-5 mt-0.5 ${plan.highlighted ? 'text-bitaccess-gold' : 'text-gray-400'}`} />
+                      )}
                       <span className="text-gray-300 text-sm">{feature}</span>
                     </li>
                   ))}

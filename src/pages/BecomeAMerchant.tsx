@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +6,7 @@ import { useMembership } from '@/contexts/MembershipContext';
 import { useMemberSubscription } from '@/hooks/useMemberSubscription';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, AlertCircle, Store, ShieldCheck, Clock, Coins } from 'lucide-react';
+import { Check, AlertCircle, Store, ShieldCheck, Clock, Coins, Sticker, QrCode } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -152,6 +151,13 @@ const BecomeAMerchant = () => {
                   <li className="flex items-start gap-2">
                     <Check className="w-5 h-5 mt-0.5 text-bitaccess-gold" />
                     <span className="text-gray-300 text-sm">NFT Minting Capability for Products</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <Sticker className="w-4 h-4 text-bitaccess-gold" />
+                      <QrCode className="w-4 h-4 text-bitaccess-gold" />
+                    </div>
+                    <span className="text-gray-300 text-sm">Bit Merchant Stickers with QR Codes</span>
                   </li>
                 </ul>
               </div>
