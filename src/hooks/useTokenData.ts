@@ -13,6 +13,7 @@ export interface TokenData {
   decimal: number;
   standard: string;
   marketSupply: string;
+  totalSupply: string;
   buyTax: string;
   sellTax: string;
   balance: string;
@@ -30,6 +31,7 @@ export const useTokenData = () => {
     decimal: 9,
     standard: "BEP20",
     marketSupply: "100,000,000,000",
+    totalSupply: "100,000,000,000",
     buyTax: "3%",
     sellTax: "3%",
     balance: "0",
@@ -65,9 +67,10 @@ export const useTokenData = () => {
           network: "Binance Smart Chain (BSC)",
           decimal: tokenDetails.decimals || 9,
           standard: "BEP20",
-          marketSupply: ethers.utils.formatUnits(tokenDetails.totalSupply || 0, tokenDetails.decimals),
-          buyTax: "3%", // Could be fetched from contract
-          sellTax: "3%", // Could be fetched from contract
+          marketSupply: "100,000,000,000",
+          totalSupply: "100,000,000,000",
+          buyTax: "3%",
+          sellTax: "3%",
           balance: userBalance,
           price: metrics.price,
         });

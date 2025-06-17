@@ -120,6 +120,11 @@ const Docs = () => {
                     </p>
                     
                     <div className="bg-bitaccess-black p-4 rounded-lg border border-bitaccess-gold/10">
+                      <h4 className="font-medium text-white mb-3">Founded by:</h4>
+                      <p className="text-gray-300 mb-4">
+                        A Group of Programmers and Blockchain Enthusiasts who have been in the Market for more than 10 years.
+                      </p>
+                      
                       <h4 className="font-medium text-white mb-3">Table of Contents:</h4>
                       <ol className="list-decimal list-inside space-y-1 text-gray-400">
                         <li>Introduction</li>

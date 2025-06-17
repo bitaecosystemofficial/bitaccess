@@ -68,6 +68,7 @@ export const tokenInfo = {
   name: "BIT ACCESS",
   symbol: "BIT",
   marketSupply: "100,000,000,000",
+  totalSupply: "100,000,000,000",
   buyTax: "3%",
   sellTax: "3%",
   decimal: 9,

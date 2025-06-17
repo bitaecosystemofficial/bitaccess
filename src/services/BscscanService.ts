@@ -59,24 +59,17 @@ export class BscscanService {
     try {
       console.log('Fetching real-time token info from BSCScan API...');
       
-      // Get token supply
-      const supplyData = await this.makeRequest({
-        module: 'stats',
-        action: 'tokensupply',
-        contractaddress: TOKEN_ADDRESS
-      });
-      
       // Get real-time holders count
       const holdersCount = await this.getRealTimeHoldersCount();
       
       return {
-        totalSupply: supplyData.result,
+        totalSupply: '100000000000000000000', // 100B tokens with 9 decimals
         holders: holdersCount
       };
     } catch (error) {
       console.error('Error fetching token info:', error);
       return {
-        totalSupply: '100000000000000000000000000000',
+        totalSupply: '100000000000000000000', // 100B tokens with 9 decimals
         holders: 3193 // Current known count as fallback
       };
     }
