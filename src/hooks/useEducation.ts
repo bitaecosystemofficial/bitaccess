@@ -211,11 +211,13 @@ export const useEducationData = (): EducationData => {
         description: "A beginner's guide to understanding digital currencies",
         duration: "15:30",
         category: "beginner",
+        level: "Beginner",
         thumbnail: "/placeholder.svg",
         requiresMembership: false,
         instructor: "BIT Team",
         likes: 2500,
-        views: 15000
+        views: 15000,
+        courseId: "blockchain-basics"
       },
       {
         id: "video-2",
@@ -223,11 +225,13 @@ export const useEducationData = (): EducationData => {
         description: "Professional trading techniques for experienced users",
         duration: "25:45",
         category: "advanced",
+        level: "Advanced",
         thumbnail: "/placeholder.svg",
         requiresMembership: true,
         instructor: "BIT Team",
         likes: 1850,
-        views: 8500
+        views: 8500,
+        courseId: "defi-advanced"
       }
     ]
   };
