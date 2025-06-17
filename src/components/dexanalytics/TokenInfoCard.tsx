@@ -1,6 +1,8 @@
 
-import { Button } from "@/components/ui/button";
-import { ExternalLink } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Copy, ExternalLink } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface TokenInfoProps {
   tokenInfo: {
@@ -10,76 +12,91 @@ interface TokenInfoProps {
     network: string;
     decimal: number;
     standard: string;
-    marketSupply: string;
-    buyTax: string;
-    sellTax: string;
+    totalSupply: string;
+    holders: number;
   };
 }
 
 const TokenInfoCard = ({ tokenInfo }: TokenInfoProps) => {
-  const truncateAddress = (address: string) => {
-    return address.substring(0, 6) + "..." + address.substring(address.length - 4);
+  const { toast } = useToast();
+
+  const copyAddress = () => {
+    navigator.clipboard.writeText(tokenInfo.contractAddress);
+    toast({
+      title: "Address Copied",
+      description: "Contract address copied to clipboard",
+    });
   };
-  
+
+  const openInBscscan = () => {
+    window.open(`https://bscscan.com/token/${tokenInfo.contractAddress}`, '_blank');
+  };
+
   return (
-    <div className="bg-gradient-to-br from-bitaccess-black-light to-bitaccess-black rounded-xl border border-bitaccess-gold/20 p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center">
-          <img 
-            src="https://github.com/bitaecosystemofficial/BIT-Logo/raw/main/logo.png" 
-            alt="BIT Token" 
-            className="w-12 h-12 mr-4"
-          />
-          <div>
-            <h2 className="text-2xl font-bold text-white">{tokenInfo.name}</h2>
-            <p className="text-gray-400">{tokenInfo.symbol} - {tokenInfo.standard}</p>
+    <Card className="border-bitaccess-gold/20 bg-bitaccess-black-light">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-2xl font-bold text-bitaccess-gold">
+            {tokenInfo.name} ({tokenInfo.symbol})
+          </CardTitle>
+          <Badge variant="outline" className="border-bitaccess-gold text-bitaccess-gold">
+            {tokenInfo.standard}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-bitaccess-black rounded-lg p-4">
+            <h3 className="text-gray-400 text-sm mb-2">Network</h3>
+            <p className="text-white font-semibold">{tokenInfo.network}</p>
+          </div>
+          
+          <div className="bg-bitaccess-black rounded-lg p-4">
+            <h3 className="text-gray-400 text-sm mb-2">Total Supply</h3>
+            <p className="text-white font-semibold">
+              {parseFloat(tokenInfo.totalSupply).toLocaleString()} {tokenInfo.symbol}
+            </p>
+          </div>
+          
+          <div className="bg-bitaccess-black rounded-lg p-4">
+            <h3 className="text-gray-400 text-sm mb-2">Holders</h3>
+            <p className="text-bitaccess-gold font-semibold text-xl">
+              {tokenInfo.holders.toLocaleString()}
+            </p>
+          </div>
+          
+          <div className="bg-bitaccess-black rounded-lg p-4">
+            <h3 className="text-gray-400 text-sm mb-2">Decimals</h3>
+            <p className="text-white font-semibold">{tokenInfo.decimal}</p>
           </div>
         </div>
-        <Button 
-          variant="outline" 
-          className="border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
-          onClick={() => window.open(`https://bscscan.com/token/${tokenInfo.contractAddress}`, '_blank')}
-        >
-          View on BSCScan <ExternalLink size={16} className="ml-2" />
-        </Button>
-      </div>
-      
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <div>
-          <p className="text-gray-400 mb-1">Contract Address</p>
-          <p className="bg-bitaccess-black p-2 rounded text-sm font-mono overflow-hidden text-ellipsis">
-            <a 
-              href={`https://bscscan.com/address/${tokenInfo.contractAddress}`} 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-bitaccess-gold"
-            >
-              {truncateAddress(tokenInfo.contractAddress)}
-            </a>
-          </p>
+        
+        <div className="mt-6 bg-bitaccess-black rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-gray-400 text-sm mb-2">Contract Address</h3>
+              <p className="text-white font-mono text-sm">{tokenInfo.contractAddress}</p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={copyAddress}
+                className="text-gray-400 hover:text-bitaccess-gold transition-colors p-2"
+                title="Copy Address"
+              >
+                <Copy className="w-4 h-4" />
+              </button>
+              <button
+                onClick={openInBscscan}
+                className="text-gray-400 hover:text-bitaccess-gold transition-colors p-2"
+                title="View on BSCScan"
+              >
+                <ExternalLink className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         </div>
-        <div>
-          <p className="text-gray-400 mb-1">Network</p>
-          <p className="text-white">{tokenInfo.network}</p>
-        </div>
-        <div>
-          <p className="text-gray-400 mb-1">Decimal</p>
-          <p className="text-white">{tokenInfo.decimal}</p>
-        </div>
-        <div>
-          <p className="text-gray-400 mb-1">Market Supply</p>
-          <p className="text-white">{tokenInfo.marketSupply}</p>
-        </div>
-        <div>
-          <p className="text-gray-400 mb-1">Buy Tax</p>
-          <p className="text-white">{tokenInfo.buyTax}</p>
-        </div>
-        <div>
-          <p className="text-gray-400 mb-1">Sell Tax</p>
-          <p className="text-white">{tokenInfo.sellTax}</p>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

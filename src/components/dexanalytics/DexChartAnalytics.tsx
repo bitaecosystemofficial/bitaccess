@@ -5,24 +5,17 @@ import { contractAddresses } from "@/constants/contracts";
 import { useContractEvents } from "@/hooks/useContractEvents";
 import { useToast } from "@/components/ui/use-toast";
 import { TokenTransaction } from "@/services/BscscanService";
-import { getMockData } from "@/services/MockDataService";
 import TokenInfoCard from "./TokenInfoCard";
-import TokenMetricsCard from "./TokenMetricsCard";
 import TokenHoldersCard from "./TokenHoldersCard";
 import TopHoldersCard from "./TopHoldersCard";
 import TokenActivityCard from "./TokenActivityCard";
-import AnalyticsTabs from "./AnalyticsTabs";
-import { useTokenMetrics } from "@/hooks/useTokenMetrics";
+import TransferTransactionsCard from "./TransferTransactionsCard";
+import { useRealTimeTokenData } from "@/hooks/useRealTimeTokenData";
 
 const DexChartAnalytics = () => {
-  const [tokenHolders, setTokenHolders] = useState(4872);
-  const [recentTransactions, setRecentTransactions] = useState<TokenTransaction[]>(
-    getMockData().transactions
-  );
-  
   const { latestTransfer } = useContractEvents();
   const { toast } = useToast();
-  const { metrics, isLoading, lastUpdate } = useTokenMetrics();
+  const { tokenInfo, topHolders, activity, isLoading, lastUpdate, refreshData } = useRealTimeTokenData();
   
   // React to transfer events (simulated)
   useState(() => {
@@ -37,16 +30,15 @@ const DexChartAnalytics = () => {
     }
   });
   
-  const tokenInfo = {
+  const tokenInfoData = {
     name: "BIT ACCESS",
     symbol: "BIT",
     contractAddress: contractAddresses.token,
     network: "Binance Smart Chain (BSC)",
     decimal: 9,
     standard: "BEP20",
-    marketSupply: "100,000,000,000",
-    buyTax: "3%",
-    sellTax: "3%"
+    totalSupply: tokenInfo?.totalSupply || "100,000,000,000",
+    holders: tokenInfo?.holders || 4872
   };
   
   return (
@@ -54,37 +46,39 @@ const DexChartAnalytics = () => {
       <div className="container mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2 bg-gold-gradient text-transparent bg-clip-text">
-            Bit Access DEX Analytics
+            Bit Access Token Analytics
           </h1>
           <p className="text-gray-400">
-            Real-time token analytics and market insights from BSCScan
+            Real-time token holders, transactions and transfer data from BSCScan
             <span className="ml-2 text-xs">
               Last updated: {lastUpdate.toLocaleTimeString()}
             </span>
           </p>
+          <button 
+            onClick={refreshData}
+            className="mt-2 bg-bitaccess-gold text-black px-4 py-2 rounded-lg hover:bg-bitaccess-gold/80 transition-colors"
+          >
+            Refresh Data
+          </button>
         </div>
         
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Skeleton className="h-[200px] rounded-xl" />
             <Skeleton className="h-[200px] rounded-xl" />
             <Skeleton className="h-[200px] rounded-xl" />
           </div>
         ) : (
           <>
-            <TokenInfoCard tokenInfo={tokenInfo} />
+            <TokenInfoCard tokenInfo={tokenInfoData} />
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-              <TokenMetricsCard metrics={metrics} />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+              <TokenHoldersCard holdersCount={tokenInfo?.holders || 4872} />
               <TokenActivityCard />
-            </div>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-              <TokenHoldersCard holdersCount={tokenHolders} />
               <TopHoldersCard />
             </div>
             
-            <AnalyticsTabs transactions={recentTransactions} />
+            <TransferTransactionsCard />
           </>
         )}
       </div>
