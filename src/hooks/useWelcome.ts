@@ -1,67 +1,38 @@
 
-import { useState, useEffect } from 'react';
-import { useWallet } from '@/contexts/WalletContext';
-import { welcomeService } from '@/services/ContractService';
-import { toast } from '@/hooks/use-toast';
+import { useState } from 'react';
+import { useToast } from '@/components/ui/use-toast';
 
 export const useWelcome = () => {
-  const { address, isConnected } = useWallet();
-  const [hasVisited, setHasVisited] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
-  // Check if user has visited before
-  useEffect(() => {
-    const visited = localStorage.getItem('hasVisitedBitAccess');
-    setHasVisited(!!visited);
-  }, []);
-
-  // Record welcome visit on blockchain
-  const recordVisit = async () => {
-    if (!isConnected || !address) {
-      toast({
-        title: "Wallet Not Connected",
-        description: "Please connect your wallet to record your visit.",
-        variant: "destructive",
-      });
-      return;
-    }
-
+  const claimWelcomeBonus = async (walletAddress: string) => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      await welcomeService.recordWelcomeVisit(address);
+      // Simulate welcome bonus claim
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
       toast({
-        title: "Welcome Recorded",
-        description: "Your visit has been recorded on the blockchain!",
+        title: "Welcome Bonus Claimed!",
+        description: "Your welcome bonus has been sent to your wallet.",
       });
+      
+      return { success: true };
     } catch (error) {
-      console.error("Error recording welcome visit:", error);
+      console.error('Error claiming welcome bonus:', error);
       toast({
-        title: "Recording Failed",
-        description: "Failed to record visit on blockchain.",
+        title: "Error",
+        description: "Failed to claim welcome bonus. Please try again.",
         variant: "destructive",
       });
+      return { success: false, error };
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Mark as visited locally
-  const markAsVisited = () => {
-    localStorage.setItem('hasVisitedBitAccess', 'true');
-    setHasVisited(true);
-  };
-
-  // Get affiliate link
-  const getAffiliateLink = () => {
-    return "https://portal.bitaecosystem.org/login";
-  };
-
   return {
-    hasVisited,
     isLoading,
-    recordVisit,
-    markAsVisited,
-    getAffiliateLink,
+    claimWelcomeBonus,
   };
 };

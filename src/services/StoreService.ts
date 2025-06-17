@@ -2,7 +2,7 @@
 import { ethers } from 'ethers';
 import { BaseContractService } from './BaseContractService';
 import { MerchantABI } from '../contracts/abis/MerchantABI';
-import { MarketplaceABI } from '../contracts/abis/MarketplaceABI';
+import { MARKETPLACE_ABI } from '../contracts/abis/MarketplaceABI';
 
 const MERCHANT_CONTRACT_ADDRESS = '0x742d35Cc6609690d3E8855A4CC8faa9b0E37c8aa';
 const MARKETPLACE_CONTRACT_ADDRESS = '0x3b2c9a6dE0F4Ff60fCA3C25e13e77e05FffFf444';
@@ -24,7 +24,7 @@ export class StoreService extends BaseContractService {
 
     this.marketplaceContract = new ethers.Contract(
       MARKETPLACE_CONTRACT_ADDRESS,
-      MarketplaceABI,
+      MARKETPLACE_ABI,
       this.signer
     );
   }
