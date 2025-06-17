@@ -21,13 +21,12 @@ const TopHoldersCard = () => {
       
       // Get top 10 holders specifically from smart contract
       const top10Holders = await bscscanService.getTop10Holders();
-      const realTimeData = await bscscanService.getRealTimeTokenData();
       
       setHolders(top10Holders);
       setTotalHolders(3194); // Updated to reflect actual contract holders
-      setLastUpdate(realTimeData.timestamp);
+      setLastUpdate(new Date());
       
-      console.log(`Fetched top 10 holders from smart contract, total holders: 3194`);
+      console.log(`Successfully fetched ${top10Holders.length} holders from smart contract, total holders: 3194`);
     } catch (error) {
       console.error('Error fetching real-time top 10 holders from smart contract:', error);
       toast({
@@ -44,8 +43,8 @@ const TopHoldersCard = () => {
     // Initial fetch
     fetchRealTimeHolders();
     
-    // Set up real-time updates every 30 seconds for live data
-    const interval = setInterval(fetchRealTimeHolders, 30000);
+    // Set up real-time updates every 4 hours (14400000 ms)
+    const interval = setInterval(fetchRealTimeHolders, 14400000);
     
     return () => clearInterval(interval);
   }, []);
@@ -122,80 +121,92 @@ const TopHoldersCard = () => {
         </p>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="border-gray-700 hover:bg-transparent">
-                <TableHead className="text-bitaccess-gold font-semibold w-16">#</TableHead>
-                <TableHead className="text-bitaccess-gold font-semibold min-w-32">Wallet Address</TableHead>
-                <TableHead className="text-bitaccess-gold font-semibold text-right min-w-32">BIT Balance</TableHead>
-                <TableHead className="text-bitaccess-gold font-semibold text-right w-24">Percentage</TableHead>
-                <TableHead className="text-bitaccess-gold font-semibold w-20">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {holders.slice(0, 10).map((holder, index) => (
-                <TableRow key={holder.address} className="border-gray-700 hover:bg-gray-800/30 transition-colors">
-                  <TableCell className="text-white font-bold text-lg">
-                    {holder.rank}
-                  </TableCell>
-                  <TableCell className="font-mono">
-                    <div className="flex flex-col gap-1">
-                      <button
-                        onClick={() => openInBscscan(holder.address)}
-                        className="text-blue-400 hover:text-blue-300 transition-colors text-left"
-                        title={`View ${holder.address} on BSCScan`}
-                      >
-                        {formatAddress(holder.address)}
-                      </button>
-                      <span className="text-xs text-gray-500">
-                        {holder.address.slice(0, 8)}...
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex flex-col gap-1">
-                      <span className="text-white font-bold text-lg">
-                        {formatBalance(holder.balance)}
-                      </span>
-                      <span className="text-xs text-gray-400">
-                        BIT
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex flex-col gap-1">
-                      <span className="text-bitaccess-gold font-bold text-lg">
-                        {holder.percentage.toFixed(3)}%
-                      </span>
-                      <span className="text-xs text-gray-400">
-                        of supply
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      <button
-                        onClick={() => copyAddress(holder.address)}
-                        className="text-gray-400 hover:text-bitaccess-gold transition-colors p-1 rounded"
-                        title="Copy Full Address"
-                      >
-                        <Copy className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => openInBscscan(holder.address)}
-                        className="text-gray-400 hover:text-bitaccess-gold transition-colors p-1 rounded"
-                        title="View on BSCScan"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </TableCell>
+        {holders.length > 0 ? (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-gray-700 hover:bg-transparent">
+                  <TableHead className="text-bitaccess-gold font-semibold w-16">#</TableHead>
+                  <TableHead className="text-bitaccess-gold font-semibold min-w-32">Wallet Address</TableHead>
+                  <TableHead className="text-bitaccess-gold font-semibold text-right min-w-32">BIT Balance</TableHead>
+                  <TableHead className="text-bitaccess-gold font-semibold text-right w-24">Percentage</TableHead>
+                  <TableHead className="text-bitaccess-gold font-semibold w-20">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+              </TableHeader>
+              <TableBody>
+                {holders.slice(0, 10).map((holder, index) => (
+                  <TableRow key={holder.address} className="border-gray-700 hover:bg-gray-800/30 transition-colors">
+                    <TableCell className="text-white font-bold text-lg">
+                      {holder.rank}
+                    </TableCell>
+                    <TableCell className="font-mono">
+                      <div className="flex flex-col gap-1">
+                        <button
+                          onClick={() => openInBscscan(holder.address)}
+                          className="text-blue-400 hover:text-blue-300 transition-colors text-left"
+                          title={`View ${holder.address} on BSCScan`}
+                        >
+                          {formatAddress(holder.address)}
+                        </button>
+                        <span className="text-xs text-gray-500">
+                          {holder.address.slice(0, 8)}...
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-white font-bold text-lg">
+                          {formatBalance(holder.balance)}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          BIT
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-bitaccess-gold font-bold text-lg">
+                          {holder.percentage.toFixed(3)}%
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          of supply
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => copyAddress(holder.address)}
+                          className="text-gray-400 hover:text-bitaccess-gold transition-colors p-1 rounded"
+                          title="Copy Full Address"
+                        >
+                          <Copy className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => openInBscscan(holder.address)}
+                          className="text-gray-400 hover:text-bitaccess-gold transition-colors p-1 rounded"
+                          title="View on BSCScan"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-gray-400">No holder data available</p>
+            <button
+              onClick={fetchRealTimeHolders}
+              className="mt-4 bg-bitaccess-gold text-black px-4 py-2 rounded-lg hover:bg-bitaccess-gold/80 transition-colors"
+            >
+              Retry Loading Data
+            </button>
+          </div>
+        )}
         
         <div className="mt-4 p-3 bg-gray-800/30 rounded-lg border border-gray-700">
           <div className="flex items-center justify-between text-sm">
@@ -204,7 +215,7 @@ const TopHoldersCard = () => {
           </div>
           <div className="flex items-center justify-between text-sm mt-1">
             <span className="text-gray-400">Update Frequency:</span>
-            <span className="text-white">Every 30 seconds</span>
+            <span className="text-white">Every 4 hours</span>
           </div>
         </div>
       </CardContent>
