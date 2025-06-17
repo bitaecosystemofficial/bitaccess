@@ -44,8 +44,8 @@ export const useRealTimeTokenData = () => {
     // Initial fetch
     fetchAllData();
     
-    // Set up polling every 60 seconds
-    const interval = setInterval(fetchAllData, 60000);
+    // Set up polling every 4 hours (14400000 ms)
+    const interval = setInterval(fetchAllData, 14400000);
     
     return () => clearInterval(interval);
   }, []);
