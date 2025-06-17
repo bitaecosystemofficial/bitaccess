@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -97,6 +98,7 @@ const AppRoutes = () => {
       <Route path="/marketplace/checkout" element={<CheckoutPage />} />
       <Route path="/marketplace/orders" element={<OrdersPage />} />
       <Route path="/become-merchant" element={<BecomeAMerchant />} />
+      <Route path="/membership-card" element={<MembershipCard />} />
       <Route path="/marketplace/merchant/dashboard" element={<MerchantRoute element={<MerchantDashboard />} />} />
       <Route path="/marketplace/merchant/:merchantId" element={<MerchantStore />} />
       <Route path="/marketplace/merchants" element={<MerchantListing />} />
