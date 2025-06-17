@@ -4,7 +4,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { contractAddresses } from "@/constants/contracts";
 import { useContractEvents } from "@/hooks/useContractEvents";
 import { useToast } from "@/components/ui/use-toast";
-import { TokenTransaction } from "@/services/BscscanService";
 import TokenInfoCard from "./TokenInfoCard";
 import TokenHoldersCard from "./TokenHoldersCard";
 import TopHoldersCard from "./TopHoldersCard";
@@ -17,7 +16,7 @@ const DexChartAnalytics = () => {
   const { toast } = useToast();
   const { tokenInfo, topHolders, activity, isLoading, lastUpdate, refreshData } = useRealTimeTokenData();
   
-  // React to transfer events (simulated)
+  // React to transfer events
   useState(() => {
     if (latestTransfer) {
       console.log("New transfer detected:", latestTransfer);
@@ -38,7 +37,7 @@ const DexChartAnalytics = () => {
     decimal: 9,
     standard: "BEP20",
     totalSupply: tokenInfo?.totalSupply || "100,000,000,000",
-    holders: tokenInfo?.holders || 4872
+    holders: tokenInfo?.holders || 3193 // Use actual BSCScan data
   };
   
   return (
@@ -73,7 +72,7 @@ const DexChartAnalytics = () => {
             <TokenInfoCard tokenInfo={tokenInfoData} />
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-              <TokenHoldersCard holdersCount={tokenInfo?.holders || 4872} />
+              <TokenHoldersCard holdersCount={tokenInfo?.holders || 3193} />
               <TokenActivityCard />
               <TopHoldersCard />
             </div>

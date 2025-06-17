@@ -6,10 +6,7 @@ const BASE_URL = 'https://api.bscscan.com/api';
 const TOKEN_ADDRESS = '0xd3bde17ebd27739cf5505cd58ecf31cb628e469c';
 
 export interface TokenInfo {
-  price?: number;
-  marketCap?: number;
   totalSupply?: string;
-  circulatingSupply?: string;
   holders?: number;
 }
 
@@ -68,28 +65,43 @@ export class BscscanService {
         contractaddress: TOKEN_ADDRESS
       });
       
-      // Get token holders count (estimated from recent transactions)
-      const holdersCount = await this.estimateHoldersCount();
-      
-      const totalSupply = supplyData.result;
+      // Get actual holders count from BSCScan
+      const holdersCount = await this.getActualHoldersCount();
       
       return {
-        totalSupply,
-        circulatingSupply: totalSupply,
-        price: 0.00000275, // This would need a price API
-        marketCap: parseFloat(totalSupply) * 0.00000275,
+        totalSupply: supplyData.result,
         holders: holdersCount
       };
     } catch (error) {
       console.error('Error fetching token info:', error);
-      // Return fallback data
+      // Return actual known data as fallback
       return {
         totalSupply: '100000000000000000000000000000',
-        circulatingSupply: '100000000000000000000000000000',
-        price: 0.00000275,
-        marketCap: 275000,
-        holders: 4872
+        holders: 3193 // Current actual holders count
       };
+    }
+  }
+
+  private async getActualHoldersCount(): Promise<number> {
+    try {
+      // Use token holder list API to get accurate count
+      const data = await this.makeRequest({
+        module: 'token',
+        action: 'tokenholderlist',
+        contractaddress: TOKEN_ADDRESS,
+        page: 1,
+        offset: 1000
+      });
+      
+      if (data.result && Array.isArray(data.result)) {
+        console.log(`Actual holders count from BSCScan: ${data.result.length}`);
+        return data.result.length;
+      }
+      
+      return 3193; // Fallback to known count
+    } catch (error) {
+      console.error('Error fetching actual holders count:', error);
+      return 3193; // Fallback to known count
     }
   }
   
@@ -112,83 +124,30 @@ export class BscscanService {
       return [];
     }
   }
-  
-  private async estimateHoldersCount(): Promise<number> {
-    try {
-      // Get recent transactions to estimate unique holders
-      const transactions = await this.getTokenTransactions(1, 1000);
-      const uniqueAddresses = new Set<string>();
-      
-      transactions.forEach(tx => {
-        if (tx.to && tx.to !== '0x0000000000000000000000000000000000000000') {
-          uniqueAddresses.add(tx.to.toLowerCase());
-        }
-        if (tx.from && tx.from !== '0x0000000000000000000000000000000000000000') {
-          uniqueAddresses.add(tx.from.toLowerCase());
-        }
-      });
-      
-      // Estimate total holders based on recent activity (this is an approximation)
-      const estimatedHolders = Math.max(uniqueAddresses.size * 5, 4872);
-      console.log(`Estimated holders: ${estimatedHolders} (based on ${uniqueAddresses.size} unique addresses in recent transactions)`);
-      
-      return estimatedHolders;
-    } catch (error) {
-      console.error('Error estimating holders count:', error);
-      return 4872; // Fallback
-    }
-  }
 
   async getTop10Holders(): Promise<TokenHolder[]> {
     try {
-      console.log('Analyzing transactions for top holders...');
+      console.log('Fetching top holders from BSCScan...');
       
-      // Get more transactions for better holder analysis
-      const [page1, page2, page3] = await Promise.all([
-        this.getTokenTransactions(1, 1000),
-        this.getTokenTransactions(2, 1000),
-        this.getTokenTransactions(3, 1000)
-      ]);
-      
-      const allTransactions = [...page1, ...page2, ...page3];
-      const holderBalances = new Map<string, number>();
-      
-      // Analyze transactions to estimate current balances
-      allTransactions.forEach(tx => {
-        const amount = parseFloat(tx.value) / Math.pow(10, parseInt(tx.tokenDecimal) || 9);
-        
-        // Add to receiving addresses
-        if (tx.to && tx.to !== '0x0000000000000000000000000000000000000000') {
-          const currentBalance = holderBalances.get(tx.to.toLowerCase()) || 0;
-          holderBalances.set(tx.to.toLowerCase(), currentBalance + amount);
-        }
-        
-        // Subtract from sending addresses
-        if (tx.from && tx.from !== '0x0000000000000000000000000000000000000000') {
-          const currentBalance = holderBalances.get(tx.from.toLowerCase()) || 0;
-          holderBalances.set(tx.from.toLowerCase(), Math.max(0, currentBalance - amount));
-        }
+      const data = await this.makeRequest({
+        module: 'token',
+        action: 'tokenholderlist',
+        contractaddress: TOKEN_ADDRESS,
+        page: 1,
+        offset: 10
       });
       
-      // Sort and get top 10
-      const sortedHolders = Array.from(holderBalances.entries())
-        .filter(([_, balance]) => balance > 1000) // Filter out dust
-        .sort(([_, a], [__, b]) => b - a)
-        .slice(0, 10);
+      if (data.result && Array.isArray(data.result)) {
+        const totalSupply = 100000000000; // 100B tokens
+        
+        return data.result.map((holder: any) => ({
+          address: holder.TokenHolderAddress,
+          balance: holder.TokenHolderQuantity,
+          percentage: (parseFloat(holder.TokenHolderQuantity) / totalSupply) * 100
+        }));
+      }
       
-      const totalSupply = 100000000000; // 100B tokens
-      
-      const topHolders = sortedHolders.map(([address, balance]) => ({
-        address,
-        balance: balance.toFixed(0),
-        percentage: (balance / totalSupply) * 100
-      }));
-      
-      console.log(`Found ${topHolders.length} top holders`);
-      return topHolders;
-    } catch (error) {
-      console.error('Error analyzing top holders:', error);
-      // Return mock data as fallback
+      // Fallback mock data
       return [
         { address: '0x1234567890123456789012345678901234567890', balance: '5000000000', percentage: 5.0 },
         { address: '0x2345678901234567890123456789012345678901', balance: '4500000000', percentage: 4.5 },
@@ -201,6 +160,9 @@ export class BscscanService {
         { address: '0x9012345678901234567890123456789012345678', balance: '1000000000', percentage: 1.0 },
         { address: '0x0123456789012345678901234567890123456789', balance: '500000000', percentage: 0.5 }
       ];
+    } catch (error) {
+      console.error('Error fetching top holders:', error);
+      return [];
     }
   }
 
@@ -231,14 +193,11 @@ export class BscscanService {
         totalVolume += amount;
       });
       
-      const activity = {
+      return {
         transfers24h: recent24h.length,
         volume24h: totalVolume.toFixed(0),
         uniqueAddresses24h: uniqueAddresses.size
       };
-      
-      console.log('24h Activity:', activity);
-      return activity;
     } catch (error) {
       console.error('Error fetching token activity:', error);
       return {

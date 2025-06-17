@@ -81,13 +81,11 @@ const AppRoutes = () => {
       <Route path="/staking" element={<Staking />} />
       <Route path="/swap" element={<Swap />} />
       <Route path="/settings" element={<Settings />} />
-      <Route path="/membership-card" element={<MembershipCard />} />
       <Route path="/docs" element={<Docs />} />
       <Route path="/guides/:guideId" element={<GuideDetails />} />
       <Route path="/whitepaper" element={<WhitepaperDetails />} />
       <Route path="/education" element={<Education />} />
       <Route path="/education/:courseId" element={<CourseDetails />} />
-      {/* Updated video routes to be publicly accessible */}
       <Route path="/videos" element={<VideoPortal />} />
       <Route path="/video/:videoId" element={<VideoDetails />} />
       <Route path="/community" element={<Community />} />
