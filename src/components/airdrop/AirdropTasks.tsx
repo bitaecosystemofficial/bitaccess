@@ -1,197 +1,203 @@
-
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Clock, Trophy, Users, MessageSquare, Share2 } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Check, ArrowUpRight } from "lucide-react";
+import { useState } from "react";
 import { useWallet } from "@/contexts/WalletContext";
+import { contractService } from "@/services/ContractService"; // Now properly imported
 import { toast } from "@/hooks/use-toast";
 
-interface AirdropTask {
-  id: string;
-  title: string;
-  description: string;
-  reward: number;
-  completed: boolean;
-  icon: React.ReactNode;
-  action?: () => void;
+interface AirdropTasksProps {
+  tasks: {
+    twitter: boolean;
+    telegram: boolean;
+    newsletter: boolean;
+    share: boolean;
+  };
+  handleTaskComplete: (task: 'twitter' | 'telegram' | 'newsletter' | 'share') => void;
+  isConnected: boolean;
 }
 
-const AirdropTasks = () => {
-  const { isConnected } = useWallet();
-  const [tasks, setTasks] = useState<AirdropTask[]>([
-    {
-      id: "1",
-      title: "Join Telegram Community",
-      description: "Join our official Telegram channel and stay updated",
-      reward: 100,
-      completed: false,
-      icon: <MessageSquare className="w-5 h-5" />,
-      action: () => window.open("https://t.me/bitaccess", "_blank")
-    },
-    {
-      id: "2",
-      title: "Follow on Twitter/X",
-      description: "Follow our official Twitter account",
-      reward: 50,
-      completed: false,
-      icon: <Users className="w-5 h-5" />,
-      action: () => window.open("https://twitter.com/bitaccess", "_blank")
-    },
-    {
-      id: "3",
-      title: "Share on Social Media",
-      description: "Share our project on your social media",
-      reward: 75,
-      completed: false,
-      icon: <Share2 className="w-5 h-5" />
-    },
-    {
-      id: "4",
-      title: "Complete KYC",
-      description: "Complete your Know Your Customer verification",
-      reward: 200,
-      completed: false,
-      icon: <Trophy className="w-5 h-5" />
-    }
-  ]);
+const taskLinks = {
+  twitter: "https://twitter.com/BitAccessOfficial",
+  telegram: "https://t.me/BitAccessOfficial",
+  newsletter: "https://bitaccess.com/newsletter",
+  share: "https://twitter.com/intent/tweet?text=Join%20the%20BitAccess%20Airdrop%20now!%20%23BitAccess%20%23Airdrop"
+};
 
-  const handleCompleteTask = async (taskId: string) => {
+const taskIds = {
+  twitter: 0,
+  telegram: 1,
+  newsletter: 2,
+  share: 3
+};
+
+const AirdropTasks = ({ tasks, handleTaskComplete, isConnected }: AirdropTasksProps) => {
+  const { address, connectWallet } = useWallet();
+  const [verifying, setVerifying] = useState<string | null>(null);
+
+  const handleTaskClick = (task: keyof typeof taskLinks) => {
+    window.open(taskLinks[task], '_blank');
+  };
+
+  const handleVerifyClick = async (task: keyof typeof taskLinks) => {
     if (!isConnected) {
-      toast({
-        title: "Connect Wallet",
-        description: "Please connect your wallet to complete tasks",
-        variant: "destructive"
-      });
+      connectWallet();
       return;
     }
-
+    
+    setVerifying(task);
     try {
-      // Simulate task completion
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      setTasks(prev => 
-        prev.map(task => 
-          task.id === taskId 
-            ? { ...task, completed: true }
-            : task
-        )
-      );
-
-      const task = tasks.find(t => t.id === taskId);
-      if (task) {
+      // Verify task on the blockchain
+      const taskId = taskIds[task];
+      if (address) {
+        const result = await contractService.verifyAirdropTask(address, taskId);
+        console.log(`Task ${task} verification transaction:`, result);
+        
+        // Call the local state update handler
+        handleTaskComplete(task);
+        
         toast({
-          title: "Task Completed!",
-          description: `You earned ${task.reward} BIT tokens`,
+          title: "Task Verified",
+          description: `${task.charAt(0).toUpperCase() + task.slice(1)} task successfully verified on the blockchain.`,
         });
       }
     } catch (error) {
-      console.error("Error completing task:", error);
+      console.error(`Error verifying ${task} task:`, error);
       toast({
-        title: "Error",
-        description: "Failed to complete task. Please try again.",
-        variant: "destructive"
+        title: "Verification Failed",
+        description: error instanceof Error ? error.message : `Failed to verify ${task} task.`,
+        variant: "destructive",
       });
+    } finally {
+      setVerifying(null);
     }
   };
 
-  const totalRewards = tasks.filter(task => task.completed).reduce((sum, task) => sum + task.reward, 0);
-  const completedTasks = tasks.filter(task => task.completed).length;
-
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Trophy className="w-5 h-5 text-yellow-500" />
-              <div>
-                <p className="text-sm text-muted-foreground">Total Rewards</p>
-                <p className="text-lg font-semibold">{totalRewards} BIT</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <CheckCircle className="w-5 h-5 text-green-500" />
-              <div>
-                <p className="text-sm text-muted-foreground">Completed</p>
-                <p className="text-lg font-semibold">{completedTasks}/{tasks.length}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Clock className="w-5 h-5 text-blue-500" />
-              <div>
-                <p className="text-sm text-muted-foreground">Pending</p>
-                <p className="text-lg font-semibold">{tasks.length - completedTasks}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+    <div className="space-y-6 mb-8">
+      <div>
+        <h4 className="font-medium text-bitaccess-gold mb-2">How to Participate:</h4>
+        <ol className="list-decimal list-inside space-y-2 text-gray-300">
+          <li>Connect your wallet using the button below</li>
+          <li>Complete the required social tasks (Twitter, Telegram, etc.)</li>
+          <li>Refer friends to earn bonus tokens (10% of their allocation)</li>
+          <li>Verify your participation and submit your wallet address</li>
+        </ol>
       </div>
-
-      <div className="grid gap-4">
-        {tasks.map((task) => (
-          <Card key={task.id} className={task.completed ? "border-green-200 bg-green-50/50" : ""}>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className={`p-2 rounded-lg ${task.completed ? "bg-green-100" : "bg-blue-100"}`}>
-                    {task.completed ? <CheckCircle className="w-5 h-5 text-green-600" /> : task.icon}
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">{task.title}</CardTitle>
-                    <CardDescription>{task.description}</CardDescription>
-                  </div>
-                </div>
-                <Badge variant={task.completed ? "default" : "secondary"}>
-                  {task.reward} BIT
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-2">
-                  {task.completed ? (
-                    <Badge variant="default" className="bg-green-500">
-                      <CheckCircle className="w-3 h-3 mr-1" />
-                      Completed
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline">Pending</Badge>
-                  )}
-                </div>
-                {!task.completed && (
-                  <Button 
-                    onClick={() => {
-                      if (task.action) {
-                        task.action();
-                        // Add a delay before marking as completed
-                        setTimeout(() => handleCompleteTask(task.id), 2000);
-                      } else {
-                        handleCompleteTask(task.id);
-                      }
-                    }}
-                    size="sm"
-                  >
-                    Complete Task
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      
+      <div>
+        <h4 className="font-medium text-bitaccess-gold mb-2">Requirements:</h4>
+        <ul className="list-disc list-inside space-y-2 text-gray-300">
+          <li>Follow BitAccess on Twitter</li>
+          <li>Join our Telegram community</li>
+          <li>Subscribe to our newsletter</li>
+          <li>Share the airdrop announcement (with proof)</li>
+        </ul>
       </div>
+      
+      <Card className="bg-bitaccess-black p-6 rounded-lg border border-bitaccess-gold/10">
+        <h4 className="font-medium text-white mb-4">Your Airdrop Status</h4>
+        <CardContent className="p-0 space-y-3">
+          <TaskProgress label="Twitter Task" completed={tasks.twitter} />
+          <TaskProgress label="Telegram Task" completed={tasks.telegram} />
+          <TaskProgress label="Newsletter" completed={tasks.newsletter} />
+          <TaskProgress label="Share Proof" completed={tasks.share} />
+          
+          {isConnected && (
+            <div className="mt-6 grid grid-cols-2 gap-4">
+              <VerificationButton 
+                task="twitter"
+                completed={tasks.twitter}
+                onClick={() => handleTaskClick('twitter')}
+                onVerify={() => handleVerifyClick('twitter')}
+                isVerifying={verifying === "twitter"}
+              />
+              
+              <VerificationButton 
+                task="telegram"
+                completed={tasks.telegram}
+                onClick={() => handleTaskClick('telegram')}
+                onVerify={() => handleVerifyClick('telegram')}
+                isVerifying={verifying === "telegram"}
+              />
+              
+              <VerificationButton 
+                task="newsletter"
+                completed={tasks.newsletter}
+                onClick={() => handleTaskClick('newsletter')}
+                onVerify={() => handleVerifyClick('newsletter')}
+                isVerifying={verifying === "newsletter"}
+              />
+              
+              <VerificationButton 
+                task="share"
+                completed={tasks.share}
+                onClick={() => handleTaskClick('share')}
+                onVerify={() => handleVerifyClick('share')}
+                isVerifying={verifying === "share"}
+              />
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
+
+interface TaskProgressProps {
+  label: string;
+  completed: boolean;
+}
+
+const TaskProgress = ({ label, completed }: TaskProgressProps) => (
+  <div>
+    <div className="flex justify-between mb-1">
+      <span className="text-sm text-gray-400">{label}</span>
+      <span className={`text-sm ${completed ? 'text-green-500' : 'text-red-500'}`}>
+        {completed ? 'Completed' : 'Not Completed'}
+      </span>
+    </div>
+    <div className="w-full bg-gray-700 rounded-full h-2">
+      <div 
+        className={`${completed ? 'bg-green-500' : 'bg-red-500'} h-2 rounded-full`} 
+        style={{ width: completed ? '100%' : '0%' }}
+      />
+    </div>
+  </div>
+);
+
+interface VerificationButtonProps {
+  task: string;
+  completed: boolean;
+  onClick: () => void;
+  onVerify: () => void;
+  isVerifying: boolean;
+}
+
+const VerificationButton = ({ task, completed, onClick, onVerify, isVerifying }: VerificationButtonProps) => (
+  <div className="flex flex-col gap-2">
+    <Button 
+      onClick={onClick}
+      className="bg-transparent border border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
+    >
+      Visit {task.charAt(0).toUpperCase() + task.slice(1)}
+      <ArrowUpRight className="ml-1 h-4 w-4" />
+    </Button>
+    <Button 
+      onClick={onVerify}
+      disabled={completed || isVerifying}
+      className="bg-transparent border border-bitaccess-gold text-bitaccess-gold hover:bg-bitaccess-gold/10"
+    >
+      {completed ? (
+        `${task.charAt(0).toUpperCase() + task.slice(1)} Verified`
+      ) : isVerifying ? (
+        "Verifying..."
+      ) : (
+        `Verify ${task.charAt(0).toUpperCase() + task.slice(1)}`
+      )}
+      {completed && <Check className="ml-1 h-4 w-4" />}
+    </Button>
+  </div>
+);
 
 export default AirdropTasks;

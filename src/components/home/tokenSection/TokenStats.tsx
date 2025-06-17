@@ -28,8 +28,8 @@ const TokenStats = () => {
       
       <div className="w-full md:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-4">
         <TokenStatCard
-          title="Total Supply"
-          value={tokenInfo.totalSupply}
+          title="Market Supply"
+          value={tokenInfo.marketSupply}
           icon={<Coins size={24} />}
         />
         <TokenStatCard

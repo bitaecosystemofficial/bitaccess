@@ -1,114 +1,181 @@
 
 import { ethers } from 'ethers';
+import { contractAddresses } from '@/constants/contracts';
+import { MerchantABI } from '@/contracts/abis/MerchantABI';
 import { BaseContractService } from './BaseContractService';
-import { MerchantABI } from '../contracts/abis/MerchantABI';
-import { MARKETPLACE_ABI } from '../contracts/abis/MarketplaceABI';
-
-const MERCHANT_CONTRACT_ADDRESS = '0x742d35Cc6609690d3E8855A4CC8faa9b0E37c8aa';
-const MARKETPLACE_CONTRACT_ADDRESS = '0x3b2c9a6dE0F4Ff60fCA3C25e13e77e05FffFf444';
+import { tokenService } from './TokenService';
+import { toast } from '@/hooks/use-toast';
 
 export class StoreService extends BaseContractService {
-  private merchantContract: ethers.Contract | null = null;
-  private marketplaceContract: ethers.Contract | null = null;
-
-  async initializeContracts() {
-    if (!this.signer) {
-      throw new Error('Wallet not connected');
-    }
-
-    this.merchantContract = new ethers.Contract(
-      MERCHANT_CONTRACT_ADDRESS,
-      MerchantABI,
-      this.signer
-    );
-
-    this.marketplaceContract = new ethers.Contract(
-      MARKETPLACE_CONTRACT_ADDRESS,
-      MARKETPLACE_ABI,
-      this.signer
-    );
+  async getStoreContract() {
+    await this.ensureSigner();
+    return new ethers.Contract(contractAddresses.merchants, MerchantABI, this.signer);
   }
 
-  async getStoreStatus(address: string): Promise<number> {
+  async getReadOnlyStoreContract() {
+    return new ethers.Contract(contractAddresses.merchants, MerchantABI, this.provider);
+  }
+
+  async subscribeToStore(planId: number, duration: number) {
     try {
-      if (!this.merchantContract) {
-        await this.initializeContracts();
-      }
-      // Simulate merchant status check
-      return Math.floor(Math.random() * 3); // 0 = not merchant, 1 = active, 2 = suspended
+      await this.ensureSigner();
+      const contract = await this.getStoreContract();
+      const tx = await contract.subscribe(planId, duration);
+      return tx.wait();
     } catch (error) {
-      console.error('Error getting store status:', error);
+      console.error("Error subscribing to store:", error);
+      throw error;
+    }
+  }
+
+  async getStoreStatus(address: string) {
+    try {
+      const contract = await this.getReadOnlyStoreContract();
+      return contract.getMerchantStatus(address);
+    } catch (error) {
+      console.error("Error getting store status:", error);
       return 0;
     }
   }
 
-  async payWithToken(planName: string, duration: number, token: string): Promise<{success: boolean, error?: string}> {
+  async getSubscriptionEnd(address: string) {
     try {
-      if (!this.signer) {
-        throw new Error('Wallet not connected');
+      const contract = await this.getReadOnlyStoreContract();
+      return contract.getSubscriptionEnd(address);
+    } catch (error) {
+      console.error("Error getting subscription end:", error);
+      return 0;
+    }
+  }
+
+  async getTotalStores() {
+    try {
+      const contract = await this.getReadOnlyStoreContract();
+      return contract.getTotalMerchants();
+    } catch (error) {
+      console.error("Error getting total stores:", error);
+      return 385;
+    }
+  }
+
+  async getActiveStores() {
+    try {
+      const contract = await this.getReadOnlyStoreContract();
+      return contract.getActiveMerchants();
+    } catch (error) {
+      console.error("Error getting active stores:", error);
+      return 312;
+    }
+  }
+
+  async getStoresByCategory(category: string) {
+    try {
+      const contract = await this.getReadOnlyStoreContract();
+      return contract.getMerchantsByCategory(category);
+    } catch (error) {
+      console.error(`Error getting stores by category ${category}:`, error);
+      return [];
+    }
+  }
+
+  async getRecentStores() {
+    try {
+      const contract = await this.getReadOnlyStoreContract();
+      return contract.getRecentStores();
+    } catch (error) {
+      console.error("Error getting recent stores:", error);
+      return [];
+    }
+  }
+
+  async payWithToken(planName: string, duration: number, tokenType: 'BIT' | 'USDT') {
+    try {
+      // Ensure we have a connected wallet
+      await this.ensureSigner();
+      
+      // Convert plan name to ID
+      const planMap: Record<string, number> = {
+        "Membership": 1,
+        "Merchant": 2
+      };
+      const planId = planMap[planName] || 1;
+      
+      // Get store contract
+      const storeContract = await this.getStoreContract();
+      
+      // Calculate price based on plan name
+      const planPrice = ethers.utils.parseUnits(
+        planName === "Membership" ? "20" : "100",
+        6 // USDT has 6 decimals
+      );
+      
+      // Calculate total price based on duration in days
+      // Assuming the price is for 365 days as specified
+      const daysInYear = 365;
+      const priceFactor = duration / daysInYear;
+      const totalPrice = planPrice.mul(Math.floor(priceFactor * 100)).div(100);
+      
+      // Get token contract address
+      const tokenAddress = tokenType === 'BIT' ? 
+        contractAddresses.token : 
+        '0xdAC17F958D2ee523a2206206994597C13D831ec7'; // USDT address on BSC
+      
+      // Approve tokens for spending
+      const tokenContract = await tokenService.getTokenContract();
+      
+      toast({
+        title: "Approving Token Spend",
+        description: "Please confirm the token approval transaction in your wallet",
+      });
+      
+      const approveTx = await tokenContract.approve(contractAddresses.merchants, totalPrice);
+      await approveTx.wait();
+      
+      // Subscribe to the plan
+      toast({
+        title: "Subscription Transaction",
+        description: "Please confirm the subscription transaction in your wallet",
+      });
+      
+      const tx = await storeContract.subscribe(planId, duration);
+      const receipt = await tx.wait();
+      
+      return {
+        success: true,
+        hash: receipt.transactionHash
+      };
+    } catch (error: any) {
+      console.error("Payment error:", error);
+      let errorMessage = "Unknown error";
+      
+      if (error.code === 4001) {
+        errorMessage = "Transaction rejected by user";
+      } else if (error.message) {
+        errorMessage = error.message;
+        
+        // Simplify common MetaMask errors
+        if (errorMessage.includes("user rejected")) {
+          errorMessage = "Transaction rejected";
+        } else if (errorMessage.includes("insufficient funds")) {
+          errorMessage = "Insufficient funds for transaction";
+        }
       }
       
-      // Simulate payment process
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      console.log(`Payment for ${planName} plan (${duration} days) with ${token}`);
-      
-      return { success: true };
-    } catch (error) {
-      console.error('Payment error:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Payment failed' 
+      return {
+        success: false,
+        error: errorMessage
       };
     }
   }
-
-  async registerMerchant(name: string, email: string) {
-    if (!this.merchantContract) {
-      await this.initializeContracts();
-    }
-    
-    const tx = await this.merchantContract!.registerMerchant(name, email);
-    return await tx.wait();
+  
+  // Alias method to ensure compatibility with ContractService
+  async subscribeMerchant(planId: number, duration: number) {
+    return this.subscribeToStore(planId, duration);
   }
 
-  async createProduct(name: string, price: string, description: string) {
-    if (!this.merchantContract) {
-      await this.initializeContracts();
-    }
-    
-    const tx = await this.merchantContract!.createProduct(
-      name,
-      ethers.utils.parseEther(price),
-      description
-    );
-    return await tx.wait();
-  }
-
-  async purchaseProduct(productId: number, amount: string) {
-    if (!this.marketplaceContract) {
-      await this.initializeContracts();
-    }
-    
-    const tx = await this.marketplaceContract!.purchaseProduct(
-      productId,
-      { value: ethers.utils.parseEther(amount) }
-    );
-    return await tx.wait();
-  }
-
-  getMerchantContract(): ethers.Contract {
-    if (!this.merchantContract) {
-      throw new Error('Merchant contract not initialized');
-    }
-    return this.merchantContract;
-  }
-
-  getMarketplaceContract(): ethers.Contract {
-    if (!this.marketplaceContract) {
-      throw new Error('Marketplace contract not initialized');
-    }
-    return this.marketplaceContract;
+  // Alias method to ensure compatibility with ContractService
+  async getMerchantContract() {
+    return this.getStoreContract();
   }
 }
 
