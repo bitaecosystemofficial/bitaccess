@@ -43,6 +43,7 @@ interface Video {
   instructor: string;
   likes: number;
   views: number;
+  courseId: string;
 }
 
 interface EducationData {
