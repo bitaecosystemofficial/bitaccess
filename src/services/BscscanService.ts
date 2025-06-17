@@ -63,13 +63,13 @@ export class BscscanService {
       const holdersCount = await this.getRealTimeHoldersCount();
       
       return {
-        totalSupply: '100000000000000000000', // 100B tokens with 9 decimals
+        totalSupply: '100000000000', // 100 Billion BIT tokens
         holders: holdersCount
       };
     } catch (error) {
       console.error('Error fetching token info:', error);
       return {
-        totalSupply: '100000000000000000000', // 100B tokens with 9 decimals
+        totalSupply: '100000000000', // 100 Billion BIT tokens
         holders: 3193 // Current known count as fallback
       };
     }
@@ -148,7 +148,7 @@ export class BscscanService {
       });
       
       if (data.result && Array.isArray(data.result)) {
-        // Calculate total supply for percentage calculation (100B tokens with 9 decimals)
+        // Total supply: 100 Billion BIT tokens
         const totalSupplyNumber = 100000000000; // 100B tokens
         
         return data.result.map((holder: any, index: number) => {
@@ -172,6 +172,7 @@ export class BscscanService {
   }
 
   async getTop10Holders(): Promise<TokenHolder[]> {
+    console.log('Fetching top 10 BIT token holders from smart contract...');
     return this.getRealTimeTopHolders(10);
   }
 

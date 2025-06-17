@@ -17,21 +17,22 @@ const TopHoldersCard = () => {
   const fetchRealTimeHolders = async () => {
     try {
       setIsLoading(true);
-      console.log('Fetching real-time holders data...');
+      console.log('Fetching real-time top 10 holders data...');
       
-      // Get comprehensive real-time data
+      // Get top 10 holders specifically
+      const top10Holders = await bscscanService.getTop10Holders();
       const realTimeData = await bscscanService.getRealTimeTokenData();
       
-      setHolders(realTimeData.topHolders.slice(0, 10)); // Show top 10
+      setHolders(top10Holders);
       setTotalHolders(realTimeData.tokenInfo?.holders || 3193);
       setLastUpdate(realTimeData.timestamp);
       
-      console.log(`Fetched ${realTimeData.topHolders.length} holders, total: ${realTimeData.tokenInfo?.holders}`);
+      console.log(`Fetched top 10 holders, total holders: ${realTimeData.tokenInfo?.holders}`);
     } catch (error) {
-      console.error('Error fetching real-time holders:', error);
+      console.error('Error fetching real-time top 10 holders:', error);
       toast({
         title: "Error",
-        description: "Failed to fetch real-time holders data from BSCScan",
+        description: "Failed to fetch real-time top 10 holders data from BSCScan",
         variant: "destructive",
       });
     } finally {
@@ -44,7 +45,7 @@ const TopHoldersCard = () => {
     fetchRealTimeHolders();
     
     // Set up real-time updates every 5 minutes
-    const interval = setInterval(fetchRealTimeHolders, 300000); // 5 minutes
+    const interval = setInterval(fetchRealTimeHolders, 300000);
     
     return () => clearInterval(interval);
   }, []);
@@ -83,7 +84,7 @@ const TopHoldersCard = () => {
       <Card className="border-bitaccess-gold/20 bg-bitaccess-black-light">
         <CardHeader>
           <CardTitle className="text-bitaccess-gold flex items-center justify-between">
-            <span>Token Holders Chart</span>
+            <span>Top 10 Token Holders</span>
             <Skeleton className="h-8 w-24" />
           </CardTitle>
         </CardHeader>
@@ -103,7 +104,7 @@ const TopHoldersCard = () => {
       <CardHeader>
         <CardTitle className="text-bitaccess-gold flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span>Token Holders Chart</span>
+            <span>Top 10 Token Holders</span>
             <button
               onClick={fetchRealTimeHolders}
               className="text-gray-400 hover:text-bitaccess-gold transition-colors"
@@ -117,7 +118,7 @@ const TopHoldersCard = () => {
           </div>
         </CardTitle>
         <p className="text-xs text-gray-500">
-          Top 1,000 holders (From a total of {totalHolders.toLocaleString()} holders) - Last updated: {lastUpdate.toLocaleTimeString()}
+          Top 10 BIT token holders from contract 0xd3bde17ebd27739cf5505cd58ecf31cb628e469c - Last updated: {lastUpdate.toLocaleTimeString()}
         </p>
       </CardHeader>
       <CardContent>
@@ -125,26 +126,27 @@ const TopHoldersCard = () => {
           <TableHeader>
             <TableRow className="border-gray-700">
               <TableHead className="text-gray-400">Rank</TableHead>
-              <TableHead className="text-gray-400">Address</TableHead>
-              <TableHead className="text-gray-400">Quantity</TableHead>
+              <TableHead className="text-gray-400">Wallet Address</TableHead>
+              <TableHead className="text-gray-400">BIT Balance</TableHead>
               <TableHead className="text-gray-400">Percentage</TableHead>
-              <TableHead className="text-gray-400">Analytics</TableHead>
+              <TableHead className="text-gray-400">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {holders.map((holder, index) => (
+            {holders.slice(0, 10).map((holder, index) => (
               <TableRow key={holder.address} className="border-gray-700 hover:bg-gray-800/50">
-                <TableCell className="text-white font-medium">{holder.rank}</TableCell>
+                <TableCell className="text-white font-medium">#{holder.rank}</TableCell>
                 <TableCell className="text-blue-400 font-mono hover:text-blue-300">
                   <button
                     onClick={() => openInBscscan(holder.address)}
                     className="hover:underline"
+                    title={holder.address}
                   >
                     {formatAddress(holder.address)}
                   </button>
                 </TableCell>
-                <TableCell className="text-white">
-                  {formatBalance(holder.balance)}
+                <TableCell className="text-white font-semibold">
+                  {formatBalance(holder.balance)} BIT
                 </TableCell>
                 <TableCell className="text-bitaccess-gold font-semibold">
                   {holder.percentage.toFixed(5)}%
