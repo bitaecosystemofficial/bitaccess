@@ -1,3 +1,4 @@
+
 export const contractAddresses = {
   presale: '0x1234567890123456789012345678901234567890',
   airdrop: '0x0987654321098765432109876543210987654321',
@@ -15,18 +16,18 @@ export const contractAddresses = {
 };
 
 export const networkInfo = {
-  name: "BSC Testnet",
-  chainId: 97, // BSC Testnet chain ID
+  name: "BSC Mainnet",
+  chainId: 56, // BSC Mainnet chain ID
   currency: "BNB",
-  rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-  blockExplorerUrl: "https://testnet.bscscan.com/",
-  testnet: true
+  rpcUrl: "https://bsc-dataseed.binance.org/",
+  blockExplorerUrl: "https://bscscan.com/",
+  testnet: false
 };
 
 // Token addresses for membership rewards
 export const tokenAddresses = {
-  usdt: '0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684',
-  btcb: '0x6ce8dA28E2f864420840cF74474eFf5fD80E65B8', 
-  bnb: '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd', // WBNB on testnet
+  usdt: '0x55d398326f99059fF775485246999027B3197955', // USDT on BSC Mainnet
+  btcb: '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c', // BTCB on BSC Mainnet
+  bnb: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', // WBNB on BSC Mainnet
   bit: '0xd3bde17ebd27739cf5505cd58ecf31cb628e469c' // BIT Token
 };
