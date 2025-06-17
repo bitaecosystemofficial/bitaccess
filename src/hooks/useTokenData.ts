@@ -1,7 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
-import { tokenService } from '@/services/TokenService';
 import { useWallet } from '@/contexts/WalletContext';
 import { useTokenMetrics } from './useTokenMetrics';
 
@@ -26,7 +24,7 @@ export const useTokenData = () => {
   const [tokenData, setTokenData] = useState<TokenData>({
     name: "BIT ACCESS",
     symbol: "BIT",
-    contractAddress: '',
+    contractAddress: '0xd3bde17ebd27739cf5505cd58ecf31cb628e469c',
     network: "Binance Smart Chain (BSC)",
     decimal: 9,
     standard: "BEP20",
@@ -43,37 +41,15 @@ export const useTokenData = () => {
   useEffect(() => {
     const fetchTokenData = async () => {
       try {
-        if (!isConnected) {
-          setIsLoading(false);
-          return;
-        }
-        
         setIsLoading(true);
         
-        // Get token details from contract
-        const tokenDetails = await tokenService.getTokenDetails();
-        
-        // Get user balance if wallet is connected
-        let userBalance = "0";
-        if (address) {
-          const balance = await tokenService.getBalance(address);
-          userBalance = ethers.utils.formatUnits(balance, tokenDetails.decimals);
-        }
-        
-        setTokenData({
-          name: tokenDetails.name || "BIT ACCESS",
-          symbol: tokenDetails.symbol || "BIT",
-          contractAddress: tokenService.contractAddress || '',
-          network: "Binance Smart Chain (BSC)",
-          decimal: tokenDetails.decimals || 9,
-          standard: "BEP20",
-          marketSupply: "100,000,000,000",
-          totalSupply: "100,000,000,000",
-          buyTax: "3%",
-          sellTax: "3%",
-          balance: userBalance,
+        // Since we removed the TokenService, we'll use static data
+        // and only update with wallet balance if needed
+        setTokenData(prev => ({
+          ...prev,
+          balance: isConnected && address ? "0" : "0", // Would need to implement balance fetching
           price: metrics.price,
-        });
+        }));
         
         setIsLoading(false);
       } catch (error) {
