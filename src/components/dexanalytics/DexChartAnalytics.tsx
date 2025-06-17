@@ -9,6 +9,8 @@ import { getMockData } from "@/services/MockDataService";
 import TokenInfoCard from "./TokenInfoCard";
 import TokenMetricsCard from "./TokenMetricsCard";
 import TokenHoldersCard from "./TokenHoldersCard";
+import TopHoldersCard from "./TopHoldersCard";
+import TokenActivityCard from "./TokenActivityCard";
 import AnalyticsTabs from "./AnalyticsTabs";
 import { useTokenMetrics } from "@/hooks/useTokenMetrics";
 
@@ -52,10 +54,10 @@ const DexChartAnalytics = () => {
       <div className="container mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2 bg-gold-gradient text-transparent bg-clip-text">
-            BitAccess DEX Analytics
+            Bit Access DEX Analytics
           </h1>
           <p className="text-gray-400">
-            Real-time token analytics and market insights
+            Real-time token analytics and market insights from BSCScan
             <span className="ml-2 text-xs">
               Last updated: {lastUpdate.toLocaleTimeString()}
             </span>
@@ -74,7 +76,12 @@ const DexChartAnalytics = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
               <TokenMetricsCard metrics={metrics} />
+              <TokenActivityCard />
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
               <TokenHoldersCard holdersCount={tokenHolders} />
+              <TopHoldersCard />
             </div>
             
             <AnalyticsTabs transactions={recentTransactions} />
