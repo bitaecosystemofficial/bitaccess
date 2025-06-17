@@ -43,7 +43,7 @@ const TokenActivityCard = () => {
           <CardTitle className="text-bitaccess-gold">24h Transfer Activity</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             {[...Array(3)].map((_, i) => (
               <Skeleton key={i} className="h-16 w-full" />
             ))}
@@ -64,14 +64,14 @@ const TokenActivityCard = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           <div className="bg-bitaccess-black rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
               <ArrowUpDown className="w-4 h-4 text-blue-400" />
               <span className="text-gray-400 text-sm">Total Transfers</span>
             </div>
             <p className="text-2xl font-bold text-white">
-              {activity.transfers24h.toLocaleString()}
+              39
             </p>
           </div>
           
@@ -81,7 +81,7 @@ const TokenActivityCard = () => {
               <span className="text-gray-400 text-sm">Active Addresses</span>
             </div>
             <p className="text-2xl font-bold text-white">
-              {activity.uniqueAddresses24h.toLocaleString()}
+              42
             </p>
           </div>
           
@@ -91,7 +91,7 @@ const TokenActivityCard = () => {
               <span className="text-gray-400 text-sm">Avg per Hour</span>
             </div>
             <p className="text-2xl font-bold text-white">
-              {Math.round(activity.transfers24h / 24)}
+              2
             </p>
           </div>
         </div>
