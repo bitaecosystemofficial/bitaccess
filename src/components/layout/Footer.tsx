@@ -1,11 +1,18 @@
-
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Youtube, Send, Github, Smartphone, TabletSmartphone } from "lucide-react";
 import Logo from "@/components/layout/Logo";
 
 const Footer = () => {
   return (
-    <footer className="bg-bitaccess-black border-t border-bitaccess-gold/30">
+    <footer className="bg-bitaccess-black border-t border-bitaccess-gold/30 relative overflow-hidden">
+      {/* Bubble Effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-10 left-10 w-4 h-4 bg-bitaccess-gold/10 rounded-full animate-float"></div>
+        <div className="absolute top-20 right-20 w-6 h-6 bg-bitaccess-gold/5 rounded-full animate-float animation-delay-1000"></div>
+        <div className="absolute bottom-20 left-1/4 w-3 h-3 bg-bitaccess-gold/15 rounded-full animate-float animation-delay-300"></div>
+        <div className="absolute bottom-40 right-1/3 w-5 h-5 bg-bitaccess-gold/8 rounded-full animate-float animation-delay-200"></div>
+      </div>
+      
       <div className="container mx-auto py-12 px-4 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="flex flex-col gap-4">
@@ -47,7 +54,7 @@ const Footer = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <img 
-                    src="https://trustwallet.com/assets/images/media/assets/trust_platform.png" 
+                    src="https://vectorseek.com/wp-content/uploads/2024/07/Trust-Wallet-Shield-Logo-Vector-Logo-Vector.svg-.png" 
                     alt="Trust Wallet" 
                     className="w-6 h-6 rounded"
                   />

@@ -3,6 +3,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './components/ui/premium-effects.css';
+
 @layer base {
   :root {
     --background: 0 0% 5%;

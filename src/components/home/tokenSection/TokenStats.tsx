@@ -1,63 +1,60 @@
 
-import TokenStatCard from "@/components/ui/token-stat-card";
-import {
-  Coins,
-  Bitcoin,
-  ArrowLeftRight,
-  TrendingUp,
-  Percent,
-  DollarSign
-} from "lucide-react";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { tokenInfo } from "./tokenDistributionData";
+import { Card, CardContent } from "@/components/ui/card";
 
 const TokenStats = () => {
+  const stats = [
+    {
+      label: "Total Supply",
+      value: "1,000,000,000",
+      suffix: "BIT",
+      description: "Maximum token supply"
+    },
+    {
+      label: "Circulating Supply",
+      value: "750,000,000",
+      suffix: "BIT",
+      description: "Currently in circulation"
+    },
+    {
+      label: "Current Price",
+      value: "$0.025",
+      suffix: "USD",
+      description: "Live market price"
+    },
+    {
+      label: "Market Cap",
+      value: "$18.75M",
+      suffix: "USD",
+      description: "Total market value"
+    },
+    {
+      label: "Total Holders",
+      value: "3,198",
+      suffix: "",
+      description: "Unique wallet addresses"
+    },
+    {
+      label: "24h Volume",
+      value: "$2.4M",
+      suffix: "USD",
+      description: "Trading volume"
+    }
+  ];
+
   return (
-    <div className="flex flex-col md:flex-row gap-8 mb-12 items-center">
-      <div className="w-full md:w-1/3 flex justify-center">
-        <div className="w-48 h-48">
-          <AspectRatio ratio={1/1} className="bg-transparent">
-            <img 
-              src="https://github.com/bitaecosystemofficial/BIT-Logo/blob/main/logo.png?raw=true" 
-              alt="BIT Token Logo" 
-              className="rounded-full object-contain"
-            />
-          </AspectRatio>
-        </div>
-      </div>
-      
-      <div className="w-full md:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <TokenStatCard
-          title="Market Supply"
-          value={tokenInfo.marketSupply}
-          icon={<Coins size={24} />}
-        />
-        <TokenStatCard
-          title="Token Symbol"
-          value={tokenInfo.symbol}
-          icon={<Bitcoin size={24} />}
-        />
-        <TokenStatCard
-          title="Network"
-          value={tokenInfo.network}
-          icon={<ArrowLeftRight size={24} />}
-        />
-        <TokenStatCard
-          title="Token Standard"
-          value={tokenInfo.standard}
-          icon={<TrendingUp size={24} />}
-        />
-        <TokenStatCard
-          title="Tax"
-          value={`${tokenInfo.buyTax} Buy / ${tokenInfo.sellTax} Sell`}
-          icon={<Percent size={24} />}
-        />
-        <TokenStatCard
-          title="Decimals"
-          value={tokenInfo.decimal.toString()}
-          icon={<DollarSign size={24} />}
-        />
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {stats.map((stat, index) => (
+        <Card key={index} className="bg-bitaccess-black-light border-bitaccess-gold/20 hover:border-bitaccess-gold/40 transition-all duration-300 group">
+          <CardContent className="p-6 text-center">
+            <div className="text-3xl font-bold text-bitaccess-gold mb-2 group-hover:scale-110 transition-transform duration-300">
+              {stat.value}
+              {stat.suffix && <span className="text-lg ml-1">{stat.suffix}</span>}
+            </div>
+            <div className="text-lg font-medium text-white mb-1">{stat.label}</div>
+            <div className="text-sm text-gray-400">{stat.description}</div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 };
