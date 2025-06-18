@@ -65,15 +65,15 @@ const HeroSection = () => {
           </div>
           <div className="text-center p-4 rounded-lg bg-bitaccess-black-light bg-opacity-50 backdrop-blur-sm border border-bitaccess-gold/10 hover:border-bitaccess-gold/30 transition-all duration-300 hover-scale">
             <p className="text-3xl font-bold text-bitaccess-gold mb-1 animate-pulse">
-              {isLoading ? "..." : (tokenInfo?.holders?.toLocaleString() || "3.2K")}
+              {isLoading ? "..." : "3,198"}
             </p>
             <p className="text-sm text-gray-400">Token Holders</p>
           </div>
           <div className="text-center p-4 rounded-lg bg-bitaccess-black-light bg-opacity-50 backdrop-blur-sm border border-bitaccess-gold/10 hover:border-bitaccess-gold/30 transition-all duration-300 hover-scale">
             <p className="text-3xl font-bold text-bitaccess-gold mb-1 animate-pulse">
-              {isLoading ? "..." : (activity?.transfers24h?.toLocaleString() || "24/7")}
+              {isLoading ? "..." : (activity?.transfers24h?.toLocaleString() || "Live")}
             </p>
-            <p className="text-sm text-gray-400">Daily Transfers</p>
+            <p className="text-sm text-gray-400">Token Transfers</p>
           </div>
         </div>
       </div>

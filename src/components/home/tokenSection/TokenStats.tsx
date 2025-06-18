@@ -6,28 +6,28 @@ const TokenStats = () => {
   const stats = [
     {
       label: "Total Supply",
-      value: "1,000,000,000",
+      value: "100,000,000,000",
       suffix: "BIT",
       description: "Maximum token supply",
       icon: <Coins className="w-8 h-8" />
     },
     {
       label: "Circulating Supply",
-      value: "750,000,000",
+      value: "5,000,000,000",
       suffix: "BIT",
       description: "Currently in circulation",
       icon: <TrendingUp className="w-8 h-8" />
     },
     {
       label: "Current Price",
-      value: "$0.025",
-      suffix: "USD",
+      value: "$0.0001",
+      suffix: "USDT",
       description: "Live market price",
       icon: <DollarSign className="w-8 h-8" />
     },
     {
       label: "Market Cap",
-      value: "$18.75M",
+      value: "$500K",
       suffix: "USD",
       description: "Total market value",
       icon: <BarChart3 className="w-8 h-8" />
@@ -40,10 +40,10 @@ const TokenStats = () => {
       icon: <Users className="w-8 h-8" />
     },
     {
-      label: "24h Volume",
-      value: "$2.4M",
-      suffix: "USD",
-      description: "Trading volume",
+      label: "Token Transfers",
+      value: "Real-time",
+      suffix: "API",
+      description: "Live transfer data",
       icon: <Activity className="w-8 h-8" />
     }
   ];

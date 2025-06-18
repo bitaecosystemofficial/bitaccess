@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import SectionHeading from "@/components/ui/section-heading";
+import PremiumCheckmark from "@/components/ui/premium-checkmark";
 import { 
   Card, 
   CardContent, 
@@ -9,7 +10,7 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
-import { Check, ExternalLink, Globe, QrCode, Sticker } from "lucide-react";
+import { ExternalLink, Globe, QrCode, Sticker } from "lucide-react";
 
 const MerchantSection = () => {
   const plans = [
@@ -85,16 +86,16 @@ const MerchantSection = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-2">
+                    <li key={i} className="flex items-start gap-3">
                       {feature.includes("Bit Merchant Stickers with QR Codes") ? (
                         <div className="flex items-center gap-1 mt-0.5">
                           <Sticker className={`w-4 h-4 ${plan.highlighted ? 'text-bitaccess-gold' : 'text-gray-400'}`} />
                           <QrCode className={`w-4 h-4 ${plan.highlighted ? 'text-bitaccess-gold' : 'text-gray-400'}`} />
                         </div>
                       ) : (
-                        <Check className={`w-5 h-5 mt-0.5 ${plan.highlighted ? 'text-bitaccess-gold' : 'text-gray-400'}`} />
+                        <PremiumCheckmark size="sm" className="mt-0.5" />
                       )}
                       <span className="text-gray-300 text-sm">{feature}</span>
                     </li>
