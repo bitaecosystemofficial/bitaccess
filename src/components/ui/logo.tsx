@@ -21,7 +21,7 @@ const Logo: React.FC<LogoProps> = ({ className }) => {
     );
   }
   
-  // Use the circular logo design for desktop view with updated styling to match footer
+  // Use the circular logo design for desktop view with white text to match footer
   return (
     <div className={`flex items-center ${className || ''}`}>
       <div className="h-10 w-10 mr-2 overflow-hidden">
