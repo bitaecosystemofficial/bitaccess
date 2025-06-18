@@ -54,7 +54,7 @@ const TokenInfoCard = ({ tokenInfo }: TokenInfoProps) => {
           <div className="bg-bitaccess-black rounded-lg p-4">
             <h3 className="text-gray-400 text-sm mb-2">Total Supply</h3>
             <p className="text-white font-semibold">
-              {parseFloat(tokenInfo.totalSupply).toLocaleString()} B {tokenInfo.symbol}
+              {parseFloat(tokenInfo.totalSupply).toLocaleString()} {tokenInfo.symbol}
             </p>
           </div>
           
