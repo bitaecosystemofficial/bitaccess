@@ -16,7 +16,7 @@ const Logo: React.FC<LogoProps> = ({ className }) => {
         <div className="bg-bitaccess-gold rounded-md w-8 h-8 flex items-center justify-center mr-2">
           <span className="font-bold text-black">BA</span>
         </div>
-        <span className="font-bold text-lg text-bitaccess-gold">BitAccess</span>
+        <span className="font-bold text-lg text-bitaccess-gold">Bit Access</span>
       </div>
     );
   }
@@ -27,7 +27,7 @@ const Logo: React.FC<LogoProps> = ({ className }) => {
       <div className="h-10 w-10 mr-2 overflow-hidden">
         <img 
           src="https://github.com/bitaecosystemofficial/BIT-Logo/raw/main/logo.png" 
-          alt="BitAccess Logo" 
+          alt="Bit Access Logo" 
           className="h-full w-full object-contain"
         />
       </div>

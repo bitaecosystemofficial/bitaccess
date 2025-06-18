@@ -10,7 +10,7 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
-import { ExternalLink, Globe, QrCode, Sticker } from "lucide-react";
+import { ExternalLink, Globe } from "lucide-react";
 
 const MerchantSection = () => {
   const plans = [
@@ -28,7 +28,12 @@ const MerchantSection = () => {
         "$1 USDT worth of BNB Reward",
         "$5 USDT worth of BIT Token Rewards",
         "Discounts from all our Products & Services",
-        "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level, 2% - 4th to 6th Level and 1% - 7th to 10th level"
+        "Earn Referral Commission:",
+        "• 15% - Direct",
+        "• 10% - 2nd Level", 
+        "• 5% - 3rd Level",
+        "• 2% - 4th to 6th Level",
+        "• 1% - 7th to 10th Level"
       ]
     },
     {
@@ -46,7 +51,12 @@ const MerchantSection = () => {
         "$10 USDT worth of BIT Token Rewards",
         "Bit Merchant Stickers with QR Codes",
         "Promotions and Advertisements on BIT Community",
-        "Earn Referral Commission: 15% - Direct, 10% - 2nd Level, 5% - 3rd Level, 2.5% - 4th to 6th Level and and 1% - 7th to 10th level"
+        "Earn Referral Commission:",
+        "• 15% - Direct",
+        "• 10% - 2nd Level",
+        "• 5% - 3rd Level", 
+        "• 2.5% - 4th to 6th Level",
+        "• 1% - 7th to 10th Level"
       ],
       highlighted: true
     }
@@ -89,14 +99,7 @@ const MerchantSection = () => {
                 <ul className="space-y-3">
                   {plan.features.map((feature, i) => (
                     <li key={i} className="flex items-start gap-3">
-                      {feature.includes("Bit Merchant Stickers with QR Codes") ? (
-                        <div className="flex items-center gap-1 mt-0.5">
-                          <Sticker className={`w-4 h-4 ${plan.highlighted ? 'text-bitaccess-gold' : 'text-gray-400'}`} />
-                          <QrCode className={`w-4 h-4 ${plan.highlighted ? 'text-bitaccess-gold' : 'text-gray-400'}`} />
-                        </div>
-                      ) : (
-                        <PremiumCheckmark size="sm" className="mt-0.5" />
-                      )}
+                      <PremiumCheckmark size="sm" className="mt-0.5 flex-shrink-0" />
                       <span className="text-gray-300 text-sm">{feature}</span>
                     </li>
                   ))}
@@ -120,7 +123,7 @@ const MerchantSection = () => {
         <div className="text-center mt-8">
           <p className="text-sm text-gray-400 flex items-center justify-center gap-2">
             <Globe className="w-4 h-4" />
-            Secure payments powered by Bit Access ecosystem
+            Secure payments powered by Bit Access Ecosystem
           </p>
         </div>
       </div>

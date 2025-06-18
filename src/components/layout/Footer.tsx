@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Youtube, Send, Github, Smartphone, TabletSmartphone } from "lucide-react";
 import Logo from "@/components/layout/Logo";
@@ -133,7 +134,7 @@ const Footer = () => {
         
         <div className="mt-12 pt-8 border-t border-bitaccess-gold/20 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-gray-400">
-            Copyright © {new Date().getFullYear()} BitAccess. All rights reserved.
+            Copyright © {new Date().getFullYear()} Bit Access. All rights reserved.
           </p>
           <div className="flex space-x-6">
             <Link to="/privacy-policy" className="text-sm text-gray-400 hover:text-bitaccess-gold">Privacy Policy</Link>
