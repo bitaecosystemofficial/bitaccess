@@ -114,7 +114,7 @@ const MerchantSection = () => {
                       <div className="ml-4 space-y-1">
                         {plan.referralCommission.map((commission, i) => (
                           <div key={i} className="flex items-center gap-3">
-                            <PremiumCheckmark size="sm" className="flex-shrink-0" />
+                            <div className="w-2 h-2 border border-gray-400 rounded-full flex-shrink-0 mt-1.5"></div>
                             <span className="tabular-nums">{commission}</span>
                           </div>
                         ))}
