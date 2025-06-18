@@ -35,7 +35,7 @@ const DexChartAnalytics = () => {
     network: "Binance Smart Chain (BSC)",
     decimal: 9,
     standard: "BEP20",
-    totalSupply: "100,000,000,000",
+    totalSupply: "100000000000",
     holders: 3198
   };
   
