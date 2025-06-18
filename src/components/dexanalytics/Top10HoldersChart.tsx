@@ -115,7 +115,7 @@ const Top10HoldersChart = () => {
             <p className="text-gray-400 text-sm">Top 10 Holdings</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-white">3,194</p>
+            <p className="text-2xl font-bold text-white">3,198</p>
             <p className="text-gray-400 text-sm">Total Holders</p>
           </div>
           <div className="text-center">
