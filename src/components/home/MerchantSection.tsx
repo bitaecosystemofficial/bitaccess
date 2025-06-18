@@ -27,13 +27,14 @@ const MerchantSection = () => {
         "$1 USDT worth of USDT Reward",
         "$1 USDT worth of BNB Reward",
         "$5 USDT worth of BIT Token Rewards",
-        "Discounts from all our Products & Services",
-        "Earn Referral Commission:",
-        "• 15% - Direct",
-        "• 10% - 2nd Level", 
-        "• 5% - 3rd Level",
-        "• 2% - 4th to 6th Level",
-        "• 1% - 7th to 10th Level"
+        "Discounts from all our Products & Services"
+      ],
+      referralCommission: [
+        "15% - Direct",
+        "10% - 2nd Level", 
+        "5% - 3rd Level",
+        "2% - 4th to 6th Level",
+        "1% - 7th to 10th Level"
       ]
     },
     {
@@ -50,13 +51,14 @@ const MerchantSection = () => {
         "$1 USDT worth of BNB Reward",
         "$10 USDT worth of BIT Token Rewards",
         "Bit Merchant Stickers with QR Codes",
-        "Promotions and Advertisements on BIT Community",
-        "Earn Referral Commission:",
-        "• 15% - Direct",
-        "• 10% - 2nd Level",
-        "• 5% - 3rd Level", 
-        "• 2.5% - 4th to 6th Level",
-        "• 1% - 7th to 10th Level"
+        "Promotions and Advertisements on BIT Community"
+      ],
+      referralCommission: [
+        "15% - Direct",
+        "10% - 2nd Level",
+        "5% - 3rd Level", 
+        "2.5% - 4th to 6th Level",
+        "1% - 7th to 10th Level"
       ],
       highlighted: true
     }
@@ -103,6 +105,22 @@ const MerchantSection = () => {
                       <span className="text-gray-300 text-sm">{feature}</span>
                     </li>
                   ))}
+                  
+                  {/* Earn Referral Commission Section */}
+                  <li className="flex items-start gap-3">
+                    <PremiumCheckmark size="sm" className="mt-0.5 flex-shrink-0" />
+                    <div className="text-gray-300 text-sm">
+                      <div className="mb-2">Earn Referral Commission:</div>
+                      <div className="ml-4 space-y-1">
+                        {plan.referralCommission.map((commission, i) => (
+                          <div key={i} className="flex items-center gap-3">
+                            <PremiumCheckmark size="sm" className="flex-shrink-0" />
+                            <span className="tabular-nums">{commission}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </li>
                 </ul>
               </CardContent>
               <CardFooter className="flex flex-col gap-2">
