@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Youtube, Send, Github, Smartphone, TabletSmartphone } from "lucide-react";
 import Logo from "@/components/layout/Logo";
@@ -31,6 +30,19 @@ const Footer = () => {
               <a href="#" className="text-bitaccess-gold hover:text-bitaccess-gold-light transition-colors">
                 <Github className="w-5 h-5" />
               </a>
+            </div>
+            
+            {/* MetaMask Integration */}
+            <div className="mt-4 pt-4 border-t border-bitaccess-gold/20">
+              <p className="text-sm text-gray-400 mb-2">Connect with MetaMask</p>
+              <div className="flex items-center gap-2">
+                <img 
+                  src="https://metamask.io/favicons/default/apple-touch-icon.png" 
+                  alt="MetaMask" 
+                  className="w-6 h-6"
+                />
+                <span className="text-sm text-white">MetaMask Wallet</span>
+              </div>
             </div>
           </div>
           
@@ -103,7 +115,7 @@ const Footer = () => {
         
         <div className="mt-12 pt-8 border-t border-bitaccess-gold/20 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-gray-400">
-            © {new Date().getFullYear()} BitAccess. All rights reserved.
+            Copyright © {new Date().getFullYear()} BitAccess. All rights reserved.
           </p>
           <div className="flex space-x-6">
             <Link to="/privacy-policy" className="text-sm text-gray-400 hover:text-bitaccess-gold">Privacy Policy</Link>
