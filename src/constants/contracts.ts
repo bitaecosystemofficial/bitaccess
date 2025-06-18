@@ -24,11 +24,11 @@ export const networkInfo = {
   testnet: false
 };
 
-// Token addresses for membership rewards
+// Token addresses for membership rewards - Real BSC Mainnet addresses
 export const tokenAddresses = {
-  usdt: '0x55d398326f99059fF775485246999027B3197955', // USDT on BSC Mainnet
-  usdc: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d', // USDC on BSC Mainnet
-  btcb: '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c', // BTCB on BSC Mainnet
-  bnb: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', // WBNB on BSC Mainnet
+  usdt: '0x55d398326f99059fF775485246999027B3197955', // Real USDT on BSC Mainnet
+  usdc: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d', // Real USDC on BSC Mainnet
+  btcb: '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c', // Real BTCB on BSC Mainnet
+  bnb: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', // Real WBNB on BSC Mainnet
   bit: '0xd3bde17ebd27739cf5505cd58ecf31cb628e469c' // BIT Token
 };

@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Youtube, Send, Github, Smartphone, TabletSmartphone } from "lucide-react";
 import Logo from "@/components/layout/Logo";
@@ -32,16 +33,26 @@ const Footer = () => {
               </a>
             </div>
             
-            {/* MetaMask Integration */}
+            {/* Supported Wallets Integration */}
             <div className="mt-4 pt-4 border-t border-bitaccess-gold/20">
-              <p className="text-sm text-gray-400 mb-2">Connect with MetaMask</p>
-              <div className="flex items-center gap-2">
-                <img 
-                  src="https://metamask.io/favicons/default/apple-touch-icon.png" 
-                  alt="MetaMask" 
-                  className="w-6 h-6"
-                />
-                <span className="text-sm text-white">MetaMask Wallet</span>
+              <p className="text-sm text-gray-400 mb-2">Supported Wallet</p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <img 
+                    src="https://metamask.io/favicons/default/apple-touch-icon.png" 
+                    alt="MetaMask" 
+                    className="w-6 h-6"
+                  />
+                  <span className="text-sm text-white">MetaMask Wallet</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <img 
+                    src="https://trustwallet.com/assets/images/media/assets/trust_platform.png" 
+                    alt="Trust Wallet" 
+                    className="w-6 h-6 rounded"
+                  />
+                  <span className="text-sm text-white">Trust Wallet</span>
+                </div>
               </div>
             </div>
           </div>

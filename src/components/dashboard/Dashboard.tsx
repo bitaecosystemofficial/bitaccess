@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,9 +21,8 @@ const Dashboard = () => {
     return null;
   }
 
-  // Mock balances - in a real app, these would come from blockchain queries
+  // Mock balances - in a real app, these would come from BSC blockchain queries
   const mockBalances = {
-    dcash: "1,250.75",
     bnb: "2.45",
     usdt: "850.20"
   };
@@ -52,8 +52,8 @@ const Dashboard = () => {
     }
   };
 
-  const handleBuyDCASH = () => {
-    window.open("https://pancakeswap.finance/swap?outputCurrency=0xd3bde17ebd27739cf5505cd58ecf31cb628e469c", "_blank");
+  const handleBuyUSDT = () => {
+    window.open("https://pancakeswap.finance/swap?outputCurrency=0x55d398326f99059fF775485246999027B3197955", "_blank");
   };
 
   const handleBuyBIT = () => {
@@ -75,10 +75,6 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-300">DCASH</span>
-                <span className="text-sm font-semibold text-white">{mockBalances.dcash}</span>
-              </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-300">BNB</span>
                 <span className="text-sm font-semibold text-white">{mockBalances.bnb}</span>
@@ -267,19 +263,19 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Buy DCASH */}
+          {/* Buy USDT */}
           <Card className="bg-bitaccess-black-light border-bitaccess-gold/20 hover:border-bitaccess-gold/40 transition-colors">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">Buy DCASH</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-400">Buy USDT</CardTitle>
               <ShoppingCart className="h-4 w-4 text-bitaccess-gold" />
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 <p className="text-sm text-gray-300">
-                  Get DCASH tokens for cross-border payments and exclusive benefits
+                  Get USDT tokens for cross-border payments and trading
                 </p>
                 <Button 
-                  onClick={handleBuyDCASH}
+                  onClick={handleBuyUSDT}
                   className="w-full bg-transparent border border-bitaccess-gold hover:bg-bitaccess-gold/10 text-bitaccess-gold"
                 >
                   <ExternalLink className="w-4 h-4 mr-2" />
