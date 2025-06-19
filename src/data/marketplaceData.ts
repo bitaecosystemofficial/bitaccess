@@ -59,9 +59,9 @@ export const featuredStores = [
 export const products: Product[] = [
   {
     id: '1',
-    name: 'Bit Access Ecosystem Premium Pen Set',
-    description: 'Elegant black and gold premium pens featuring the official Bit Access Ecosystem logo. Perfect for professional meetings and blockchain conferences.',
-    price: 850,
+    name: 'Bit Access Premium Pen Set',
+    description: 'Elegant black and gold premium pens featuring the official Bit Access logo. Perfect for professional meetings and blockchain conferences.',
+    price: 850.00,
     currency: 'PHP',
     image: '/lovable-uploads/409d97ff-d06a-4806-baef-83807032cfff.png',
     category: 'stationery',
@@ -77,9 +77,9 @@ export const products: Product[] = [
   },
   {
     id: '2',
-    name: 'Bit Access Ecosystem Travel Tumbler',
-    description: 'Premium black and gold travel tumbler with thermal insulation. Features the official Bit Access Ecosystem branding. Perfect for crypto enthusiasts on the go.',
-    price: 1200,
+    name: 'Bit Access Travel Tumbler',
+    description: 'Premium black and gold travel tumbler with thermal insulation. Features the official Bit Access branding. Perfect for crypto enthusiasts on the go.',
+    price: 1200.00,
     currency: 'PHP',
     image: '/lovable-uploads/9efc7a53-92a4-4ca1-82f7-648abc492421.png',
     category: 'accessories',
@@ -96,9 +96,9 @@ export const products: Product[] = [
   },
   {
     id: '3',
-    name: 'Official Bit Access Ecosystem T-Shirt',
-    description: 'Premium quality cotton t-shirt featuring the official Bit Access Ecosystem logo. Available in white with gold accents. Comfortable fit for blockchain enthusiasts.',
-    price: 680,
+    name: 'Official Bit Access T-Shirt',
+    description: 'Premium quality cotton t-shirt featuring the official Bit Access logo. Available in white with gold accents. Comfortable fit for blockchain enthusiasts.',
+    price: 680.00,
     currency: 'PHP',
     image: '/lovable-uploads/f5f0aae9-121e-4354-809a-3559eda73429.png',
     category: 'apparel',
@@ -113,9 +113,9 @@ export const products: Product[] = [
   },
   {
     id: '4',
-    name: 'Bit Access Ecosystem Premium Notebook',
-    description: 'High-quality leather-bound notebook with gold accents and the official Bit Access Ecosystem logo. Perfect for taking notes during blockchain meetings and conferences.',
-    price: 950,
+    name: 'Bit Access Premium Notebook',
+    description: 'High-quality leather-bound notebook with gold accents and the official Bit Access logo. Perfect for taking notes during blockchain meetings.',
+    price: 950.00,
     currency: 'PHP',
     image: '/lovable-uploads/3e9b91af-909f-499b-8334-80519d77a8fc.png',
     category: 'stationery',
@@ -131,9 +131,9 @@ export const products: Product[] = [
   },
   {
     id: '5',
-    name: 'Bit Access Ecosystem Banner Stand',
-    description: 'Professional retractable banner stand featuring Bit Access Ecosystem branding. Perfect for events, conferences, and promotional activities. High-quality print with vibrant colors.',
-    price: 3500,
+    name: 'Bit Access Banner Stand',
+    description: 'Professional retractable banner stand featuring Bit Access branding. Perfect for events, conferences, and promotional activities.',
+    price: 3500.00,
     currency: 'PHP',
     image: '/lovable-uploads/c6a8cfd9-7105-4aeb-a399-d35487c22dbc.png',
     category: 'promotional',
@@ -150,8 +150,8 @@ export const products: Product[] = [
   {
     id: '6',
     name: 'Bit Access Sports Water Bottle Set',
-    description: 'Durable sports water bottle set featuring Bit Access Ecosystem branding. Includes black and red bottles with premium build quality. Perfect for active crypto enthusiasts.',
-    price: 1450,
+    description: 'Durable sports water bottle set featuring Bit Access branding. Includes black and red bottles with premium build quality.',
+    price: 1450.00,
     currency: 'PHP',
     image: '/lovable-uploads/e1b38030-e551-4c33-a7b1-30c59822dc9a.png',
     category: 'accessories',
@@ -166,9 +166,9 @@ export const products: Product[] = [
   },
   {
     id: '7',
-    name: 'Bit Access Gold Premium Pen',
-    description: 'Luxury gold-accent pen with Bit Access Ecosystem branding. Features smooth writing mechanism and elegant design. Perfect for signing important blockchain documents.',
-    price: 550,
+    name: 'Bit Access Gold Executive Pen',
+    description: 'Luxury gold-accent pen with Bit Access branding. Features smooth writing mechanism and elegant design.',
+    price: 550.00,
     currency: 'PHP',
     image: '/lovable-uploads/ddd59a58-b3f7-4276-b10b-a97a35408562.png',
     category: 'stationery',
@@ -184,9 +184,9 @@ export const products: Product[] = [
   },
   {
     id: '8',
-    name: 'Bit Access Silver Executive Pen',
-    description: 'Professional silver-accent pen featuring Bit Access Ecosystem logo. Sleek design with comfortable grip. Ideal for business meetings and professional use.',
-    price: 480,
+    name: 'Bit Access Silver Professional Pen',
+    description: 'Professional silver-accent pen featuring Bit Access logo. Sleek design with comfortable grip. Ideal for business meetings.',
+    price: 480.00,
     currency: 'PHP',
     image: '/lovable-uploads/9421cf4c-903e-4396-9423-6317a3db7ab9.png',
     category: 'stationery',
@@ -201,9 +201,9 @@ export const products: Product[] = [
   },
   {
     id: '9',
-    name: 'Bit Access Ecosystem Card Holder',
-    description: 'Premium metallic card holder with Bit Access Ecosystem branding. Compact design perfect for business cards and crypto wallet cards. Elegant black and gold finish.',
-    price: 750,
+    name: 'Bit Access Premium Card Holder',
+    description: 'Premium metallic card holder with Bit Access branding. Compact design perfect for business cards and crypto wallet cards.',
+    price: 750.00,
     currency: 'PHP',
     image: '/lovable-uploads/5076f3bb-d96f-4238-804d-dd91949f83c7.png',
     category: 'accessories',
@@ -219,9 +219,9 @@ export const products: Product[] = [
   },
   {
     id: '10',
-    name: 'Bit Access Double Banner Set',
-    description: 'Professional double banner set for major events and conferences. Features high-quality printing with vibrant Bit Access Ecosystem branding. Perfect for trade shows and blockchain events.',
-    price: 6200,
+    name: 'Bit Access Double Banner Display',
+    description: 'Professional double banner set for major events and conferences. Features high-quality printing with vibrant Bit Access branding.',
+    price: 6200.00,
     currency: 'PHP',
     image: '/lovable-uploads/a33dea2f-e135-4e04-8278-6fee786990e3.png',
     category: 'promotional',
@@ -237,9 +237,9 @@ export const products: Product[] = [
   },
   {
     id: '11',
-    name: 'Bit Access Ecosystem Coffee Mug',
-    description: 'Premium ceramic coffee mug with Bit Access Ecosystem logo in black and gold. Perfect for morning coffee while checking crypto markets. Dishwasher safe with high-quality printing.',
-    price: 450,
+    name: 'Bit Access Premium Coffee Mug',
+    description: 'Premium ceramic coffee mug with Bit Access logo in black and gold. Perfect for morning coffee while checking crypto markets.',
+    price: 450.00,
     currency: 'PHP',
     image: '/lovable-uploads/cac118fc-abac-4d1f-af2f-f756f664351e.png',
     category: 'accessories',
@@ -254,9 +254,9 @@ export const products: Product[] = [
   },
   {
     id: '12',
-    name: 'Bit Access Ecosystem Wall Clock',
-    description: 'Stylish wall clock featuring the Bit Access Ecosystem logo design. Perfect for home or office decoration. Silent quartz movement with clear number display.',
-    price: 1850,
+    name: 'Bit Access Designer Wall Clock',
+    description: 'Stylish wall clock featuring the Bit Access logo design. Perfect for home or office decoration with silent quartz movement.',
+    price: 1850.00,
     currency: 'PHP',
     image: '/lovable-uploads/8a0bc2e7-0c93-46f8-b06b-820324742e69.png',
     category: 'accessories',
@@ -272,45 +272,11 @@ export const products: Product[] = [
   },
   {
     id: '13',
-    name: 'Bit Access Tote Bag Set',
-    description: 'Eco-friendly canvas tote bags featuring Bit Access branding. Available in black and white designs. Perfect for shopping or carrying crypto conference materials.',
-    price: 890,
+    name: 'Bit Access Classic Baseball Cap',
+    description: 'Premium baseball cap featuring Bit Access branding. Available in black/red color combination with adjustable fit.',
+    price: 780.00,
     currency: 'PHP',
-    image: '/lovable-uploads/0eea185a-0f0c-4409-88aa-e8dafe449674.png',
-    category: 'accessories',
-    seller: {
-      id: 's1',
-      name: 'Bit Access Official Store',
-      rating: 4.9
-    },
-    stock: 85,
-    tags: ['tote bag', 'canvas', 'eco-friendly', 'set'],
-    createdAt: '2025-06-03T12:00:00Z'
-  },
-  {
-    id: '14',
-    name: 'Bit Access Blockchain Umbrella',
-    description: 'Colorful blockchain-themed umbrella with Bit Access Ecosystem branding. Water-resistant and windproof design. Perfect protection from rain while showing your crypto passion.',
-    price: 1350,
-    currency: 'PHP',
-    image: '/lovable-uploads/f27edfa1-1383-4480-802d-27134936b020.png',
-    category: 'accessories',
-    seller: {
-      id: 's1',
-      name: 'Bit Access Official Store',
-      rating: 4.9
-    },
-    stock: 55,
-    tags: ['umbrella', 'blockchain', 'waterproof', 'windproof'],
-    createdAt: '2025-06-02T12:00:00Z'
-  },
-  {
-    id: '15',
-    name: 'Bit Access Cap Collection',
-    description: 'Premium baseball caps featuring Bit Access Ecosystem branding. Available in multiple color combinations including orange/black and black/red. Adjustable fit with embroidered logo.',
-    price: 780,
-    currency: 'PHP',
-    image: '/lovable-uploads/1dc8ae81-fd4c-4d4b-a6de-bbb04c6529bd.png',
+    image: '/lovable-uploads/3ca52171-1bba-481b-b2f4-157c6099e941.png',
     category: 'apparel',
     seller: {
       id: 's1',
@@ -323,10 +289,96 @@ export const products: Product[] = [
     createdAt: '2025-06-01T12:00:00Z'
   },
   {
+    id: '14',
+    name: 'Bit Access Premium Coffee Mug Set',
+    description: 'Set of white and black ceramic coffee mugs with gold Bit Access circular logo. Features premium finish and dishwasher-safe design.',
+    price: 890.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/2ec2c6ec-6ae3-4659-bae5-82fc210ce558.png',
+    category: 'accessories',
+    seller: {
+      id: 's1',
+      name: 'Bit Access Official Store',
+      rating: 4.9
+    },
+    stock: 85,
+    tags: ['mug', 'set', 'ceramic', 'gold logo'],
+    createdAt: '2025-05-30T12:00:00Z'
+  },
+  {
+    id: '15',
+    name: 'Bit Access Gold Circle Mug',
+    description: 'Elegant white ceramic mug with gold circular Bit Access logo. Features "BLOCKCHAIN EMPOWERING COMMUNITIES" text around the emblem.',
+    price: 520.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/c14f25f7-6426-4ff9-803a-dc79d12046e1.png',
+    category: 'accessories',
+    seller: {
+      id: 's1',
+      name: 'Bit Access Official Store',
+      rating: 4.9
+    },
+    stock: 110,
+    featured: true,
+    tags: ['mug', 'gold', 'circular', 'empowering'],
+    createdAt: '2025-05-29T12:00:00Z'
+  },
+  {
     id: '16',
-    name: 'Bit Access Premium Perfume for Men',
-    description: 'Exclusive masculine fragrance with sophisticated blend. Features elegant packaging with Bit Access Ecosystem branding. 50ml luxury perfume perfect for professional occasions.',
-    price: 2850,
+    name: 'Bit Access Professional Umbrella Set',
+    description: 'Set of premium umbrellas featuring Bit Access branding. Includes classic black umbrella and colorful multi-panel design.',
+    price: 1650.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/61e907d9-1912-4716-8e0c-9b569789406d.png',
+    category: 'accessories',
+    seller: {
+      id: 's1',
+      name: 'Bit Access Official Store',
+      rating: 4.9
+    },
+    stock: 55,
+    tags: ['umbrella', 'set', 'waterproof', 'windproof'],
+    createdAt: '2025-05-28T12:00:00Z'
+  },
+  {
+    id: '17',
+    name: 'Bit Access Eco Tote Bag Collection',
+    description: 'Eco-friendly canvas tote bags featuring Bit Access branding. Available in black and white designs for shopping or conferences.',
+    price: 890.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/0eea185a-0f0c-4409-88aa-e8dafe449674.png',
+    category: 'accessories',
+    seller: {
+      id: 's1',
+      name: 'Bit Access Official Store',
+      rating: 4.9
+    },
+    stock: 85,
+    tags: ['tote bag', 'canvas', 'eco-friendly', 'set'],
+    createdAt: '2025-05-27T12:00:00Z'
+  },
+  {
+    id: '18',
+    name: 'Bit Access Colorful Blockchain Umbrella',
+    description: 'Vibrant blockchain-themed umbrella with Bit Access branding. Water-resistant and windproof design in colorful pattern.',
+    price: 1350.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/f27edfa1-1383-4480-802d-27134936b020.png',
+    category: 'accessories',
+    seller: {
+      id: 's1',
+      name: 'Bit Access Official Store',
+      rating: 4.9
+    },
+    stock: 55,
+    tags: ['umbrella', 'blockchain', 'waterproof', 'colorful'],
+    createdAt: '2025-05-26T12:00:00Z'
+  },
+  {
+    id: '19',
+    name: 'Bit Access Luxury Perfume for Men',
+    description: 'Exclusive masculine fragrance with sophisticated blend. Features elegant packaging with Bit Access branding. 50ml luxury perfume.',
+    price: 2850.00,
     currency: 'PHP',
     image: '/lovable-uploads/b4e14dba-ceb2-467d-a2d9-eac5d758dabf.png',
     category: 'accessories',
@@ -338,13 +390,13 @@ export const products: Product[] = [
     stock: 30,
     featured: true,
     tags: ['perfume', 'men', 'luxury', 'fragrance'],
-    createdAt: '2025-05-31T12:00:00Z'
+    createdAt: '2025-05-25T12:00:00Z'
   },
   {
-    id: '17',
-    name: 'Bit Access Ecosystem Polo Shirt',
-    description: 'Professional black polo shirt with stunning Bit Access Ecosystem design. Features blockchain education and cryptocurrency graphics. Premium fabric with moisture-wicking technology.',
-    price: 1250,
+    id: '20',
+    name: 'Bit Access Professional Polo Shirt',
+    description: 'Professional black polo shirt with stunning Bit Access design. Features blockchain education graphics and cryptocurrency elements.',
+    price: 1250.00,
     currency: 'PHP',
     image: '/lovable-uploads/771e7432-4244-418d-bd7e-a5b6fa0f020d.png',
     category: 'apparel',
@@ -356,13 +408,13 @@ export const products: Product[] = [
     stock: 70,
     featured: true,
     tags: ['polo', 'shirt', 'professional', 'moisture-wicking'],
-    createdAt: '2025-05-30T12:00:00Z'
+    createdAt: '2025-05-24T12:00:00Z'
   },
   {
-    id: '18',
-    name: 'Crypto Ecosystem Wall Clock',
-    description: 'Premium wall clock featuring multiple cryptocurrency logos around Bit Access Ecosystem branding. Perfect for crypto enthusiasts and traders. Silent movement with LED backlighting.',
-    price: 2450,
+    id: '21',
+    name: 'Bit Access Crypto Wall Clock',
+    description: 'Premium wall clock featuring multiple cryptocurrency logos around Bit Access branding. Perfect for crypto enthusiasts with LED backlighting.',
+    price: 2450.00,
     currency: 'PHP',
     image: '/lovable-uploads/82078a7a-11b2-4632-8eb7-456890665185.png',
     category: 'accessories',
@@ -374,6 +426,6 @@ export const products: Product[] = [
     stock: 35,
     discountPercentage: 15,
     tags: ['clock', 'crypto', 'LED', 'silent'],
-    createdAt: '2025-05-29T12:00:00Z'
+    createdAt: '2025-05-23T12:00:00Z'
   }
 ];

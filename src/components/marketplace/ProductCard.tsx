@@ -43,6 +43,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     return product.price;
   };
 
+  const formatPrice = (price: number) => {
+    return `${product.currency} ${price.toFixed(2)}`;
+  };
+
   return (
     <Card className="overflow-hidden h-full flex flex-col hover:border-bitaccess-gold/30 transition-colors duration-200">
       <div className="relative">
@@ -90,15 +94,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {product.discountPercentage ? (
             <>
               <span className="text-lg font-semibold text-bitaccess-gold">
-                {calculateFinalPrice()} {product.currency}
+                {formatPrice(calculateFinalPrice())}
               </span>
               <span className="text-sm text-gray-400 line-through">
-                {product.price} {product.currency}
+                {formatPrice(product.price)}
               </span>
             </>
           ) : (
             <span className="text-lg font-semibold text-bitaccess-gold">
-              {product.price} {product.currency}
+              {formatPrice(product.price)}
             </span>
           )}
         </div>

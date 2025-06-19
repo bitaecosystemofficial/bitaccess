@@ -119,24 +119,24 @@ const Marketplace = () => {
           </TabsList>
           
           <TabsContent value="trending" className="mt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {products.slice(0, 8).map(product => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+              {products.slice(0, 6).map(product => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
           </TabsContent>
           
           <TabsContent value="new" className="mt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {products.slice(8, 16).map(product => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+              {products.slice(6, 12).map(product => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
           </TabsContent>
           
           <TabsContent value="deals" className="mt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {products.filter(p => p.discountPercentage > 0).map(product => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+              {products.filter(p => p.discountPercentage > 0).slice(0, 6).map(product => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
