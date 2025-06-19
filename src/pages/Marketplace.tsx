@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -13,16 +13,53 @@ import { Badge } from '@/components/ui/badge';
 import ProductCard from '@/components/marketplace/ProductCard';
 import { products, categories, categoryIcons, featuredStores } from '@/data/marketplaceData';
 import { Search, Filter, ShoppingBag, Tag, TrendingUp } from 'lucide-react';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const Marketplace = () => {
   const navigate = useNavigate();
   const { isConnected } = useWallet();
   const { membershipData } = useMembership();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [activeTab, setActiveTab] = useState('trending');
   
   const isMerchant = isConnected && membershipData?.isActive && membershipData.type === 'Merchant';
+  const productsPerPage = 8;
 
   // Filter products to show only Bit Access Official Store items
   const bitAccessProducts = products.filter(product => product.seller.id === 's1');
+
+  // Get products for current tab
+  const getTabProducts = () => {
+    switch (activeTab) {
+      case 'trending':
+        return bitAccessProducts;
+      case 'new':
+        return bitAccessProducts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      case 'deals':
+        return bitAccessProducts.filter(p => p.discountPercentage && p.discountPercentage > 0);
+      default:
+        return bitAccessProducts;
+    }
+  };
+
+  const tabProducts = getTabProducts();
+  const totalPages = Math.ceil(tabProducts.length / productsPerPage);
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const endIndex = startIndex + productsPerPage;
+  const currentProducts = tabProducts.slice(startIndex, endIndex);
+
+  // Reset pagination when tab changes
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setCurrentPage(1);
+  };
 
   // Function to navigate to the merchant page
   const goToBecomeMerchant = () => {
@@ -109,9 +146,9 @@ const Marketplace = () => {
 
         {/* Main Content - Bit Access Official Store Focus */}
         <div className="mb-12">
-          <h2 className="text-2xl font-semibold mb-6 text-bitaccess-gold">Bit Access Official Store</h2>
+          <h2 className="text-2xl font-semibold mb-6 text-bitaccess-gold">Bit Access Official Store - Join 2025</h2>
           
-          <Tabs defaultValue="trending">
+          <Tabs value={activeTab} onValueChange={handleTabChange}>
             <TabsList>
               <TabsTrigger value="trending" className="flex gap-2">
                 <TrendingUp className="h-4 w-4" /> Trending
@@ -125,27 +162,123 @@ const Marketplace = () => {
             </TabsList>
             
             <TabsContent value="trending" className="mt-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {bitAccessProducts.slice(0, 8).map(product => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+                {currentProducts.map(product => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
+              
+              {totalPages > 1 && (
+                <Pagination className="mt-8">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                    
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => setCurrentPage(page)}
+                          isActive={currentPage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
             </TabsContent>
             
             <TabsContent value="new" className="mt-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {bitAccessProducts.slice(8, 16).map(product => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+                {currentProducts.map(product => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
+              
+              {totalPages > 1 && (
+                <Pagination className="mt-8">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                    
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => setCurrentPage(page)}
+                          isActive={currentPage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
             </TabsContent>
             
             <TabsContent value="deals" className="mt-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {bitAccessProducts.filter(p => p.discountPercentage && p.discountPercentage > 0).slice(0, 8).map(product => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+                {currentProducts.map(product => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
+              
+              {totalPages > 1 && (
+                <Pagination className="mt-8">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                    
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => setCurrentPage(page)}
+                          isActive={currentPage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
             </TabsContent>
           </Tabs>
         </div>
@@ -175,10 +308,11 @@ const Marketplace = () => {
               <CardContent className="p-4">
                 <div className="flex items-center mb-2">
                   <div className="w-10 h-10 rounded-full bg-bitaccess-gold flex items-center justify-center text-black font-bold mr-3">
-                    {featuredStores[0].name.charAt(0)}
+                    B
                   </div>
                   <div>
-                    <h3 className="font-medium">{featuredStores[0].name}</h3>
+                    <h3 className="font-medium">Bit Access Official Store</h3>
+                    <p className="text-sm text-bitaccess-gold font-medium">Join 2025</p>
                     <div className="flex items-center text-sm text-gray-400">
                       <span className="flex items-center">
                         ⭐ {featuredStores[0].rating}
