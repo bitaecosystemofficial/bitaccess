@@ -12,6 +12,12 @@ const HeroSection = () => {
 
   return (
     <section className="relative bg-hero-pattern pt-24 md:pt-32 pb-20 md:pb-32 overflow-hidden">
+      {/* Background overlay image */}
+      <div 
+        className="absolute inset-0 z-0 opacity-10 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(/lovable-uploads/ba7e959b-f7ce-4b86-9bfb-98f756ae25e2.png)` }}
+      ></div>
+      
       <div className="absolute inset-0 z-0 overflow-hidden">
         {/* Enhanced animated background elements */}
         <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-bitaccess-gold/20 rounded-full filter blur-[120px] animate-pulse-slow"></div>
