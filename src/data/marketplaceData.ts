@@ -1,4 +1,3 @@
-
 import { Product, Category } from '@/types/marketplace';
 import { ShoppingBag, HeadphonesIcon, Home, FileCode, HeartHandshake, Gift } from 'lucide-react';
 import React from 'react';

@@ -150,50 +150,47 @@ const Marketplace = () => {
           </Tabs>
         </div>
 
-        {/* Featured Merchants */}
+        {/* Featured Merchants - Only Bit Access Official Store */}
         <div className="mb-12">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Featured Merchants</h2>
+            <h2 className="text-xl font-semibold">Featured Merchant</h2>
             <Button 
               variant="link" 
               className="text-bitaccess-gold"
-              onClick={() => navigate('/marketplace/merchants')}
+              onClick={() => navigate('/marketplace/merchant/s1')}
             >
-              View All
+              View Store
             </Button>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {featuredStores.map((store, index) => (
-              <Card 
-                key={index} 
-                className="bg-bitaccess-black-light border-gray-700 hover:border-bitaccess-gold transition-colors cursor-pointer overflow-hidden"
-                onClick={() => navigate(`/marketplace/merchant/${store.id}`)}
-              >
-                <div 
-                  className="h-32 bg-cover bg-center" 
-                  style={{ backgroundImage: `url(${store.coverImage})` }}
-                />
-                <CardContent className="p-4">
-                  <div className="flex items-center mb-2">
-                    <div className="w-10 h-10 rounded-full bg-bitaccess-gold flex items-center justify-center text-black font-bold mr-3">
-                      {store.name.charAt(0)}
-                    </div>
-                    <div>
-                      <h3 className="font-medium">{store.name}</h3>
-                      <div className="flex items-center text-sm text-gray-400">
-                        <span className="flex items-center">
-                          ⭐ {store.rating}
-                        </span>
-                        <span className="mx-2">•</span>
-                        <span>{store.productCount} products</span>
-                      </div>
+            <Card 
+              className="bg-bitaccess-black-light border-gray-700 hover:border-bitaccess-gold transition-colors cursor-pointer overflow-hidden"
+              onClick={() => navigate(`/marketplace/merchant/s1`)}
+            >
+              <div 
+                className="h-32 bg-cover bg-center" 
+                style={{ backgroundImage: `url(${featuredStores[0].coverImage})` }}
+              />
+              <CardContent className="p-4">
+                <div className="flex items-center mb-2">
+                  <div className="w-10 h-10 rounded-full bg-bitaccess-gold flex items-center justify-center text-black font-bold mr-3">
+                    {featuredStores[0].name.charAt(0)}
+                  </div>
+                  <div>
+                    <h3 className="font-medium">{featuredStores[0].name}</h3>
+                    <div className="flex items-center text-sm text-gray-400">
+                      <span className="flex items-center">
+                        ⭐ {featuredStores[0].rating}
+                      </span>
+                      <span className="mx-2">•</span>
+                      <span>{bitAccessProducts.length} products</span>
                     </div>
                   </div>
-                  <Badge className="bg-bitaccess-black text-gray-300 hover:bg-bitaccess-black">{store.category}</Badge>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+                <Badge className="bg-bitaccess-black text-gray-300 hover:bg-bitaccess-black">{featuredStores[0].category}</Badge>
+              </CardContent>
+            </Card>
           </div>
         </div>
 
