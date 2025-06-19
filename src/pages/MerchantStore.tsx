@@ -8,11 +8,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useWallet } from '@/contexts/WalletContext';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import ProductCard from '@/components/marketplace/ProductCard';
-import { cn } from '@/lib/utils'; // Changed from mapRange to cn which is available
+import { cn } from '@/lib/utils';
 import { products } from '@/data/marketplaceData';
 import { ChevronLeft, Store, Grid3X3, ListFilter, MessageSquare, Star } from 'lucide-react';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
-// Define the interface correctly to match what react-router-dom's useParams expects
 interface StoreParams {
   [key: string]: string | undefined;
   merchantId: string;
@@ -27,21 +34,29 @@ interface StoreReview {
 }
 
 const MerchantStore = () => {
-  // Use the proper type for useParams
   const { merchantId } = useParams<string>();
   const navigate = useNavigate();
   const { isConnected } = useWallet();
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  // Filter products to show only Bit Access Official Store items
+  const bitAccessProducts = products.filter(product => product.seller.id === 's1');
+  const productsPerPage = 8;
+  const totalPages = Math.ceil(bitAccessProducts.length / productsPerPage);
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const endIndex = startIndex + productsPerPage;
+  const currentProducts = bitAccessProducts.slice(startIndex, endIndex);
   
   const [store, setStore] = useState({
-    id: merchantId || '0x123...456',
-    name: 'Crypto Gadget Store',
+    id: merchantId || 's1',
+    name: 'Bit Access Official Store',
     owner: '0x123...456',
-    description: 'Premium crypto gadgets and accessories for blockchain enthusiasts. We offer hardware wallets, apparel, educational materials and more.',
-    rating: 4.7,
-    reviewCount: 24,
-    joinedDate: new Date(2023, 5, 15),
-    coverImage: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=2232&auto=format&fit=crop',
-    products: products.slice(0, 8)
+    description: 'Official Bit Access merchandise store featuring premium products for blockchain enthusiasts. Join 2025 and discover exclusive crypto gadgets, apparel, accessories, and educational materials.',
+    rating: 4.9,
+    reviewCount: 156,
+    joinedDate: new Date(2024, 0, 15),
+    coverImage: '/lovable-uploads/c6a8cfd9-7105-4aeb-a399-d35487c22dbc.png',
+    products: bitAccessProducts
   });
   
   const [reviews, setReviews] = useState<StoreReview[]>([
@@ -49,22 +64,22 @@ const MerchantStore = () => {
       id: '1',
       reviewer: '0xabc...123',
       rating: 5,
-      comment: 'Great products and fast shipping. The hardware wallet I bought works perfectly.',
-      date: new Date(2023, 9, 10)
+      comment: 'Amazing quality products! The Bit Access merchandise exceeded my expectations. Fast shipping and excellent customer service.',
+      date: new Date(2024, 11, 10)
     },
     {
       id: '2',
       reviewer: '0xdef...456',
-      rating: 4,
-      comment: 'Good selection of items. Shipping was a bit slow but overall satisfied with my purchase.',
-      date: new Date(2023, 8, 22)
+      rating: 5,
+      comment: 'Love the premium quality of the Bit Access products. The designs are stunning and materials are top-notch.',
+      date: new Date(2024, 10, 22)
     },
     {
       id: '3',
       reviewer: '0xghi...789',
-      rating: 5,
-      comment: 'Excellent customer service! They helped me choose the right product for my needs.',
-      date: new Date(2023, 7, 15)
+      rating: 4,
+      comment: 'Great selection of blockchain-themed products. The wall clock is beautiful and the mugs are perfect for my office.',
+      date: new Date(2024, 9, 15)
     }
   ]);
 
@@ -94,7 +109,7 @@ const MerchantStore = () => {
           <div className="flex flex-col md:flex-row md:items-center">
             <Avatar className="h-24 w-24 border-4 border-bitaccess-black -mt-16 mr-4 relative z-20">
               <AvatarFallback className="bg-bitaccess-gold text-black text-2xl">
-                {store.name.charAt(0)}
+                B
               </AvatarFallback>
             </Avatar>
             
@@ -142,18 +157,50 @@ const MerchantStore = () => {
             
             <TabsContent value="products" className="mt-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold">Store Products</h2>
+                <h2 className="text-xl font-semibold">Store Products ({bitAccessProducts.length} items)</h2>
                 <Button variant="outline" className="flex items-center space-x-2">
                   <ListFilter className="h-4 w-4" />
                   <span>Filter</span>
                 </Button>
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {store.products.map(product => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+                {currentProducts.map(product => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
+
+              {totalPages > 1 && (
+                <Pagination className="mt-8">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                    
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => setCurrentPage(page)}
+                          isActive={currentPage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
             </TabsContent>
             
             <TabsContent value="reviews" className="mt-6">
@@ -268,11 +315,11 @@ const MerchantStore = () => {
                       </div>
                       <div>
                         <p className="text-sm text-gray-400 mb-1">Products</p>
-                        <p>{store.products.length}</p>
+                        <p>{bitAccessProducts.length}</p>
                       </div>
                       <div>
                         <p className="text-sm text-gray-400 mb-1">Response Rate</p>
-                        <p>98% (typically responds within 6 hours)</p>
+                        <p>99% (typically responds within 2 hours)</p>
                       </div>
                     </div>
                   </CardContent>
@@ -284,11 +331,11 @@ const MerchantStore = () => {
                     <div className="space-y-4">
                       <div>
                         <p className="text-sm text-gray-400 mb-1">Shipping Time</p>
-                        <p>1-3 business days</p>
+                        <p>1-2 business days</p>
                       </div>
                       <div>
                         <p className="text-sm text-gray-400 mb-1">Return Policy</p>
-                        <p>Returns accepted within 14 days</p>
+                        <p>Returns accepted within 30 days</p>
                       </div>
                       <div>
                         <p className="text-sm text-gray-400 mb-1">Payment Methods</p>
