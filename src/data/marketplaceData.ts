@@ -28,7 +28,7 @@ export const featuredStores = [
     coverImage: '/lovable-uploads/c6a8cfd9-7105-4aeb-a399-d35487c22dbc.png',
     category: 'merchandise',
     rating: 4.9,
-    productCount: 15
+    productCount: 21
   },
   {
     id: 's2',
@@ -131,41 +131,6 @@ export const products: Product[] = [
   },
   {
     id: '5',
-    name: 'Bit Access Banner Stand',
-    description: 'Professional retractable banner stand featuring Bit Access branding. Perfect for events, conferences, and promotional activities.',
-    price: 3500.00,
-    currency: 'PHP',
-    image: '/lovable-uploads/c6a8cfd9-7105-4aeb-a399-d35487c22dbc.png',
-    category: 'promotional',
-    seller: {
-      id: 's2',
-      name: 'Crypto Merchandise Hub',
-      rating: 4.8
-    },
-    stock: 25,
-    discountPercentage: 15,
-    tags: ['banner', 'promotional', 'event', 'retractable'],
-    createdAt: '2025-06-11T12:00:00Z'
-  },
-  {
-    id: '6',
-    name: 'Bit Access Sports Water Bottle Set',
-    description: 'Durable sports water bottle set featuring Bit Access branding. Includes black and red bottles with premium build quality.',
-    price: 1450.00,
-    currency: 'PHP',
-    image: '/lovable-uploads/e1b38030-e551-4c33-a7b1-30c59822dc9a.png',
-    category: 'accessories',
-    seller: {
-      id: 's3',
-      name: 'Blockchain Essentials',
-      rating: 4.7
-    },
-    stock: 80,
-    tags: ['water bottle', 'sports', 'set', 'durable'],
-    createdAt: '2025-06-10T12:00:00Z'
-  },
-  {
-    id: '7',
     name: 'Bit Access Gold Executive Pen',
     description: 'Luxury gold-accent pen with Bit Access branding. Features smooth writing mechanism and elegant design.',
     price: 550.00,
@@ -183,7 +148,7 @@ export const products: Product[] = [
     createdAt: '2025-06-09T12:00:00Z'
   },
   {
-    id: '8',
+    id: '6',
     name: 'Bit Access Silver Professional Pen',
     description: 'Professional silver-accent pen featuring Bit Access logo. Sleek design with comfortable grip. Ideal for business meetings.',
     price: 480.00,
@@ -200,7 +165,7 @@ export const products: Product[] = [
     createdAt: '2025-06-08T12:00:00Z'
   },
   {
-    id: '9',
+    id: '7',
     name: 'Bit Access Premium Card Holder',
     description: 'Premium metallic card holder with Bit Access branding. Compact design perfect for business cards and crypto wallet cards.',
     price: 750.00,
@@ -218,25 +183,24 @@ export const products: Product[] = [
     createdAt: '2025-06-07T12:00:00Z'
   },
   {
-    id: '10',
-    name: 'Bit Access Double Banner Display',
-    description: 'Professional double banner set for major events and conferences. Features high-quality printing with vibrant Bit Access branding.',
-    price: 6200.00,
+    id: '8',
+    name: 'Bit Access Sports Water Bottle Set',
+    description: 'Durable sports water bottle set featuring Bit Access branding. Includes black and red bottles with premium build quality.',
+    price: 1450.00,
     currency: 'PHP',
-    image: '/lovable-uploads/a33dea2f-e135-4e04-8278-6fee786990e3.png',
-    category: 'promotional',
+    image: '/lovable-uploads/e1b38030-e551-4c33-a7b1-30c59822dc9a.png',
+    category: 'accessories',
     seller: {
-      id: 's2',
-      name: 'Crypto Merchandise Hub',
-      rating: 4.8
+      id: 's1',
+      name: 'Bit Access Official Store',
+      rating: 4.9
     },
-    stock: 15,
-    featured: true,
-    tags: ['banner', 'double', 'event', 'trade show'],
-    createdAt: '2025-06-06T12:00:00Z'
+    stock: 80,
+    tags: ['water bottle', 'sports', 'set', 'durable'],
+    createdAt: '2025-06-10T12:00:00Z'
   },
   {
-    id: '11',
+    id: '9',
     name: 'Bit Access Premium Coffee Mug',
     description: 'Premium ceramic coffee mug with Bit Access logo in black and gold. Perfect for morning coffee while checking crypto markets.',
     price: 450.00,
@@ -253,7 +217,7 @@ export const products: Product[] = [
     createdAt: '2025-06-05T12:00:00Z'
   },
   {
-    id: '12',
+    id: '10',
     name: 'Bit Access Designer Wall Clock',
     description: 'Stylish wall clock featuring the Bit Access logo design. Perfect for home or office decoration with silent quartz movement.',
     price: 1850.00,
@@ -271,7 +235,7 @@ export const products: Product[] = [
     createdAt: '2025-06-04T12:00:00Z'
   },
   {
-    id: '13',
+    id: '11',
     name: 'Bit Access Classic Baseball Cap',
     description: 'Premium baseball cap featuring Bit Access branding. Available in black/red color combination with adjustable fit.',
     price: 780.00,
@@ -289,7 +253,7 @@ export const products: Product[] = [
     createdAt: '2025-06-01T12:00:00Z'
   },
   {
-    id: '14',
+    id: '12',
     name: 'Bit Access Premium Coffee Mug Set',
     description: 'Set of white and black ceramic coffee mugs with gold Bit Access circular logo. Features premium finish and dishwasher-safe design.',
     price: 890.00,
@@ -306,7 +270,7 @@ export const products: Product[] = [
     createdAt: '2025-05-30T12:00:00Z'
   },
   {
-    id: '15',
+    id: '13',
     name: 'Bit Access Gold Circle Mug',
     description: 'Elegant white ceramic mug with gold circular Bit Access logo. Features "BLOCKCHAIN EMPOWERING COMMUNITIES" text around the emblem.',
     price: 520.00,
@@ -324,7 +288,7 @@ export const products: Product[] = [
     createdAt: '2025-05-29T12:00:00Z'
   },
   {
-    id: '16',
+    id: '14',
     name: 'Bit Access Professional Umbrella Set',
     description: 'Set of premium umbrellas featuring Bit Access branding. Includes classic black umbrella and colorful multi-panel design.',
     price: 1650.00,
@@ -341,7 +305,7 @@ export const products: Product[] = [
     createdAt: '2025-05-28T12:00:00Z'
   },
   {
-    id: '17',
+    id: '15',
     name: 'Bit Access Eco Tote Bag Collection',
     description: 'Eco-friendly canvas tote bags featuring Bit Access branding. Available in black and white designs for shopping or conferences.',
     price: 890.00,
@@ -358,7 +322,7 @@ export const products: Product[] = [
     createdAt: '2025-05-27T12:00:00Z'
   },
   {
-    id: '18',
+    id: '16',
     name: 'Bit Access Colorful Blockchain Umbrella',
     description: 'Vibrant blockchain-themed umbrella with Bit Access branding. Water-resistant and windproof design in colorful pattern.',
     price: 1350.00,
@@ -375,7 +339,7 @@ export const products: Product[] = [
     createdAt: '2025-05-26T12:00:00Z'
   },
   {
-    id: '19',
+    id: '17',
     name: 'Bit Access Luxury Perfume for Men',
     description: 'Exclusive masculine fragrance with sophisticated blend. Features elegant packaging with Bit Access branding. 50ml luxury perfume.',
     price: 2850.00,
@@ -393,7 +357,7 @@ export const products: Product[] = [
     createdAt: '2025-05-25T12:00:00Z'
   },
   {
-    id: '20',
+    id: '18',
     name: 'Bit Access Professional Polo Shirt',
     description: 'Professional black polo shirt with stunning Bit Access design. Features blockchain education graphics and cryptocurrency elements.',
     price: 1250.00,
@@ -411,7 +375,7 @@ export const products: Product[] = [
     createdAt: '2025-05-24T12:00:00Z'
   },
   {
-    id: '21',
+    id: '19',
     name: 'Bit Access Crypto Wall Clock',
     description: 'Premium wall clock featuring multiple cryptocurrency logos around Bit Access branding. Perfect for crypto enthusiasts with LED backlighting.',
     price: 2450.00,
@@ -427,5 +391,41 @@ export const products: Product[] = [
     discountPercentage: 15,
     tags: ['clock', 'crypto', 'LED', 'silent'],
     createdAt: '2025-05-23T12:00:00Z'
+  },
+  {
+    id: '20',
+    name: 'Bit Access Banner Stand',
+    description: 'Professional retractable banner stand featuring Bit Access branding. Perfect for events, conferences, and promotional activities.',
+    price: 3500.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/c6a8cfd9-7105-4aeb-a399-d35487c22dbc.png',
+    category: 'promotional',
+    seller: {
+      id: 's2',
+      name: 'Crypto Merchandise Hub',
+      rating: 4.8
+    },
+    stock: 25,
+    discountPercentage: 15,
+    tags: ['banner', 'promotional', 'event', 'retractable'],
+    createdAt: '2025-06-11T12:00:00Z'
+  },
+  {
+    id: '21',
+    name: 'Bit Access Double Banner Display',
+    description: 'Professional double banner set for major events and conferences. Features high-quality printing with vibrant Bit Access branding.',
+    price: 6200.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/a33dea2f-e135-4e04-8278-6fee786990e3.png',
+    category: 'promotional',
+    seller: {
+      id: 's2',
+      name: 'Crypto Merchandise Hub',
+      rating: 4.8
+    },
+    stock: 15,
+    featured: true,
+    tags: ['banner', 'double', 'event', 'trade show'],
+    createdAt: '2025-06-06T12:00:00Z'
   }
 ];

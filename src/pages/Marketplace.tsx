@@ -21,6 +21,9 @@ const Marketplace = () => {
   
   const isMerchant = isConnected && membershipData?.isActive && membershipData.type === 'Merchant';
 
+  // Filter products to show only Bit Access Official Store items
+  const bitAccessProducts = products.filter(product => product.seller.id === 's1');
+
   // Function to navigate to the merchant page
   const goToBecomeMerchant = () => {
     navigate('/become-merchant');
@@ -104,44 +107,48 @@ const Marketplace = () => {
           </div>
         </div>
 
-        {/* Main Content */}
-        <Tabs defaultValue="trending" className="mb-12">
-          <TabsList>
-            <TabsTrigger value="trending" className="flex gap-2">
-              <TrendingUp className="h-4 w-4" /> Trending
-            </TabsTrigger>
-            <TabsTrigger value="new" className="flex gap-2">
-              <Tag className="h-4 w-4" /> New Arrivals
-            </TabsTrigger>
-            <TabsTrigger value="deals" className="flex gap-2">
-              <ShoppingBag className="h-4 w-4" /> Best Deals
-            </TabsTrigger>
-          </TabsList>
+        {/* Main Content - Bit Access Official Store Focus */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6 text-bitaccess-gold">Bit Access Official Store</h2>
           
-          <TabsContent value="trending" className="mt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-              {products.slice(0, 6).map(product => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="new" className="mt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-              {products.slice(6, 12).map(product => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="deals" className="mt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-              {products.filter(p => p.discountPercentage > 0).slice(0, 6).map(product => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
+          <Tabs defaultValue="trending">
+            <TabsList>
+              <TabsTrigger value="trending" className="flex gap-2">
+                <TrendingUp className="h-4 w-4" /> Trending
+              </TabsTrigger>
+              <TabsTrigger value="new" className="flex gap-2">
+                <Tag className="h-4 w-4" /> New Arrivals
+              </TabsTrigger>
+              <TabsTrigger value="deals" className="flex gap-2">
+                <ShoppingBag className="h-4 w-4" /> Best Deals
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="trending" className="mt-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {bitAccessProducts.slice(0, 8).map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="new" className="mt-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {bitAccessProducts.slice(8, 16).map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="deals" className="mt-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {bitAccessProducts.filter(p => p.discountPercentage && p.discountPercentage > 0).slice(0, 8).map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
 
         {/* Featured Merchants */}
         <div className="mb-12">
