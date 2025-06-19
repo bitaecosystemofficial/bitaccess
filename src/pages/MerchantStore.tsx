@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -55,10 +54,10 @@ const MerchantStore = () => {
     rating: 4.9,
     reviewCount: 156,
     joinedDate: new Date(2024, 0, 15),
-    coverImage: '/lovable-uploads/c6a8cfd9-7105-4aeb-a399-d35487c22dbc.png',
+    coverImage: '/lovable-uploads/3b873eb5-0c9d-4a97-a3c4-7dc0afff9498.png',
     products: bitAccessProducts
   });
-  
+
   const [reviews, setReviews] = useState<StoreReview[]>([
     {
       id: '1',

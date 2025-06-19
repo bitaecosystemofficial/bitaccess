@@ -43,8 +43,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     return product.price;
   };
 
+  const calculateFinalUsdtPrice = () => {
+    if (product.discountPercentage) {
+      const discount = product.usdtPrice * (product.discountPercentage / 100);
+      return product.usdtPrice - discount;
+    }
+    return product.usdtPrice;
+  };
+
   const formatPrice = (price: number) => {
     return `${product.currency} ${price.toFixed(2)}`;
+  };
+
+  const formatUsdtPrice = (price: number) => {
+    return `${price.toFixed(2)} USDT`;
   };
 
   return (
@@ -93,17 +105,32 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="flex flex-col">
           {product.discountPercentage ? (
             <>
-              <span className="text-lg font-semibold text-bitaccess-gold">
-                {formatPrice(calculateFinalPrice())}
-              </span>
-              <span className="text-sm text-gray-400 line-through">
-                {formatPrice(product.price)}
-              </span>
+              <div className="flex items-center space-x-2">
+                <span className="text-lg font-semibold text-bitaccess-gold">
+                  {formatPrice(calculateFinalPrice())}
+                </span>
+                <span className="text-sm font-medium text-green-400">
+                  {formatUsdtPrice(calculateFinalUsdtPrice())}
+                </span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-400 line-through">
+                  {formatPrice(product.price)}
+                </span>
+                <span className="text-xs text-gray-500 line-through">
+                  {formatUsdtPrice(product.usdtPrice)}
+                </span>
+              </div>
             </>
           ) : (
-            <span className="text-lg font-semibold text-bitaccess-gold">
-              {formatPrice(product.price)}
-            </span>
+            <div className="flex flex-col">
+              <span className="text-lg font-semibold text-bitaccess-gold">
+                {formatPrice(product.price)}
+              </span>
+              <span className="text-sm font-medium text-green-400">
+                {formatUsdtPrice(product.usdtPrice)}
+              </span>
+            </div>
           )}
         </div>
         
