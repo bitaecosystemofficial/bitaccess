@@ -426,5 +426,181 @@ export const products: Product[] = [
     featured: true,
     tags: ['banner', 'double', 'event', 'trade show'],
     createdAt: '2025-06-06T12:00:00Z'
+  },
+  {
+    id: '22',
+    name: 'Bit Access Premium Lanyards Set',
+    description: 'Professional lanyards featuring Bit Access branding. Available in white and black designs. Perfect for conferences, events, and daily use.',
+    price: 650.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/e8b6b9eb-9bd3-4fbe-a65b-443d3452427a.png',
+    category: 'accessories',
+    seller: {
+      id: 's1',
+      name: 'Bit Access Official Store',
+      rating: 4.9
+    },
+    stock: 120,
+    tags: ['lanyard', 'professional', 'conference', 'branding'],
+    createdAt: '2025-06-03T12:00:00Z'
+  },
+  {
+    id: '23',
+    name: 'Bit Access Luxury Watch Collection',
+    description: 'Premium watches featuring the official Bit Access gold logo. Available in black leather and sports band options. Precise quartz movement.',
+    price: 3850.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/88bb3010-4a6b-48ce-bfe4-c722d590ddc4.png',
+    category: 'accessories',
+    seller: {
+      id: 's1',
+      name: 'Bit Access Official Store',
+      rating: 4.9
+    },
+    stock: 25,
+    featured: true,
+    discountPercentage: 8,
+    tags: ['watch', 'luxury', 'leather', 'quartz'],
+    createdAt: '2025-06-02T12:00:00Z'
+  },
+  {
+    id: '24',
+    name: 'Bit Access Ecosystem Wall Clock',
+    description: 'Beautiful wall clock featuring the Bit Access ecosystem design with blockchain empowering communities theme. Silent operation with elegant styling.',
+    price: 2250.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/c16e2201-ffd7-4815-a0aa-ee106a8000a4.png',
+    category: 'accessories',
+    seller: {
+      id: 's1',
+      name: 'Bit Access Official Store',
+      rating: 4.9
+    },
+    stock: 40,
+    featured: true,
+    tags: ['clock', 'ecosystem', 'wall', 'silent'],
+    createdAt: '2025-06-01T12:00:00Z'
+  },
+  {
+    id: '25',
+    name: 'Bit Access Premium Shopping Bags',
+    description: 'High-quality shopping bags featuring Bit Access branding. Available in white and black designs. Durable and eco-friendly materials.',
+    price: 420.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/16a32a65-0503-488d-aece-83bc0ec3de93.png',
+    category: 'accessories',
+    seller: {
+      id: 's1',
+      name: 'Bit Access Official Store',
+      rating: 4.9
+    },
+    stock: 150,
+    tags: ['shopping bag', 'eco-friendly', 'durable', 'branding'],
+    createdAt: '2025-05-31T12:00:00Z'
+  },
+  {
+    id: '26',
+    name: 'Bit Access Multi-Panel Umbrella',
+    description: 'Stylish multi-panel umbrella featuring various cryptocurrency logos and Bit Access branding. Water-resistant and windproof design.',
+    price: 1650.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/b4185a49-d1f1-4e9d-9392-82fa93a355cd.png',
+    category: 'accessories',
+    seller: {
+      id: 's1',
+      name: 'Bit Access Official Store',
+      rating: 4.9
+    },
+    stock: 60,
+    discountPercentage: 12,
+    tags: ['umbrella', 'multi-panel', 'waterproof', 'crypto'],
+    createdAt: '2025-05-30T12:00:00Z'
+  },
+  {
+    id: '27',
+    name: 'Bit Access Executive Business Cards',
+    description: 'Professional business cards featuring the Bit Access ecosystem design. High-quality printing with premium card stock.',
+    price: 850.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/9b31b746-44dc-4dda-aa9b-04f1f416c356.png',
+    category: 'stationery',
+    seller: {
+      id: 's1',
+      name: 'Bit Access Official Store',
+      rating: 4.9
+    },
+    stock: 200,
+    tags: ['business cards', 'executive', 'premium', 'professional'],
+    createdAt: '2025-05-29T12:00:00Z'
+  },
+  {
+    id: '28',
+    name: 'Bit Access Classic Black Umbrella',
+    description: 'Classic black umbrella with Bit Access ecosystem branding. Durable construction with automatic open mechanism.',
+    price: 1350.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/e77d650e-f15c-441b-9686-d72351db307a.png',
+    category: 'accessories',
+    seller: {
+      id: 's1',
+      name: 'Bit Access Official Store',
+      rating: 4.9
+    },
+    stock: 70,
+    tags: ['umbrella', 'classic', 'automatic', 'durable'],
+    createdAt: '2025-05-28T12:00:00Z'
+  },
+  {
+    id: '29',
+    name: 'Bit Access Crypto Wall Clock',
+    description: 'Premium wall clock featuring multiple cryptocurrency logos around Bit Access branding. Perfect for crypto enthusiasts with LED backlighting.',
+    price: 2450.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/51a23efb-1ba1-486e-9ead-0fc35a6920cf.png',
+    category: 'accessories',
+    seller: {
+      id: 's1',
+      name: 'Bit Access Official Store',
+      rating: 4.9
+    },
+    stock: 35,
+    discountPercentage: 15,
+    featured: true,
+    tags: ['clock', 'crypto', 'LED', 'silent'],
+    createdAt: '2025-05-27T12:00:00Z'
+  },
+  {
+    id: '30',
+    name: 'Bit Access Elite Coffee Mug - White',
+    description: 'Premium white ceramic coffee mug with black interior featuring the official Bit Access ecosystem logo. Dishwasher and microwave safe.',
+    price: 520.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/e822f1ac-96b4-4cd8-8b87-d24d6a836e63.png',
+    category: 'accessories',
+    seller: {
+      id: 's1',
+      name: 'Bit Access Official Store',
+      rating: 4.9
+    },
+    stock: 110,
+    tags: ['mug', 'ceramic', 'white', 'dishwasher safe'],
+    createdAt: '2025-05-26T12:00:00Z'
+  },
+  {
+    id: '31',
+    name: 'Bit Access Elite Coffee Mug - Black',
+    description: 'Premium black ceramic coffee mug featuring the official Bit Access ecosystem logo. Elegant design with comfortable handle.',
+    price: 520.00,
+    currency: 'PHP',
+    image: '/lovable-uploads/4a369845-e3fe-4834-a836-6afd0b0ae213.png',
+    category: 'accessories',
+    seller: {
+      id: 's1',
+      name: 'Bit Access Official Store',
+      rating: 4.9
+    },
+    stock: 110,
+    tags: ['mug', 'ceramic', 'black', 'elegant'],
+    createdAt: '2025-05-25T12:00:00Z'
   }
 ];
