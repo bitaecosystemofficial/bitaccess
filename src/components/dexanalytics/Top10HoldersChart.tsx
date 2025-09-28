@@ -1,21 +1,22 @@
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { ChartContainer } from "@/components/ui/chart";
+import { useRealTimeTokenData } from "@/hooks/useRealTimeTokenData";
+import { formatNumber } from "@/utils/formatUtils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Top10HoldersChart = () => {
-  // Mock data for top 10 holders with realistic distribution
-  const holdersData = [
-    { name: 'Holder 1', value: 15.2, address: '0x1a2b...3c4d', tokens: '15,200,000,000' },
-    { name: 'Holder 2', value: 12.8, address: '0x5e6f...7g8h', tokens: '12,800,000,000' },
-    { name: 'Holder 3', value: 10.5, address: '0x9i0j...1k2l', tokens: '10,500,000,000' },
-    { name: 'Holder 4', value: 8.7, address: '0x3m4n...5o6p', tokens: '8,700,000,000' },
-    { name: 'Holder 5', value: 7.3, address: '0x7q8r...9s0t', tokens: '7,300,000,000' },
-    { name: 'Holder 6', value: 6.1, address: '0x1u2v...3w4x', tokens: '6,100,000,000' },
-    { name: 'Holder 7', value: 5.4, address: '0x5y6z...7a8b', tokens: '5,400,000,000' },
-    { name: 'Holder 8', value: 4.8, address: '0x9c0d...1e2f', tokens: '4,800,000,000' },
-    { name: 'Holder 9', value: 4.2, address: '0x3g4h...5i6j', tokens: '4,200,000,000' },
-    { name: 'Holder 10', value: 3.7, address: '0x7k8l...9m0n', tokens: '3,700,000,000' },
-  ];
+  const { tokenInfo, topHolders, isLoading } = useRealTimeTokenData();
+
+  // Format holders data for chart - get top 10
+  const top10Holders = topHolders.slice(0, 10);
+  const holdersData = top10Holders.map((holder, index) => ({
+    name: `Holder ${index + 1}`,
+    value: parseFloat(holder.percentage.toFixed(2)),
+    address: `${holder.address.slice(0, 6)}...${holder.address.slice(-4)}`,
+    tokens: formatNumber(parseFloat(holder.balance)),
+    fullAddress: holder.address
+  }));
 
   const COLORS = [
     '#FFD700', // Gold
@@ -43,6 +44,31 @@ const Top10HoldersChart = () => {
     }
     return null;
   };
+
+  if (isLoading) {
+    return (
+      <div className="bg-bitaccess-black-light p-6 rounded-xl border border-bitaccess-gold/20">
+        <div className="flex items-center justify-between mb-6">
+          <Skeleton className="h-6 w-48 bg-gray-700" />
+          <Skeleton className="h-8 w-32 bg-gray-700" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Skeleton className="h-80 bg-gray-700" />
+          <div className="space-y-3">
+            {[...Array(10)].map((_, i) => (
+              <Skeleton key={i} className="h-16 bg-gray-700" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Calculate statistics from real data
+  const totalHoldersCount = tokenInfo?.holders || 4605;
+  const largestHolderPercentage = top10Holders[0]?.percentage || 0;
+  const tenthLargestPercentage = top10Holders[9]?.percentage || 0;
+  const top10TotalPercentage = holdersData.reduce((sum, holder) => sum + holder.value, 0);
 
   return (
     <div className="bg-bitaccess-black-light p-6 rounded-xl border border-bitaccess-gold/20">
@@ -92,7 +118,7 @@ const Top10HoldersChart = () => {
                   />
                   <div>
                     <p className="text-white font-medium">#{index + 1}</p>
-                    <p className="text-gray-400 text-sm">{holder.address}</p>
+                    <p className="text-gray-400 text-sm font-mono">{holder.address}</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -110,20 +136,20 @@ const Top10HoldersChart = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center">
             <p className="text-2xl font-bold text-bitaccess-gold">
-              {holdersData.reduce((sum, holder) => sum + holder.value, 0).toFixed(1)}%
+              {top10TotalPercentage.toFixed(1)}%
             </p>
             <p className="text-gray-400 text-sm">Top 10 Holdings</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-white">3,198</p>
+            <p className="text-2xl font-bold text-white">{totalHoldersCount.toLocaleString()}</p>
             <p className="text-gray-400 text-sm">Total Holders</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-white">15.2%</p>
+            <p className="text-2xl font-bold text-white">{largestHolderPercentage.toFixed(2)}%</p>
             <p className="text-gray-400 text-sm">Largest Holder</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-white">3.7%</p>
+            <p className="text-2xl font-bold text-white">{tenthLargestPercentage.toFixed(2)}%</p>
             <p className="text-gray-400 text-sm">10th Largest</p>
           </div>
         </div>
