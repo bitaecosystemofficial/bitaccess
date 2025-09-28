@@ -1,19 +1,17 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
-import { useWallet } from "@/contexts/WalletContext";
 import { useMembership } from "@/contexts/MembershipContext";
-import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Logo from "@/components/ui/logo";
-import WalletDisplay from "./WalletDisplay";
 import NavigationItems from "./NavigationItems";
 import MobileMenu from "./MobileMenu";
 import CartIndicator from "../marketplace/CartIndicator";
 import { NAVIGATION_ITEMS } from "./navigationConstants";
+import { Web3WalletButton } from "@/components/ui/web3-wallet-button";
+import { useWeb3Wallet } from "@/hooks/useWeb3Wallet";
 
 const Header = () => {
-  const { address, isConnected, connectWallet, disconnectWallet } = useWallet();
+  const { address, isConnected } = useWeb3Wallet();
   const { membershipData } = useMembership();
   const isMobile = useIsMobile();
   
@@ -48,18 +46,6 @@ const Header = () => {
     }
   }
 
-  const handleConnectWallet = async () => {
-    if (!isConnected) {
-      await connectWallet();
-    }
-  };
-
-  const handleDisconnectWallet = () => {
-    if (isConnected) {
-      disconnectWallet();
-    }
-  };
-
   return (
     <header className="bg-bitaccess-black fixed top-0 left-0 w-full z-50 border-b border-bitaccess-gold/10">
       <div className="container flex items-center justify-between h-16 px-4">
@@ -75,24 +61,14 @@ const Header = () => {
           />
         ) : (
           <MobileMenu 
-            navigationItems={navItems} 
+            navigationItems={navItems}
             isConnected={isConnected} 
           />
         )}
 
-        <div className="flex items-center">
+        <div className="flex items-center space-x-4">
           {isConnected && <CartIndicator />}
-          
-          {isConnected ? (
-            <WalletDisplay 
-              address={address} 
-              handleDisconnectWallet={handleDisconnectWallet} 
-            />
-          ) : (
-            <Button onClick={handleConnectWallet} className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black">
-              Connect Wallet
-            </Button>
-          )}
+          <Web3WalletButton />
         </div>
       </div>
     </header>

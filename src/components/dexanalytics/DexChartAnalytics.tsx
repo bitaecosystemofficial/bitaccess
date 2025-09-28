@@ -36,7 +36,7 @@ const DexChartAnalytics = () => {
     decimal: 9,
     standard: "BEP20",
     totalSupply: "100000000000",
-    holders: 3198
+    holders: tokenInfo?.holders || 4605
   };
   
   return (

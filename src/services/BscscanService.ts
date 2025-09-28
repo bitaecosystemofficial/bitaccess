@@ -31,6 +31,9 @@ export interface TokenActivity {
   transfers24h: number;
   volume24h: string;
   uniqueAddresses24h: number;
+  totalTransfers?: number;
+  activeAddresses?: number;
+  avgPerHour?: number;
 }
 
 export class BscscanService {
@@ -77,7 +80,7 @@ export class BscscanService {
       console.error('Error fetching token info:', error);
       return {
         totalSupply: '100000000000000000000000000000',
-        holders: 3193 // Current known count as fallback
+        holders: 4605 // Updated to use 4,605 as requested
       };
     }
   }
@@ -115,10 +118,10 @@ export class BscscanService {
       }
       
       console.log(`Real-time holders count from BSCScan: ${totalHolders}`);
-      return totalHolders || 3193;
+      return totalHolders || 4605;
     } catch (error) {
       console.error('Error fetching real-time holders count:', error);
-      return 3193; // Fallback to known count
+      return 4605; // Fallback to requested count
     }
   }
   

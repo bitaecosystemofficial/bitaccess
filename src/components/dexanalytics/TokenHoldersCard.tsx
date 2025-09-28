@@ -5,7 +5,7 @@ const TokenHoldersCard = ({ holdersCount }: { holdersCount: number }) => {
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-semibold text-white">Token Holders</h3>
         <div className="bg-bitaccess-gold/20 rounded-full px-3 py-1 text-sm text-bitaccess-gold">
-          3,198 holders
+          {holdersCount.toLocaleString()} holders
         </div>
       </div>
       <div className="space-y-3">
