@@ -45,31 +45,17 @@ const Presale = () => {
     );
   }
   
-  // Format bonus tiers for display
   const renderBonusTiers = () => {
-    const bnbTiers = presaleData.bonusTiers.bnb;
-    
-    if (bnbTiers.length === 0) {
-      return (
-        <ul className="space-y-1 text-sm">
-          <li className="text-gray-300">Loading bonus tiers...</li>
-        </ul>
-      );
-    }
-
     return (
-      <ul className="space-y-1 text-sm">
-        {bnbTiers.map((tier, index) => (
-          <li key={index} className="flex justify-between">
-            <span className="text-gray-300">
-              {index === 0 
-                ? `Purchase ${tier.minAmount}+ BNB:`
-                : `Purchase ${tier.minAmount}+ BNB:`}
-            </span>
-            <span className="text-bitaccess-gold">+{tier.bonusPercent}% Bonus</span>
-          </li>
-        ))}
-      </ul>
+      <div className="space-y-2">
+        <div className="flex justify-between items-center">
+          <span className="text-gray-300">All purchases:</span>
+          <span className="text-bitaccess-gold font-semibold">+5% Bonus</span>
+        </div>
+        <div className="text-xs text-gray-400 mt-2">
+          Current BNB Price: ${presaleData.bnbPrice?.toFixed(2) || '600.00'}
+        </div>
+      </div>
     );
   };
   

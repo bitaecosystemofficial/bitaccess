@@ -7,6 +7,8 @@ import { useWallet } from "@/contexts/WalletContext";
 import { useMembership } from "@/contexts/MembershipContext";
 import { WalletProvider } from "@/contexts/WalletContext";
 import { MembershipProvider } from "@/contexts/MembershipContext";
+import { Web3ModalProvider } from "@/contexts/Web3ModalProvider";
+import PwaInstallPrompt from "@/components/pwa/PwaInstallPrompt";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Airdrop from "./pages/Airdrop";
@@ -78,17 +80,20 @@ const AppRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <WalletProvider>
-        <MembershipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-        </MembershipProvider>
-      </WalletProvider>
-    </TooltipProvider>
+    <Web3ModalProvider>
+      <TooltipProvider>
+        <WalletProvider>
+          <MembershipProvider>
+            <Toaster />
+            <Sonner />
+            <PwaInstallPrompt />
+            <BrowserRouter>
+              <AppRoutes />
+            </BrowserRouter>
+          </MembershipProvider>
+        </WalletProvider>
+      </TooltipProvider>
+    </Web3ModalProvider>
   </QueryClientProvider>
 );
 

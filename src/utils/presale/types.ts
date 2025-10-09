@@ -26,6 +26,7 @@ export interface PresaleData {
     usdt: BonusTier[];
   };
   address: string;
+  bnbPrice?: number;
 }
 
 export interface TimeRemaining {

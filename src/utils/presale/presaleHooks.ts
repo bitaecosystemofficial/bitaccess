@@ -5,6 +5,7 @@ import { presaleService } from '@/services/PresaleService';
 import { useWallet } from '@/contexts/WalletContext';
 import { ethers } from 'ethers';
 import { contractAddresses } from '@/constants/contracts';
+import { CryptoCompareService } from '@/services/CryptoCompareService';
 
 export interface BonusTier {
   minAmount: number;
@@ -31,6 +32,7 @@ export interface PresaleData {
     usdt: BonusTier[];
   };
   address: string;
+  bnbPrice?: number;
 }
 
 interface TimeRemaining {
@@ -40,96 +42,49 @@ interface TimeRemaining {
   seconds: number;
 }
 
-export const usePresaleData = () => {
+// Static presale configuration
+const PRESALE_CONFIG = {
+  currentPrice: 0.000108,
+  targetPrice: 0.00030,
+  totalSupply: 1000000000, // 1B BIT
+  bonusPercent: 5
+};
+
+export const usePresaleData = (): PresaleData => {
   const { isConnected } = useWallet();
   const [presaleData, setPresaleData] = useState<PresaleData>({
     currentPhase: 1,
     totalPhases: 3,
-    bnbRate: 0,
-    usdtRate: 0,
-    totalSupply: 5000000,
+    bnbRate: PRESALE_CONFIG.currentPrice,
+    usdtRate: PRESALE_CONFIG.currentPrice,
+    totalSupply: PRESALE_CONFIG.totalSupply,
     soldTokens: 0,
     progress: 0,
-    softCap: 0,
-    hardCap: 0,
-    endTimeInSeconds: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60,
+    softCap: PRESALE_CONFIG.totalSupply * 0.3,
+    hardCap: PRESALE_CONFIG.totalSupply,
+    endTimeInSeconds: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
     paymentMethods: {
-      bnb: { rate: 0, min: 0.1, max: 50 },
-      usdt: { rate: 0, min: 100, max: 25000 }
+      bnb: { rate: PRESALE_CONFIG.currentPrice, min: 0.1, max: 50 },
+      usdt: { rate: PRESALE_CONFIG.currentPrice, min: 100, max: 25000 }
     },
     bonusTiers: {
-      bnb: [],
-      usdt: []
+      bnb: [{ minAmount: 0.1, bonusPercent: PRESALE_CONFIG.bonusPercent }],
+      usdt: [{ minAmount: 100, bonusPercent: PRESALE_CONFIG.bonusPercent }]
     },
-    address: contractAddresses.presale
+    address: contractAddresses.presale,
+    bnbPrice: 600
   });
 
   useEffect(() => {
-    const fetchPresaleData = async () => {
-      if (!isConnected) return;
-
-      try {
-        const info = await presaleService.getPresaleInfo();
-        const bonusInfo = await presaleService.getBonusTiers();
-        
-        // Format BNB rate - convert from wei to ether
-        const bnbRateInEther = parseFloat(ethers.utils.formatEther(info.bnbRate));
-        // Format USDT rate - assuming 18 decimals
-        const usdtRateInUsd = parseFloat(ethers.utils.formatUnits(info.usdtRate, 18));
-        
-        // Format bonus tiers
-        const bnbTiers = bonusInfo.bnbTiers.map(tier => ({
-          minAmount: parseFloat(ethers.utils.formatEther(tier.minAmount)),
-          bonusPercent: tier.bonusPercent.toNumber()
-        }));
-        
-        const usdtTiers = bonusInfo.usdtTiers.map(tier => ({
-          minAmount: parseFloat(ethers.utils.formatUnits(tier.minAmount, 18)),
-          bonusPercent: tier.bonusPercent.toNumber()
-        }));
-
-        // Calculate progress
-        const soldTokensFormatted = parseFloat(ethers.utils.formatUnits(info.soldTokens, 6)); // Assuming 6 decimals for BIT token
-        const totalSupplyFormatted = parseFloat(ethers.utils.formatUnits(info.totalSupply, 6));
-        const progress = Math.round((soldTokensFormatted / totalSupplyFormatted) * 100);
-
-        setPresaleData(prev => ({
-          ...prev,
-          currentPhase: info.phase.toNumber(),
-          bnbRate: bnbRateInEther,
-          usdtRate: usdtRateInUsd,
-          totalSupply: totalSupplyFormatted,
-          soldTokens: soldTokensFormatted,
-          progress: progress,
-          softCap: parseFloat(ethers.utils.formatUnits(info.softCap, 6)),
-          hardCap: parseFloat(ethers.utils.formatUnits(info.hardCap, 6)),
-          endTimeInSeconds: info.endTime.toNumber(),
-          paymentMethods: {
-            bnb: { 
-              rate: bnbRateInEther, 
-              min: 0.1, 
-              max: 50 
-            },
-            usdt: { 
-              rate: usdtRateInUsd, 
-              min: 100, 
-              max: 25000 
-            }
-          },
-          bonusTiers: {
-            bnb: bnbTiers,
-            usdt: usdtTiers
-          }
-        }));
-      } catch (error) {
-        console.error("Error fetching presale data:", error);
-      }
+    const fetchBnbPrice = async () => {
+      const price = await CryptoCompareService.getBNBPrice();
+      setPresaleData(prev => ({ ...prev, bnbPrice: price }));
     };
 
-    fetchPresaleData();
-    const interval = setInterval(fetchPresaleData, 30000);
+    fetchBnbPrice();
+    const interval = setInterval(fetchBnbPrice, 60000); // Update every minute
     return () => clearInterval(interval);
-  }, [isConnected]);
+  }, []);
 
   return presaleData;
 };

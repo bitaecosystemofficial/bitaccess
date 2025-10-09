@@ -1,9 +1,19 @@
 
 import { Link } from "react-router-dom";
-import { Facebook, Twitter, Youtube, Send, Github, Smartphone, TabletSmartphone } from "lucide-react";
+import { Facebook, Twitter, Youtube, Send, Github, Download } from "lucide-react";
 import Logo from "@/components/layout/Logo";
+import { useWeb3Wallet } from "@/hooks/useWeb3Wallet";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Footer = () => {
+  const { isConnected } = useWeb3Wallet();
+  const isMobile = useIsMobile();
+  
+  // Hide footer on mobile when connected
+  if (isMobile && isConnected) {
+    return null;
+  }
+  
   return (
     <footer className="bg-bitaccess-black border-t border-bitaccess-gold/30 relative overflow-hidden">
       {/* Bubble Effects */}
@@ -105,29 +115,25 @@ const Footer = () => {
             </form>
             
             <div className="space-y-3">
-              <h4 className="text-sm font-semibold text-white">Download App</h4>
-              <div className="flex flex-col gap-2">
-                <a 
-                  href="#" 
-                  className="flex items-center gap-2 bg-bitaccess-black-light border border-bitaccess-gold/30 rounded-lg px-3 py-2 hover:border-bitaccess-gold transition-colors"
-                >
-                  <Smartphone className="w-5 h-5 text-bitaccess-gold" />
-                  <div className="text-left">
-                    <p className="text-xs text-gray-400">Download on</p>
-                    <p className="text-sm text-white font-medium">Google Play</p>
-                  </div>
-                </a>
-                <a 
-                  href="#" 
-                  className="flex items-center gap-2 bg-bitaccess-black-light border border-bitaccess-gold/30 rounded-lg px-3 py-2 hover:border-bitaccess-gold transition-colors"
-                >
-                  <TabletSmartphone className="w-5 h-5 text-bitaccess-gold" />
-                  <div className="text-left">
-                    <p className="text-xs text-gray-400">Download on</p>
-                    <p className="text-sm text-white font-medium">App Store</p>
-                  </div>
-                </a>
-              </div>
+              <h4 className="text-sm font-semibold text-white">Install App</h4>
+              <button
+                onClick={() => {
+                  const event = new Event('beforeinstallprompt');
+                  window.dispatchEvent(event);
+                }}
+                className="flex items-center gap-3 bg-bitaccess-black-light border border-bitaccess-gold/30 rounded-lg px-4 py-3 hover:border-bitaccess-gold transition-colors w-full"
+              >
+                <img 
+                  src="/pwa-icon.png" 
+                  alt="BIT Access" 
+                  className="w-10 h-10 rounded-lg"
+                />
+                <div className="text-left flex-1">
+                  <p className="text-sm text-white font-medium">Install BIT Access App</p>
+                  <p className="text-xs text-gray-400">Progressive Web App</p>
+                </div>
+                <Download className="w-5 h-5 text-bitaccess-gold" />
+              </button>
             </div>
           </div>
         </div>

@@ -14,15 +14,15 @@ const PresaleStats = () => {
           <Coins size={40} className="text-bitaccess-gold" />
         </div>
         <div>
-          <h3 className="text-xl font-bold text-white mb-2">Presale Phase: {presaleData.currentPhase + 1} of {presaleData.totalPhases}</h3>
+          <h3 className="text-xl font-bold text-white mb-2">Buy BIT ACCESS</h3>
           <div className="flex flex-col md:flex-row md:space-x-6">
             <p className="text-gray-400 flex items-center">
               <TrendingUp size={16} className="mr-2 text-bitaccess-gold" />
-              Current Price: <span className="ml-2 text-white font-medium">${presaleData.bnbRate.toFixed(3)}</span>
+              Current Price: <span className="ml-2 text-white font-medium">${presaleData.bnbRate.toFixed(6)}</span>
             </p>
             <p className="text-gray-400 flex items-center mt-2 md:mt-0">
               <Clock size={16} className="mr-2 text-bitaccess-gold" />
-              Launch Price: <span className="ml-2 text-white font-medium">${(presaleData.bnbRate * 1.5).toFixed(3)}</span>
+              Target Price: <span className="ml-2 text-white font-medium">${(0.00030).toFixed(5)}</span>
             </p>
           </div>
         </div>
@@ -66,9 +66,9 @@ const PresaleStats = () => {
         
         <Card className="bg-bitaccess-black border border-bitaccess-gold/10 hover:border-bitaccess-gold/30 transition-all">
           <CardContent className="p-5">
-            <h4 className="text-gray-400 mb-2">Bonus Tiers</h4>
+            <h4 className="text-gray-400 mb-2">Bonus</h4>
             <p className="text-xl font-bold text-bitaccess-gold">
-              Up to 15%
+              5%
             </p>
           </CardContent>
         </Card>

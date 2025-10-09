@@ -3,18 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bitaccess-gold-galaxy</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+    <meta name="theme-color" content="#D4AF37" />
+    <title>BIT Access - Blockchain Education & Merchant Adoption</title>
+    <meta name="description" content="Empowering blockchain education and merchant adoption through the Bit Access Ecosystem" />
+    <meta name="author" content="BIT Access" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="/pwa-icon.png" />
+    <link rel="apple-touch-icon" href="/pwa-icon.png" />
 
-    <meta property="og:title" content="bitaccess-gold-galaxy" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <meta property="og:title" content="BIT Access" />
+    <meta property="og:description" content="Empowering blockchain education and merchant adoption" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:image" content="/pwa-icon.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:site" content="@bitaccess" />
+    <meta name="twitter:image" content="/pwa-icon.png" />
   </head>
 
   <body>
@@ -22,5 +26,12 @@
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
   </body>
 </html>
