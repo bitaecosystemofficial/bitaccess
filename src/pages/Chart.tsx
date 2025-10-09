@@ -105,9 +105,8 @@ const Chart = () => {
 
   const formatSupply = (supply: string) => {
     const num = parseFloat(supply);
-    return (num / Math.pow(10, parseInt(tokenInfo?.decimals || "18"))).toLocaleString(undefined, {
-      maximumFractionDigits: 0
-    });
+    const value = num / Math.pow(10, parseInt(tokenInfo?.decimals || "18"));
+    return (value / 1000000000).toFixed(2) + " Billion";
   };
 
   const formatDate = (timestamp: number) => {
@@ -192,13 +191,13 @@ const Chart = () => {
                 </Card>
               </div>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Contract Information</CardTitle>
-                  <CardDescription>Detailed token and contract data</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Contract Information</CardTitle>
+                    <CardDescription>Detailed token and contract data</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
                     <div className="space-y-4">
                       <div>
                         <p className="text-sm text-gray-400 mb-1">Token Name</p>
@@ -212,17 +211,6 @@ const Chart = () => {
                         <p className="text-sm text-gray-400 mb-1">Decimals</p>
                         <p className="text-lg font-semibold text-white">{tokenInfo?.decimals || "18"}</p>
                       </div>
-                      {tokenInfo?.price && (
-                        <div>
-                          <p className="text-sm text-gray-400 mb-1">Market Cap</p>
-                          <p className="text-lg font-semibold text-white">
-                            ${tokenInfo.price.marketCapUsd?.toLocaleString() || "N/A"}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-4">
                       <div>
                         <p className="text-sm text-gray-400 mb-1">Contract Address</p>
                         <div className="flex items-center gap-2">
@@ -254,9 +242,86 @@ const Chart = () => {
                         </>
                       )}
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Top 15 Holders Distribution</CardTitle>
+                    <CardDescription>Token distribution among largest holders</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[400px] flex items-center justify-center">
+                      {holders.length > 0 ? (
+                        <div className="w-full space-y-4">
+                          <div className="relative w-full h-64">
+                            <svg viewBox="0 0 200 200" className="w-full h-full">
+                              {(() => {
+                                const top15 = holders.slice(0, 15);
+                                const colors = [
+                                  '#FFD700', '#FFA500', '#FF8C00', '#FF6347', '#FF4500',
+                                  '#DC143C', '#C71585', '#9370DB', '#4169E1', '#1E90FF',
+                                  '#00CED1', '#20B2AA', '#3CB371', '#32CD32', '#ADFF2F'
+                                ];
+                                let currentAngle = -90;
+                                
+                                return top15.map((holder, index) => {
+                                  const angle = (holder.share / 100) * 360;
+                                  const startAngle = currentAngle;
+                                  const endAngle = currentAngle + angle;
+                                  currentAngle = endAngle;
+                                  
+                                  const startRad = (startAngle * Math.PI) / 180;
+                                  const endRad = (endAngle * Math.PI) / 180;
+                                  
+                                  const x1 = 100 + 80 * Math.cos(startRad);
+                                  const y1 = 100 + 80 * Math.sin(startRad);
+                                  const x2 = 100 + 80 * Math.cos(endRad);
+                                  const y2 = 100 + 80 * Math.sin(endRad);
+                                  
+                                  const largeArc = angle > 180 ? 1 : 0;
+                                  
+                                  return (
+                                    <path
+                                      key={holder.address}
+                                      d={`M 100 100 L ${x1} ${y1} A 80 80 0 ${largeArc} 1 ${x2} ${y2} Z`}
+                                      fill={colors[index]}
+                                      stroke="#000"
+                                      strokeWidth="0.5"
+                                    />
+                                  );
+                                });
+                              })()}
+                            </svg>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            {holders.slice(0, 15).map((holder, index) => {
+                              const colors = [
+                                '#FFD700', '#FFA500', '#FF8C00', '#FF6347', '#FF4500',
+                                '#DC143C', '#C71585', '#9370DB', '#4169E1', '#1E90FF',
+                                '#00CED1', '#20B2AA', '#3CB371', '#32CD32', '#ADFF2F'
+                              ];
+                              return (
+                                <div key={holder.address} className="flex items-center gap-2">
+                                  <div 
+                                    className="w-3 h-3 rounded-sm flex-shrink-0" 
+                                    style={{ backgroundColor: colors[index] }}
+                                  />
+                                  <span className="text-gray-400 truncate">
+                                    Rank {holder.rank}: {holder.share.toFixed(2)}%
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-gray-400">Loading chart data...</p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
 
             <TabsContent value="holders" className="space-y-6">
@@ -299,7 +364,7 @@ const Chart = () => {
                             </td>
                             <td className="py-4 px-4 text-right">
                               <span className="text-white font-semibold">
-                                {parseFloat(holder.balance).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                                {(parseFloat(holder.balance) / 1000000000).toFixed(2)} Billion
                               </span>
                             </td>
                             <td className="py-4 px-4 text-right">
@@ -379,7 +444,7 @@ const Chart = () => {
                                 <div className="flex items-center gap-2 text-sm">
                                   <span className="text-gray-400">Value:</span>
                                   <span className="text-white font-semibold">
-                                    {parseFloat(op.value).toLocaleString(undefined, { maximumFractionDigits: 2 })} BIT
+                                    {(parseFloat(op.value) / 1000000000).toFixed(4)} Billion BIT
                                   </span>
                                 </div>
                               </div>

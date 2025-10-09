@@ -30,6 +30,7 @@ import WhitepaperDetails from "./pages/WhitepaperDetails";
 import MembershipCard from "./pages/MembershipCard";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import Audit from "./pages/Audit";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +74,7 @@ const AppRoutes = () => {
       <Route path="/membership-card" element={<MembershipCard />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/terms-of-service" element={<TermsOfService />} />
+      <Route path="/audit" element={<Audit />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

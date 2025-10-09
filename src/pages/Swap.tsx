@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowDownUp, Info, AlertCircle, Loader2 } from "lucide-react";
 import { parseBigNumber, formatBigNumber } from "@/utils/contractUtils";
+import bitLogo from "@/assets/bit-token-logo.png";
 
 const Swap = () => {
   const { isConnected } = useWallet();
@@ -37,7 +38,18 @@ const Swap = () => {
     if (address === tokenAddresses.usdt) return "USDT";
     if (address === tokenAddresses.bit) return "BIT";
     if (address === tokenAddresses.btcb) return "BTCB";
+    if (address === tokenAddresses.usdc) return "USDC";
     return "Unknown";
+  };
+
+  // Helper for token logos
+  const getTokenLogo = (address: string) => {
+    if (address === tokenAddresses.bnb) return "https://s2.coinmarketcap.com/static/img/coins/64x64/1839.png";
+    if (address === tokenAddresses.usdt) return "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png";
+    if (address === tokenAddresses.usdc) return "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png";
+    if (address === tokenAddresses.btcb) return "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png";
+    if (address === tokenAddresses.bit) return bitLogo;
+    return null;
   };
   
   // Check for correct network on component mount
@@ -234,14 +246,40 @@ const Swap = () => {
                           min="0"
                         />
                         <Select value={fromToken} onValueChange={handleFromTokenChange}>
-                          <SelectTrigger className="w-[120px]">
+                          <SelectTrigger className="w-[140px]">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value={tokenAddresses.bnb}>BNB</SelectItem>
-                            <SelectItem value={tokenAddresses.usdt}>USDT</SelectItem>
-                            <SelectItem value={tokenAddresses.bit}>BIT</SelectItem>
-                            <SelectItem value={tokenAddresses.btcb}>BTCB</SelectItem>
+                            <SelectItem value={tokenAddresses.bnb}>
+                              <div className="flex items-center gap-2">
+                                <img src={getTokenLogo(tokenAddresses.bnb)!} alt="BNB" className="w-5 h-5" />
+                                <span>BNB</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value={tokenAddresses.usdt}>
+                              <div className="flex items-center gap-2">
+                                <img src={getTokenLogo(tokenAddresses.usdt)!} alt="USDT" className="w-5 h-5" />
+                                <span>USDT</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value={tokenAddresses.usdc}>
+                              <div className="flex items-center gap-2">
+                                <img src={getTokenLogo(tokenAddresses.usdc)!} alt="USDC" className="w-5 h-5" />
+                                <span>USDC</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value={tokenAddresses.btcb}>
+                              <div className="flex items-center gap-2">
+                                <img src={getTokenLogo(tokenAddresses.btcb)!} alt="BTCB" className="w-5 h-5" />
+                                <span>BTCB</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value={tokenAddresses.bit}>
+                              <div className="flex items-center gap-2">
+                                <img src={getTokenLogo(tokenAddresses.bit)!} alt="BIT" className="w-5 h-5" />
+                                <span>BIT</span>
+                              </div>
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -290,14 +328,40 @@ const Swap = () => {
                           readOnly
                         />
                         <Select value={toToken} onValueChange={handleToTokenChange}>
-                          <SelectTrigger className="w-[120px]">
+                          <SelectTrigger className="w-[140px]">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value={tokenAddresses.bnb}>BNB</SelectItem>
-                            <SelectItem value={tokenAddresses.usdt}>USDT</SelectItem>
-                            <SelectItem value={tokenAddresses.bit}>BIT</SelectItem>
-                            <SelectItem value={tokenAddresses.btcb}>BTCB</SelectItem>
+                            <SelectItem value={tokenAddresses.bnb}>
+                              <div className="flex items-center gap-2">
+                                <img src={getTokenLogo(tokenAddresses.bnb)!} alt="BNB" className="w-5 h-5" />
+                                <span>BNB</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value={tokenAddresses.usdt}>
+                              <div className="flex items-center gap-2">
+                                <img src={getTokenLogo(tokenAddresses.usdt)!} alt="USDT" className="w-5 h-5" />
+                                <span>USDT</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value={tokenAddresses.usdc}>
+                              <div className="flex items-center gap-2">
+                                <img src={getTokenLogo(tokenAddresses.usdc)!} alt="USDC" className="w-5 h-5" />
+                                <span>USDC</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value={tokenAddresses.btcb}>
+                              <div className="flex items-center gap-2">
+                                <img src={getTokenLogo(tokenAddresses.btcb)!} alt="BTCB" className="w-5 h-5" />
+                                <span>BTCB</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value={tokenAddresses.bit}>
+                              <div className="flex items-center gap-2">
+                                <img src={getTokenLogo(tokenAddresses.bit)!} alt="BIT" className="w-5 h-5" />
+                                <span>BIT</span>
+                              </div>
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
