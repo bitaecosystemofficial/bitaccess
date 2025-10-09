@@ -28,9 +28,9 @@ export function Web3WalletButton() {
     }
   }
 
-  const openInBscscan = () => {
+  const openInBinexplorer = () => {
     if (address) {
-      window.open(`https://bscscan.com/address/${address}`, '_blank')
+      window.open(`https://binplorer.com/address/${address}`, '_blank')
     }
   }
 
@@ -75,9 +75,9 @@ export function Web3WalletButton() {
           <Copy className="w-4 h-4 mr-2" />
           Copy Address
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={openInBscscan} className="text-white hover:bg-bitaccess-gold/10">
+        <DropdownMenuItem onClick={openInBinexplorer} className="text-white hover:bg-bitaccess-gold/10">
           <ExternalLink className="w-4 h-4 mr-2" />
-          View on BSCScan
+          View on Binexplorer
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-bitaccess-gold/20" />
         <DropdownMenuItem onClick={() => disconnect()} className="text-red-400 hover:bg-red-500/10">

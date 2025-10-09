@@ -86,12 +86,12 @@ const Presale = () => {
             <div className="mt-6 text-center text-sm text-gray-400">
               <p>Running on {networkInfo.name} | 
                 <a 
-                  href={`${networkInfo.blockExplorerUrl}/address/${contractAddresses.presale}`} 
+                  href={`${networkInfo.blockExplorerUrl}address/${contractAddresses.presale}`} 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="text-bitaccess-gold ml-1 hover:underline"
                 >
-                  View on {networkInfo.testnet ? 'Testnet ' : ''}BscScan
+                  View on Binexplorer
                 </a>
               </p>
             </div>

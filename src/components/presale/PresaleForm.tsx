@@ -57,8 +57,16 @@ const PresaleForm = () => {
     if (!amount || isNaN(parseFloat(amount))) return "0";
     
     const amountValue = parseFloat(amount);
-    const rate = presaleData.paymentMethods[paymentMethod].rate;
-    let baseTokens = amountValue / rate * 1000000; // Convert to tokens
+    
+    // For BNB, convert to USDT first using current BNB price
+    let usdtValue = amountValue;
+    if (paymentMethod === 'bnb') {
+      usdtValue = amountValue * (presaleData.bnbPrice || 600);
+    }
+    
+    // Calculate tokens: 108 USDT = 1,000,000 BIT, so rate is 0.000108 USDT per BIT
+    const rate = 0.000108;
+    let baseTokens = usdtValue / rate;
     
     // Apply bonus if applicable
     const tiers = paymentMethod === 'bnb' ? presaleData.bonusTiers.bnb : presaleData.bonusTiers.usdt;
@@ -75,6 +83,18 @@ const PresaleForm = () => {
     const totalTokens = baseTokens + bonusTokens;
     
     return totalTokens.toLocaleString(undefined, { maximumFractionDigits: 0 });
+  };
+
+  // Calculate display price based on payment method
+  const getDisplayPrice = () => {
+    if (paymentMethod === 'usdt') {
+      return "$0.000108";
+    } else {
+      // Calculate BNB price per BIT
+      const bnbPrice = presaleData.bnbPrice || 600;
+      const bnbPerBit = 0.000108 / bnbPrice;
+      return bnbPerBit.toFixed(10);
+    }
   };
 
   return (
@@ -125,7 +145,21 @@ const PresaleForm = () => {
           
           <div className="flex justify-between text-sm mt-1">
             <span className="text-gray-400">Current price:</span>
-            <span className="text-white">${presaleData.paymentMethods[paymentMethod].rate.toFixed(3)} / BIT</span>
+            <span className="text-white">
+              {getDisplayPrice()} {paymentMethod.toUpperCase()} per BIT
+            </span>
+          </div>
+          
+          {paymentMethod === 'bnb' && (
+            <div className="flex justify-between text-sm mt-1">
+              <span className="text-gray-400">BNB Price:</span>
+              <span className="text-white">${presaleData.bnbPrice?.toFixed(2) || "600.00"} USDT</span>
+            </div>
+          )}
+          
+          <div className="flex justify-between text-sm mt-1">
+            <span className="text-gray-400">Max per wallet:</span>
+            <span className="text-white">10,000,000 BIT</span>
           </div>
         </div>
 

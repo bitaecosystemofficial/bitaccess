@@ -5,29 +5,53 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { contractAddresses } from "@/constants/contracts";
 
-const BSCSCAN_API_KEY = "EK-tLJmD-TV5Qqjd-hQhSS";
+const BINPLORER_API_KEY = "EK-tLJmD-TV5Qqjd-hQhSS";
 const TOKEN_ADDRESS = contractAddresses.token;
+const API_BASE_URL = "https://api.binplorer.com";
 
 interface TokenInfo {
+  address: string;
   name: string;
   symbol: string;
   totalSupply: string;
   decimals: string;
-  contractAddress: string;
+  holdersCount: number;
+  transfersCount: number;
+  issuancesCount?: number;
+  price?: {
+    rate: number;
+    currency: string;
+    marketCapUsd: number;
+  };
+  owner?: string;
+  contractInfo?: {
+    creatorAddress: string;
+    creationTimestamp: number;
+  };
 }
 
 interface HolderData {
   rank: number;
   address: string;
   balance: string;
-  percentage: string;
+  share: number;
+}
+
+interface TokenOperation {
+  timestamp: number;
+  transactionHash: string;
+  type: string;
+  from?: string;
+  to?: string;
+  value: string;
 }
 
 const Chart = () => {
   const [tokenInfo, setTokenInfo] = useState<TokenInfo | null>(null);
   const [holders, setHolders] = useState<HolderData[]>([]);
-  const [totalHolders, setTotalHolders] = useState<number>(0);
+  const [operations, setOperations] = useState<TokenOperation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("info");
 
   useEffect(() => {
     fetchTokenData();
@@ -37,46 +61,40 @@ const Chart = () => {
     try {
       setLoading(true);
       
-      // Fetch token info
+      // Fetch token info using Binplorer API
       const tokenResponse = await fetch(
-        `https://api.bscscan.com/api?module=token&action=tokeninfo&contractaddress=${TOKEN_ADDRESS}&apikey=${BSCSCAN_API_KEY}`
+        `${API_BASE_URL}/getTokenInfo/${TOKEN_ADDRESS}?apiKey=${BINPLORER_API_KEY}`
       );
       const tokenData = await tokenResponse.json();
       
-      if (tokenData.status === "1" && tokenData.result) {
-        const token = tokenData.result[0];
-        setTokenInfo({
-          name: token.tokenName || "Bit Access Token",
-          symbol: token.symbol || "BIT",
-          totalSupply: token.totalSupply || "100000000000",
-          decimals: token.divisor || "18",
-          contractAddress: TOKEN_ADDRESS
-        });
+      if (tokenData && !tokenData.error) {
+        setTokenInfo(tokenData);
       }
 
-      // Fetch holder count
-      const holderCountResponse = await fetch(
-        `https://api.bscscan.com/api?module=token&action=tokenholderlist&contractaddress=${TOKEN_ADDRESS}&page=1&offset=1&apikey=${BSCSCAN_API_KEY}`
-      );
-      const holderCountData = await holderCountResponse.json();
-      if (holderCountData.status === "1") {
-        setTotalHolders(parseInt(holderCountData.result?.length || "0"));
-      }
-
-      // Fetch top holders
+      // Fetch top 20 holders
       const holdersResponse = await fetch(
-        `https://api.bscscan.com/api?module=token&action=tokenholderlist&contractaddress=${TOKEN_ADDRESS}&page=1&offset=500&apikey=${BSCSCAN_API_KEY}`
+        `${API_BASE_URL}/getTopTokenHolders/${TOKEN_ADDRESS}?apiKey=${BINPLORER_API_KEY}&limit=20`
       );
       const holdersData = await holdersResponse.json();
       
-      if (holdersData.status === "1" && holdersData.result) {
-        const formattedHolders = holdersData.result.slice(0, 500).map((holder: any, index: number) => ({
+      if (holdersData && holdersData.holders) {
+        const formattedHolders = holdersData.holders.map((holder: any, index: number) => ({
           rank: index + 1,
-          address: holder.TokenHolderAddress,
-          balance: (parseInt(holder.TokenHolderQuantity) / Math.pow(10, 18)).toFixed(2),
-          percentage: ((parseInt(holder.TokenHolderQuantity) / parseInt(tokenData.result[0]?.totalSupply || "1")) * 100).toFixed(4)
+          address: holder.address,
+          balance: parseFloat(holder.balance).toFixed(2),
+          share: holder.share
         }));
         setHolders(formattedHolders);
+      }
+
+      // Fetch recent operations (transfers, mints, burns)
+      const operationsResponse = await fetch(
+        `${API_BASE_URL}/getTokenHistory/${TOKEN_ADDRESS}?apiKey=${BINPLORER_API_KEY}&limit=50`
+      );
+      const operationsData = await operationsResponse.json();
+      
+      if (operationsData && operationsData.operations) {
+        setOperations(operationsData.operations);
       }
     } catch (error) {
       console.error("Error fetching token data:", error);
@@ -86,8 +104,25 @@ const Chart = () => {
   };
 
   const formatSupply = (supply: string) => {
-    const num = parseInt(supply);
-    return (num / Math.pow(10, 18)).toLocaleString();
+    const num = parseFloat(supply);
+    return (num / Math.pow(10, parseInt(tokenInfo?.decimals || "18"))).toLocaleString(undefined, {
+      maximumFractionDigits: 0
+    });
+  };
+
+  const formatDate = (timestamp: number) => {
+    return new Date(timestamp * 1000).toLocaleString();
+  };
+
+  const getOperationColor = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'mint':
+        return 'text-green-400';
+      case 'burn':
+        return 'text-red-400';
+      default:
+        return 'text-blue-400';
+    }
   };
 
   if (loading) {
@@ -105,63 +140,121 @@ const Chart = () => {
       <div className="container px-4 py-24">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gold-gradient text-transparent bg-clip-text">
-            Bit Access Token Chart
+            Bit Access Token Analytics
           </h1>
           <p className="text-gray-400 mb-8">
-            Real-time token data and holder information from BSCScan
+            Real-time token data and analytics powered by Binplorer
           </p>
 
-          <Tabs defaultValue="info" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
-              <TabsTrigger value="info">Token Info</TabsTrigger>
-              <TabsTrigger value="holders">Holders</TabsTrigger>
-              <TabsTrigger value="transfers">Transfers</TabsTrigger>
+          <Tabs defaultValue="info" className="space-y-6" onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-3 lg:w-[450px]">
+              <TabsTrigger value="info">Overview</TabsTrigger>
+              <TabsTrigger value="holders">Top 20 Holders</TabsTrigger>
+              <TabsTrigger value="operations">Activity</TabsTrigger>
             </TabsList>
 
             <TabsContent value="info" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Contract Information</CardTitle>
-                  <CardDescription>Token details and contract data</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-400">Token Name</p>
-                      <p className="text-lg font-semibold text-white">{tokenInfo?.name}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400">Symbol</p>
-                      <p className="text-lg font-semibold text-white">{tokenInfo?.symbol}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400">Total Supply</p>
-                      <p className="text-lg font-semibold text-white">
-                        {tokenInfo ? formatSupply(tokenInfo.totalSupply) : "0"} BIT
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400">Decimals</p>
-                      <p className="text-lg font-semibold text-white">{tokenInfo?.decimals}</p>
-                    </div>
-                    <div className="md:col-span-2">
-                      <p className="text-sm text-gray-400">Contract Address</p>
-                      <p className="text-sm font-mono text-bitaccess-gold break-all">
-                        {tokenInfo?.contractAddress}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <Card className="bg-gradient-to-br from-bitaccess-gold/10 to-transparent border-bitaccess-gold/20">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Total Supply</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold text-bitaccess-gold">
+                      {tokenInfo ? formatSupply(tokenInfo.totalSupply) : "0"}
+                    </p>
+                    <p className="text-sm text-gray-400 mt-1">{tokenInfo?.symbol || "BIT"}</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-blue-500/10 to-transparent border-blue-500/20">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Total Holders</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold text-blue-400">
+                      {tokenInfo?.holdersCount?.toLocaleString() || "0"}
+                    </p>
+                    <p className="text-sm text-gray-400 mt-1">Unique addresses</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-green-500/10 to-transparent border-green-500/20">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Total Transfers</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-3xl font-bold text-green-400">
+                      {tokenInfo?.transfersCount?.toLocaleString() || "0"}
+                    </p>
+                    <p className="text-sm text-gray-400 mt-1">All time</p>
+                  </CardContent>
+                </Card>
+              </div>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Holder Statistics</CardTitle>
-                  <CardDescription>Total unique wallet addresses holding BIT tokens</CardDescription>
+                  <CardTitle>Contract Information</CardTitle>
+                  <CardDescription>Detailed token and contract data</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold text-bitaccess-gold">{totalHolders.toLocaleString()}</p>
-                  <p className="text-sm text-gray-400 mt-2">Total Holders</p>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-sm text-gray-400 mb-1">Token Name</p>
+                        <p className="text-lg font-semibold text-white">{tokenInfo?.name || "Bit Access Token"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-400 mb-1">Symbol</p>
+                        <p className="text-lg font-semibold text-white">{tokenInfo?.symbol || "BIT"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-400 mb-1">Decimals</p>
+                        <p className="text-lg font-semibold text-white">{tokenInfo?.decimals || "18"}</p>
+                      </div>
+                      {tokenInfo?.price && (
+                        <div>
+                          <p className="text-sm text-gray-400 mb-1">Market Cap</p>
+                          <p className="text-lg font-semibold text-white">
+                            ${tokenInfo.price.marketCapUsd?.toLocaleString() || "N/A"}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-sm text-gray-400 mb-1">Contract Address</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-mono text-bitaccess-gold break-all">
+                            {tokenInfo?.address || TOKEN_ADDRESS}
+                          </p>
+                        </div>
+                      </div>
+                      {tokenInfo?.owner && (
+                        <div>
+                          <p className="text-sm text-gray-400 mb-1">Owner</p>
+                          <p className="text-sm font-mono text-white break-all">{tokenInfo.owner}</p>
+                        </div>
+                      )}
+                      {tokenInfo?.contractInfo && (
+                        <>
+                          <div>
+                            <p className="text-sm text-gray-400 mb-1">Creator</p>
+                            <p className="text-sm font-mono text-white break-all">
+                              {tokenInfo.contractInfo.creatorAddress}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-400 mb-1">Created</p>
+                            <p className="text-sm text-white">
+                              {formatDate(tokenInfo.contractInfo.creationTimestamp)}
+                            </p>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -169,29 +262,59 @@ const Chart = () => {
             <TabsContent value="holders" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Top 500 Holders</CardTitle>
-                  <CardDescription>Largest token holders ranked by balance</CardDescription>
+                  <CardTitle>Top 20 Token Holders</CardTitle>
+                  <CardDescription>Largest token holders ranked by balance and ownership percentage</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="border-b border-bitaccess-gold/20">
-                          <th className="text-left py-3 px-2 text-sm text-gray-400">Rank</th>
-                          <th className="text-left py-3 px-2 text-sm text-gray-400">Address</th>
-                          <th className="text-right py-3 px-2 text-sm text-gray-400">Balance (BIT)</th>
-                          <th className="text-right py-3 px-2 text-sm text-gray-400">Percentage</th>
+                        <tr className="border-b border-bitaccess-gold/30">
+                          <th className="text-left py-4 px-4 text-sm font-semibold text-gray-300">Rank</th>
+                          <th className="text-left py-4 px-4 text-sm font-semibold text-gray-300">Address</th>
+                          <th className="text-right py-4 px-4 text-sm font-semibold text-gray-300">Balance (BIT)</th>
+                          <th className="text-right py-4 px-4 text-sm font-semibold text-gray-300">Share</th>
                         </tr>
                       </thead>
                       <tbody>
                         {holders.map((holder) => (
-                          <tr key={holder.address} className="border-b border-bitaccess-gold/10 hover:bg-bitaccess-gold/5">
-                            <td className="py-3 px-2 text-white">{holder.rank}</td>
-                            <td className="py-3 px-2 text-bitaccess-gold font-mono text-sm">
-                              {holder.address.slice(0, 6)}...{holder.address.slice(-4)}
+                          <tr 
+                            key={holder.address} 
+                            className="border-b border-bitaccess-gold/10 hover:bg-bitaccess-gold/5 transition-colors"
+                          >
+                            <td className="py-4 px-4">
+                              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-bitaccess-gold/20 text-bitaccess-gold font-semibold text-sm">
+                                {holder.rank}
+                              </span>
                             </td>
-                            <td className="py-3 px-2 text-right text-white">{parseFloat(holder.balance).toLocaleString()}</td>
-                            <td className="py-3 px-2 text-right text-gray-400">{holder.percentage}%</td>
+                            <td className="py-4 px-4">
+                              <a
+                                href={`https://binplorer.com/address/${holder.address}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-bitaccess-gold hover:text-bitaccess-gold/80 font-mono text-sm transition-colors"
+                              >
+                                {holder.address.slice(0, 8)}...{holder.address.slice(-6)}
+                              </a>
+                            </td>
+                            <td className="py-4 px-4 text-right">
+                              <span className="text-white font-semibold">
+                                {parseFloat(holder.balance).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4 text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <div className="w-24 h-2 bg-bitaccess-black-dark rounded-full overflow-hidden">
+                                  <div 
+                                    className="h-full bg-gradient-to-r from-bitaccess-gold to-yellow-400"
+                                    style={{ width: `${Math.min(holder.share, 100)}%` }}
+                                  />
+                                </div>
+                                <span className="text-gray-300 font-medium min-w-[60px]">
+                                  {holder.share.toFixed(2)}%
+                                </span>
+                              </div>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -201,24 +324,95 @@ const Chart = () => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="transfers" className="space-y-6">
+            <TabsContent value="operations" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Recent Transfers</CardTitle>
-                  <CardDescription>Latest token transfer activities</CardDescription>
+                  <CardTitle>Recent Token Activity</CardTitle>
+                  <CardDescription>Latest transfers, mints, and burns</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-12">
-                    <p className="text-gray-400 mb-4">
-                      View detailed transfer history on BSCScan
-                    </p>
+                  <div className="space-y-3">
+                    {operations.length > 0 ? (
+                      operations.map((op, index) => (
+                        <div 
+                          key={`${op.transactionHash}-${index}`}
+                          className="p-4 rounded-lg bg-bitaccess-black-dark border border-bitaccess-gold/10 hover:border-bitaccess-gold/30 transition-colors"
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-3 mb-2">
+                                <span className={`px-3 py-1 rounded-full text-xs font-semibold uppercase ${getOperationColor(op.type)} bg-current/10`}>
+                                  {op.type}
+                                </span>
+                                <span className="text-sm text-gray-400">
+                                  {formatDate(op.timestamp)}
+                                </span>
+                              </div>
+                              
+                              <div className="space-y-1">
+                                {op.from && (
+                                  <div className="flex items-center gap-2 text-sm">
+                                    <span className="text-gray-400">From:</span>
+                                    <a
+                                      href={`https://binplorer.com/address/${op.from}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-bitaccess-gold hover:text-bitaccess-gold/80 font-mono"
+                                    >
+                                      {op.from.slice(0, 8)}...{op.from.slice(-6)}
+                                    </a>
+                                  </div>
+                                )}
+                                {op.to && (
+                                  <div className="flex items-center gap-2 text-sm">
+                                    <span className="text-gray-400">To:</span>
+                                    <a
+                                      href={`https://binplorer.com/address/${op.to}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-bitaccess-gold hover:text-bitaccess-gold/80 font-mono"
+                                    >
+                                      {op.to.slice(0, 8)}...{op.to.slice(-6)}
+                                    </a>
+                                  </div>
+                                )}
+                                <div className="flex items-center gap-2 text-sm">
+                                  <span className="text-gray-400">Value:</span>
+                                  <span className="text-white font-semibold">
+                                    {parseFloat(op.value).toLocaleString(undefined, { maximumFractionDigits: 2 })} BIT
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <a
+                              href={`https://binplorer.com/tx/${op.transactionHash}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-bitaccess-gold hover:text-bitaccess-gold/80 font-mono whitespace-nowrap"
+                            >
+                              {op.transactionHash.slice(0, 8)}...
+                            </a>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-12">
+                        <p className="text-gray-400 mb-4">
+                          No recent operations available
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="mt-6 pt-6 border-t border-bitaccess-gold/10 text-center">
                     <a
-                      href={`https://bscscan.com/token/${TOKEN_ADDRESS}`}
+                      href={`https://binplorer.com/address/${TOKEN_ADDRESS}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center px-6 py-3 bg-bitaccess-gold text-bitaccess-black font-semibold rounded-lg hover:bg-bitaccess-gold-dark transition-colors"
+                      className="inline-flex items-center px-6 py-3 bg-bitaccess-gold text-bitaccess-black font-semibold rounded-lg hover:bg-bitaccess-gold/90 transition-colors"
                     >
-                      View on BSCScan
+                      View All Activity on Binplorer
                     </a>
                   </div>
                 </CardContent>

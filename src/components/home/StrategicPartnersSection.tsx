@@ -8,8 +8,8 @@ const partners = [
     description: "Blockchain Technology Platform"
   },
   {
-    name: "BSCScan",
-    logo: "https://info.bscscan.com/explorer/bscscan/apple-touch-icon.png",
+    name: "Binexplorer",
+    logo: "https://binplorer.com/favicon-32x32.png",
     description: "BSC Blockchain Explorer"
   },
   {

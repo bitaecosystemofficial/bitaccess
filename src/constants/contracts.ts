@@ -20,7 +20,7 @@ export const networkInfo = {
   chainId: 56, // BSC Mainnet chain ID
   currency: "BNB",
   rpcUrl: "https://bsc-dataseed.binance.org/",
-  blockExplorerUrl: "https://bscscan.com/",
+  blockExplorerUrl: "https://binplorer.com/",
   testnet: false
 };
 

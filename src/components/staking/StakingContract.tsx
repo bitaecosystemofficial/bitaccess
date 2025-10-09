@@ -15,7 +15,7 @@ const StakingContract = () => {
           <div>
             <p className="text-gray-400 mb-1">Staking Contract Address</p>
             <a
-              href={`https://bscscan.com/address/${contractAddresses.staking}`}
+              href={`https://binplorer.com/address/${contractAddresses.staking}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-bitaccess-gold hover:underline break-all"
@@ -27,7 +27,7 @@ const StakingContract = () => {
           <div>
             <p className="text-gray-400 mb-1">BIT Token Contract</p>
             <a
-              href={`https://bscscan.com/address/${contractAddresses.token}`}
+              href={`https://binplorer.com/address/${contractAddresses.token}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-bitaccess-gold hover:underline break-all"

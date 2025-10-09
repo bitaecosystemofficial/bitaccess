@@ -85,14 +85,14 @@ const Airdrop = () => {
           
           <div className="mt-8 text-center text-sm text-gray-400">
             <p>
-              Running on {networkInfo.name} | Contract address: {contractAddresses.airdrop.substring(0, 6)}...{contractAddresses.airdrop.substring(contractAddresses.airdrop.length - 4)} |
+              Running on {networkInfo.name} | Contract: {contractAddresses.airdrop.substring(0, 6)}...{contractAddresses.airdrop.substring(contractAddresses.airdrop.length - 4)} |
               <a 
-                href={`${networkInfo.blockExplorerUrl}/address/${contractAddresses.airdrop}`} 
+                href={`${networkInfo.blockExplorerUrl}address/${contractAddresses.airdrop}`} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-bitaccess-gold ml-1 hover:underline"
               >
-                View on {networkInfo.testnet ? 'Testnet ' : ''}BscScan
+                View on Binexplorer
               </a>
             </p>
           </div>

@@ -24,7 +24,7 @@ const FAQ = () => {
         },
         {
           question: "Is BIT Access safe and secure?",
-          answer: "Yes! Our smart contracts are deployed on Binance Smart Chain and have undergone thorough security audits. We use industry-standard security practices including multi-signature wallets, regular audits, and transparent on-chain operations. All contract addresses are publicly verifiable on BscScan."
+          answer: "Yes! Our smart contracts are deployed on Binance Smart Chain and have undergone thorough security audits. We use industry-standard security practices including multi-signature wallets, regular audits, and transparent on-chain operations. All contract addresses are publicly verifiable on Binexplorer."
         },
         {
           question: "What wallets are supported?",
@@ -121,7 +121,7 @@ const FAQ = () => {
         },
         {
           question: "Are the smart contracts audited?",
-          answer: "Yes, all our smart contracts undergo thorough security audits by reputable third-party firms. Audit reports are available in our documentation, and contract addresses are verified on BscScan."
+          answer: "Yes, all our smart contracts undergo thorough security audits by reputable third-party firms. Audit reports are available in our documentation, and contract addresses are verified on Binexplorer."
         },
         {
           question: "What are the transaction fees?",
@@ -129,7 +129,7 @@ const FAQ = () => {
         },
         {
           question: "How can I verify smart contracts?",
-          answer: "All our smart contracts are verified on BscScan. You can view the contract code, transaction history, and token information at any time. Contract addresses are listed on our website and documentation."
+          answer: "All our smart contracts are verified on Binexplorer. You can view the contract code, transaction history, and token information at any time. Contract addresses are listed on our website and documentation."
         }
       ]
     }
