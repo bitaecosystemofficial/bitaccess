@@ -1,8 +1,9 @@
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { useAccount, useDisconnect } from 'wagmi'
 import { Button } from '@/components/ui/button'
-import { Wallet, Copy, ExternalLink, LogOut } from 'lucide-react'
+import { Wallet, Copy, ExternalLink, LogOut, LayoutDashboard } from 'lucide-react'
 import { toast } from '@/hooks/use-toast'
+import { useNavigate } from 'react-router-dom'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +16,7 @@ export function Web3WalletButton() {
   const { open } = useWeb3Modal()
   const { address, isConnected } = useAccount()
   const { disconnect } = useDisconnect()
+  const navigate = useNavigate()
 
   const copyAddress = () => {
     if (address) {
@@ -30,6 +32,10 @@ export function Web3WalletButton() {
     if (address) {
       window.open(`https://bscscan.com/address/${address}`, '_blank')
     }
+  }
+
+  const goToDashboard = () => {
+    navigate('/settings')
   }
 
   const formatAddress = (addr: string) => {
@@ -60,6 +66,11 @@ export function Web3WalletButton() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 bg-bitaccess-black-light border-bitaccess-gold/20">
+        <DropdownMenuItem onClick={goToDashboard} className="text-white hover:bg-bitaccess-gold/10">
+          <LayoutDashboard className="w-4 h-4 mr-2" />
+          Dashboard
+        </DropdownMenuItem>
+        <DropdownMenuSeparator className="bg-bitaccess-gold/20" />
         <DropdownMenuItem onClick={copyAddress} className="text-white hover:bg-bitaccess-gold/10">
           <Copy className="w-4 h-4 mr-2" />
           Copy Address

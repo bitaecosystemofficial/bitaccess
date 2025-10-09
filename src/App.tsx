@@ -12,6 +12,7 @@ import PwaInstallPrompt from "@/components/pwa/PwaInstallPrompt";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Ecosystem from "./pages/Ecosystem";
+import Tokenomics from "./pages/Tokenomics";
 import Roadmap from "./pages/Roadmap";
 import FAQ from "./pages/FAQ";
 import Airdrop from "./pages/Airdrop";
@@ -54,6 +55,7 @@ const AppRoutes = () => {
       <Route path="/" element={<Index />} />
       <Route path="/about" element={<About />} />
       <Route path="/ecosystem" element={<Ecosystem />} />
+      <Route path="/tokenomics" element={<Tokenomics />} />
       <Route path="/roadmap" element={<Roadmap />} />
       <Route path="/faq" element={<FAQ />} />
       <Route path="/airdrop" element={<Airdrop />} />

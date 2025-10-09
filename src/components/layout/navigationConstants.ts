@@ -5,6 +5,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
   { label: "Home", href: "/", requiresWallet: false, hideWhenConnected: false },
   { label: "About", href: "/about", requiresWallet: false, hideWhenConnected: true },
   { label: "Ecosystem", href: "/ecosystem", requiresWallet: false, hideWhenConnected: true },
+  { label: "Tokenomics", href: "/tokenomics", requiresWallet: false, hideWhenConnected: true },
   { label: "Roadmap", href: "/roadmap", requiresWallet: false, hideWhenConnected: true },
   { label: "Airdrop", href: "/airdrop", requiresWallet: true, hideWhenConnected: false },
   { label: "Presale", href: "/presale", requiresWallet: true, hideWhenConnected: false },

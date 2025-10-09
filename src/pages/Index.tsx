@@ -1,8 +1,6 @@
-
 import Layout from "@/components/layout/Layout";
 import HeroSection from "@/components/home/HeroSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
-import TokenSection from "@/components/home/TokenSection";
 import CommunitySection from "@/components/home/CommunitySection";
 import CtaSection from "@/components/home/CtaSection";
 import RoadmapSection from "@/components/home/RoadmapSection";
@@ -30,7 +28,6 @@ const Index = () => {
       <div className="relative z-10">
         <HeroSection />
         <FeaturesSection />
-        <TokenSection />
         <StrategicPartnersSection />
         <RoadmapSection />
         <CommunitySection />
