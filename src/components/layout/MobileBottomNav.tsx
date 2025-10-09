@@ -5,7 +5,7 @@ import { useWallet } from "@/contexts/WalletContext";
 import { useMembership } from "@/contexts/MembershipContext";
 import { 
   Wallet,
-  Home,
+  TrendingUp,
   BarChart3,
   Gift,
   Coins,
@@ -37,7 +37,7 @@ const MobileBottomNav = () => {
   
   // Add icons to navigation items for mobile
   const navItems: NavItemWithIcon[] = [
-    { label: "Home", icon: <Home className="h-6 w-6" />, href: "/", requiresWallet: false, hideWhenConnected: false },
+    { label: "Chart", icon: <TrendingUp className="h-6 w-6" />, href: "/chart", requiresWallet: false, hideWhenConnected: false },
     { label: "About", icon: <Info className="h-6 w-6" />, href: "/about", requiresWallet: false, hideWhenConnected: true },
     { label: "Ecosystem", icon: <BarChart3 className="h-6 w-6" />, href: "/ecosystem", requiresWallet: false, hideWhenConnected: true },
     { label: "Tokenomics", icon: <Coins className="h-6 w-6" />, href: "/tokenomics", requiresWallet: false, hideWhenConnected: true },

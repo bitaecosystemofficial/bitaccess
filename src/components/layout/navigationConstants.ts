@@ -2,7 +2,7 @@
 import { NavItem } from "./NavigationItems";
 
 export const NAVIGATION_ITEMS: NavItem[] = [
-  { label: "Home", href: "/", requiresWallet: false, hideWhenConnected: false },
+  { label: "Chart", href: "/chart", requiresWallet: false, hideWhenConnected: false },
   { label: "About", href: "/about", requiresWallet: false, hideWhenConnected: true },
   { label: "Ecosystem", href: "/ecosystem", requiresWallet: false, hideWhenConnected: true },
   { label: "Tokenomics", href: "/tokenomics", requiresWallet: false, hideWhenConnected: true },

@@ -15,6 +15,7 @@ import Ecosystem from "./pages/Ecosystem";
 import Tokenomics from "./pages/Tokenomics";
 import Roadmap from "./pages/Roadmap";
 import FAQ from "./pages/FAQ";
+import Chart from "./pages/Chart";
 import Airdrop from "./pages/Airdrop";
 import Presale from "./pages/Presale";
 import Staking from "./pages/Staking";
@@ -58,6 +59,7 @@ const AppRoutes = () => {
       <Route path="/tokenomics" element={<Tokenomics />} />
       <Route path="/roadmap" element={<Roadmap />} />
       <Route path="/faq" element={<FAQ />} />
+      <Route path="/chart" element={<Chart />} />
       <Route path="/airdrop" element={<Airdrop />} />
       <Route path="/presale" element={<Presale />} />
       <Route path="/staking" element={<Staking />} />

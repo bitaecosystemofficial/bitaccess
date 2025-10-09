@@ -1,10 +1,9 @@
 import Layout from "@/components/layout/Layout";
 import HeroSection from "@/components/home/HeroSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
-import CommunitySection from "@/components/home/CommunitySection";
 import CtaSection from "@/components/home/CtaSection";
-import RoadmapSection from "@/components/home/RoadmapSection";
 import StrategicPartnersSection from "@/components/home/StrategicPartnersSection";
+import CrossChainSection from "@/components/home/CrossChainSection";
 
 const Index = () => {
   return (
@@ -28,9 +27,8 @@ const Index = () => {
       <div className="relative z-10">
         <HeroSection />
         <FeaturesSection />
+        <CrossChainSection />
         <StrategicPartnersSection />
-        <RoadmapSection />
-        <CommunitySection />
         <CtaSection />
       </div>
     </Layout>

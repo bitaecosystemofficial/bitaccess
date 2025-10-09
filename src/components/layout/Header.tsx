@@ -5,6 +5,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import Logo from "@/components/ui/logo";
 import NavigationItems from "./NavigationItems";
 import MobileMenu from "./MobileMenu";
+import bitLogo from "@/assets/bit-logo.png";
 
 import { NAVIGATION_ITEMS } from "./navigationConstants";
 import { Web3WalletButton } from "@/components/ui/web3-wallet-button";
@@ -30,19 +31,18 @@ const Header = () => {
     <header className="bg-bitaccess-black fixed top-0 left-0 w-full z-50 border-b border-bitaccess-gold/10">
       <div className="container flex items-center justify-between h-16 px-4">
         <Link to="/" className="flex items-center font-bold text-xl text-white">
-          <Logo />
+          {isMobile ? (
+            <img src={bitLogo} alt="BIT Logo" className="h-10 w-10" />
+          ) : (
+            <Logo />
+          )}
         </Link>
 
-        {!isMobile ? (
+        {!isMobile && (
           <NavigationItems 
             items={navItems} 
             isConnected={isConnected} 
             className="flex items-center space-x-6 mx-4"
-          />
-        ) : (
-          <MobileMenu 
-            navigationItems={navItems}
-            isConnected={isConnected} 
           />
         )}
 

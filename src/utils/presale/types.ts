@@ -17,6 +17,7 @@ export interface PresaleData {
   softCap: number;
   hardCap: number;
   endTimeInSeconds: number;
+  maxPurchasePerWallet: number;
   paymentMethods: {
     bnb: { rate: number; min: number; max: number };
     usdt: { rate: number; min: number; max: number };

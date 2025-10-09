@@ -8,10 +8,12 @@ import { PresaleData, BonusTier } from './types';
 import { CryptoCompareService } from '@/services/CryptoCompareService';
 
 // Static presale configuration
+// Rate: 108 USDT per 1 Million BIT = 0.000108 USDT per BIT
 const PRESALE_CONFIG = {
-  currentPrice: 0.000108,
+  currentPrice: 0.000108, // 108 USDT per 1M BIT
   targetPrice: 0.00030,
   totalSupply: 1000000000, // 1B BIT
+  maxPurchasePerWallet: 10000000, // 10M BIT max per wallet
   bonusPercent: 5
 };
 
@@ -29,9 +31,10 @@ export const usePresaleData = (): PresaleData => {
     softCap: PRESALE_CONFIG.totalSupply * 0.3,
     hardCap: PRESALE_CONFIG.totalSupply,
     endTimeInSeconds: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
+    maxPurchasePerWallet: PRESALE_CONFIG.maxPurchasePerWallet,
     paymentMethods: {
       bnb: { rate: PRESALE_CONFIG.currentPrice, min: 0.1, max: 50 },
-      usdt: { rate: PRESALE_CONFIG.currentPrice, min: 100, max: 25000 }
+      usdt: { rate: PRESALE_CONFIG.currentPrice, min: 108, max: 1080000 } // 108 USDT = 1M BIT, max 10M BIT
     },
     bonusTiers: {
       bnb: [{ minAmount: 0.1, bonusPercent: PRESALE_CONFIG.bonusPercent }],
