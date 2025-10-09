@@ -52,9 +52,29 @@ const Chart = () => {
   const [operations, setOperations] = useState<TokenOperation[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("info");
+  const [currentHoldersPage, setCurrentHoldersPage] = useState(1);
+  const [currentActivitiesPage, setCurrentActivitiesPage] = useState(1);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const itemsPerPage = isMobile ? 10 : 20;
 
   useEffect(() => {
     fetchTokenData();
+    
+    // Auto-refresh every 12 hours (43200000 ms)
+    const refreshInterval = setInterval(() => {
+      fetchTokenData();
+    }, 43200000);
+    
+    // Handle window resize for mobile detection
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      clearInterval(refreshInterval);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   const fetchTokenData = async () => {
@@ -108,6 +128,29 @@ const Chart = () => {
     const value = num / Math.pow(10, parseInt(tokenInfo?.decimals || "18"));
     return (value / 1000000000).toFixed(2) + " Billion";
   };
+
+  // Format balance by dividing by 10^9 (decimals)
+  const formatBalance = (balance: string): string => {
+    const balanceNum = parseFloat(balance);
+    const actualBalance = balanceNum / 1_000_000_000; // Divide by 10^9
+    return `${actualBalance.toLocaleString(undefined, { maximumFractionDigits: 2 })} BIT`;
+  };
+
+  // Paginate holders
+  const paginatedHolders = holders.slice(
+    (currentHoldersPage - 1) * itemsPerPage,
+    currentHoldersPage * itemsPerPage
+  );
+  
+  const totalHoldersPages = Math.ceil(holders.length / itemsPerPage);
+
+  // Paginate activities
+  const paginatedOperations = operations.slice(
+    (currentActivitiesPage - 1) * itemsPerPage,
+    currentActivitiesPage * itemsPerPage
+  );
+  
+  const totalActivitiesPages = Math.ceil(operations.length / itemsPerPage);
 
   const formatDate = (timestamp: number) => {
     return new Date(timestamp * 1000).toLocaleString();
@@ -342,14 +385,14 @@ const Chart = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {holders.map((holder) => (
+                        {paginatedHolders.map((holder, index) => (
                           <tr 
                             key={holder.address} 
                             className="border-b border-bitaccess-gold/10 hover:bg-bitaccess-gold/5 transition-colors"
                           >
                             <td className="py-4 px-4">
                               <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-bitaccess-gold/20 text-bitaccess-gold font-semibold text-sm">
-                                {holder.rank}
+                                {(currentHoldersPage - 1) * itemsPerPage + index + 1}
                               </span>
                             </td>
                             <td className="py-4 px-4">
@@ -364,7 +407,7 @@ const Chart = () => {
                             </td>
                             <td className="py-4 px-4 text-right">
                               <span className="text-white font-semibold">
-                                {(parseFloat(holder.balance) / 1000000000).toFixed(2)} Billion
+                                {(parseFloat(holder.balance) / 1000000000).toFixed(2)} Billion BIT
                               </span>
                             </td>
                             <td className="py-4 px-4 text-right">
@@ -385,6 +428,29 @@ const Chart = () => {
                       </tbody>
                     </table>
                   </div>
+                  
+                  {/* Pagination for Holders */}
+                  {totalHoldersPages > 1 && (
+                    <div className="flex justify-center gap-2 mt-4">
+                      <button
+                        className="px-3 py-1 text-sm bg-bitaccess-gold/20 hover:bg-bitaccess-gold/30 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                        onClick={() => setCurrentHoldersPage(Math.max(1, currentHoldersPage - 1))}
+                        disabled={currentHoldersPage === 1}
+                      >
+                        Previous
+                      </button>
+                      <span className="flex items-center px-4 text-sm text-gray-400">
+                        Page {currentHoldersPage} of {totalHoldersPages}
+                      </span>
+                      <button
+                        className="px-3 py-1 text-sm bg-bitaccess-gold/20 hover:bg-bitaccess-gold/30 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                        onClick={() => setCurrentHoldersPage(Math.min(totalHoldersPages, currentHoldersPage + 1))}
+                        disabled={currentHoldersPage === totalHoldersPages}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -397,8 +463,8 @@ const Chart = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {operations.length > 0 ? (
-                      operations.map((op, index) => (
+                    {paginatedOperations.length > 0 ? (
+                      paginatedOperations.map((op, index) => (
                         <div 
                           key={`${op.transactionHash}-${index}`}
                           className="p-4 rounded-lg bg-bitaccess-black-dark border border-bitaccess-gold/10 hover:border-bitaccess-gold/30 transition-colors"
@@ -444,7 +510,7 @@ const Chart = () => {
                                 <div className="flex items-center gap-2 text-sm">
                                   <span className="text-gray-400">Value:</span>
                                   <span className="text-white font-semibold">
-                                    {(parseFloat(op.value) / 1000000000).toFixed(4)} Billion BIT
+                                    {formatBalance(op.value)}
                                   </span>
                                 </div>
                               </div>
@@ -469,6 +535,29 @@ const Chart = () => {
                       </div>
                     )}
                   </div>
+                  
+                  {/* Pagination for Activities */}
+                  {totalActivitiesPages > 1 && (
+                    <div className="flex justify-center gap-2 mt-4">
+                      <button
+                        className="px-3 py-1 text-sm bg-bitaccess-gold/20 hover:bg-bitaccess-gold/30 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                        onClick={() => setCurrentActivitiesPage(Math.max(1, currentActivitiesPage - 1))}
+                        disabled={currentActivitiesPage === 1}
+                      >
+                        Previous
+                      </button>
+                      <span className="flex items-center px-4 text-sm text-gray-400">
+                        Page {currentActivitiesPage} of {totalActivitiesPages}
+                      </span>
+                      <button
+                        className="px-3 py-1 text-sm bg-bitaccess-gold/20 hover:bg-bitaccess-gold/30 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                        onClick={() => setCurrentActivitiesPage(Math.min(totalActivitiesPages, currentActivitiesPage + 1))}
+                        disabled={currentActivitiesPage === totalActivitiesPages}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
                   
                   <div className="mt-6 pt-6 border-t border-bitaccess-gold/10 text-center">
                     <a

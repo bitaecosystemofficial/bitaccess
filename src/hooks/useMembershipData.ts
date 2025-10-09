@@ -4,6 +4,8 @@ import { useWallet } from "@/contexts/WalletContext";
 import { MembershipType } from "@/contexts/MembershipContext";
 import { toast } from "@/hooks/use-toast";
 import { useMembershipService } from "./useMembershipService";
+import { membershipService } from "@/services/MembershipService";
+import { ethers } from "ethers";
 
 export interface MembershipData {
   isActive: boolean;
@@ -56,40 +58,72 @@ export const useMembershipData = () => {
 
       setIsLoading(true);
       try {
-        // This is mock data - in a real app, we would fetch this from a backend
-        
-        // Set mock membership data or null if no active membership
-        const mockMembership: MembershipData = {
-          isActive: false, // Set to inactive by default
-          type: MembershipType.Regular,
-          startDate: '2025-04-23',
-          expiryDate: '2026-04-23',
-          endDate: new Date('2026-04-23'), // Fixed to string-compatible date
-          status: "Active",
-          level: "Gold",
-          hasClaimedRewards: false,
-          referrals: ["0x123...456", "0x789...012", "0xABC...DEF"],
-          rewards: 25,
-          earnings: "120 BIT",
-          level2Referrals: 5,
-          level3Referrals: 3,
-          level4Referrals: 2,
-          level5Referrals: 1,
-          level6Referrals: 0,
-          level7Referrals: 0,
-          pendingRewards: [
-            {type: "Referral Bonus", description: "Level 1 Referral Reward", amount: 10},
-            {type: "Activity Reward", description: "Daily Login Bonus", amount: 5}
-          ],
-          claimedRewardsArray: [
-            {type: "Welcome Bonus", claimedDate: "2025-05-01", amount: 50},
-            {type: "Staking Reward", claimedDate: "2025-05-10", amount: 25}
-          ],
-          referralEarnings: 75,
-          stakingEarnings: 45
-        };
-        
-        setMembershipData(mockMembership);
+        // Fetch real membership data from contract
+        try {
+          const subscription = await membershipService.getUserSubscription(address);
+          
+          // Check if user has an active subscription
+          const now = Math.floor(Date.now() / 1000);
+          const endDateNum = Number(subscription.endDate);
+          const startDateNum = Number(subscription.startDate);
+          const isActive = endDateNum > now;
+          
+          // Get available earnings
+          const contract = await membershipService.getMembershipContract(false);
+          const availableEarnings = await contract.getAvailableEarnings(address);
+          
+          const membershipData: MembershipData = {
+            isActive: isActive,
+            type: subscription.mType === 0 ? MembershipType.Regular : MembershipType.Merchant,
+            startDate: new Date(startDateNum * 1000).toISOString(),
+            expiryDate: new Date(endDateNum * 1000).toISOString(),
+            endDate: new Date(endDateNum * 1000),
+            status: isActive ? "Active" : "Inactive",
+            level: subscription.mType === 0 ? "Regular" : "Merchant",
+            hasClaimedRewards: subscription.claimedRewards || false,
+            referrals: [],
+            rewards: 0,
+            earnings: ethers.utils.formatEther(availableEarnings || "0"),
+            level2Referrals: 0,
+            level3Referrals: 0,
+            level4Referrals: 0,
+            level5Referrals: 0,
+            level6Referrals: 0,
+            level7Referrals: 0,
+            pendingRewards: [],
+            claimedRewardsArray: [],
+            referralEarnings: 0,
+            stakingEarnings: 0
+          };
+          
+          setMembershipData(membershipData);
+        } catch (error) {
+          // If contract call fails, set to inactive
+          const defaultData: MembershipData = {
+            isActive: false,
+            type: MembershipType.Regular,
+            startDate: new Date().toISOString(),
+            expiryDate: new Date().toISOString(),
+            endDate: new Date(),
+            status: "Inactive",
+            level: "Regular",
+            hasClaimedRewards: false,
+            referrals: [],
+            rewards: 0,
+            earnings: "0",
+            level2Referrals: 0,
+            level3Referrals: 0,
+            level4Referrals: 0,
+            level5Referrals: 0,
+            level6Referrals: 0,
+            level7Referrals: 0,
+            pendingRewards: [],
+            claimedRewardsArray: [],
+            referralEarnings: 0,
+            stakingEarnings: 0
+          };
+          setMembershipData(defaultData);
+        }
         
         // Load membership stats
         await loadMembershipStats();

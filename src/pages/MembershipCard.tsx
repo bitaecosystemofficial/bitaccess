@@ -76,30 +76,16 @@ const MembershipCard = () => {
     );
   }
 
-  if (!membershipData?.isActive) {
-    return (
-      <Layout>
-        <div className="container px-4 py-24 mt-16">
-          <div className="max-w-2xl mx-auto text-center">
-            <h1 className="text-3xl font-bold mb-6">Membership Required</h1>
-            <p className="mb-8 text-gray-400">
-              You need an active membership to access your BitAccess card.
-            </p>
-            <Button 
-              onClick={() => window.location.href = '/'}
-              className="bg-bitaccess-gold text-black hover:bg-bitaccess-gold/90"
-            >
-              Get Membership
-            </Button>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
+  // Show card even if inactive, but display inactive status
+  const cardStatus = membershipData?.isActive ? "Active" : "Inactive";
 
-  // Format dates
-  const startDate = membershipData ? format(membershipData.startDate, "MM-dd-yy") : "05-23-25";
-  const endDate = membershipData ? format(membershipData.endDate, "MM-dd-yy") : "06-23-25";
+  // Format dates from actual membership data
+  const startDate = membershipData?.startDate 
+    ? format(new Date(membershipData.startDate), "MM/dd/yy") 
+    : format(new Date(), "MM/dd/yy");
+  const endDate = membershipData?.endDate 
+    ? format(membershipData.endDate, "MM/dd/yy") 
+    : format(new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), "MM/dd/yy");
 
   // Format card number from wallet address
   const formatCardNumber = (address: string) => {
@@ -195,16 +181,11 @@ const MembershipCard = () => {
                         <p className="text-sm font-mono">{formatIdNumber(address || "")}</p>
                       </div>
                       
-                      <div>
-                        {membershipData?.type === "Merchant" ? (
-                          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-900/30 border border-green-600/50">
-                            <span className="text-xs font-bold text-green-500">VIP</span>
-                          </div>
-                        ) : (
-                          <div className="w-12 h-12 rounded-full bg-bitaccess-gold/20 border border-bitaccess-gold/50 flex items-center justify-center">
-                            <CreditCard className="h-6 w-6 text-bitaccess-gold/80" />
-                          </div>
-                        )}
+                      <div className="text-right">
+                        <p className="text-xs text-gray-400">STATUS</p>
+                        <p className={`text-sm font-bold ${cardStatus === "Active" ? "text-green-500" : "text-red-500"}`}>
+                          {cardStatus}
+                        </p>
                       </div>
                     </div>
                   </div>
