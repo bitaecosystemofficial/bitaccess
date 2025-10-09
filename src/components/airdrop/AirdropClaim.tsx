@@ -69,7 +69,7 @@ const AirdropClaim = ({ eligibilityPercentage, isAllTasksCompleted }: AirdropCla
           </div>
           <div>
             <h4 className="font-medium text-white">Claim Your Tokens</h4>
-            <p className="text-sm text-gray-400">Complete all tasks to become eligible</p>
+            <p className="text-sm text-gray-400">Complete all tasks to receive 2,000 BIT</p>
           </div>
         </div>
         

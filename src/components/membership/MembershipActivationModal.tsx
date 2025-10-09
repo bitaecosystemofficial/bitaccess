@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,6 +7,7 @@ import { CreditCard, Wallet, X } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { toast } from "@/hooks/use-toast";
 import { ethers } from "ethers";
+import { CryptoCompareService } from "@/services/CryptoCompareService";
 
 interface MembershipActivationModalProps {
   isOpen: boolean;
@@ -16,7 +17,34 @@ interface MembershipActivationModalProps {
 
 const MembershipActivationModal = ({ isOpen, onClose, onActivated }: MembershipActivationModalProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [bnbAmount, setBnbAmount] = useState("0.0");
+  const [loadingPrice, setLoadingPrice] = useState(true);
   const { provider, signer, address } = useWallet();
+
+  // Fetch BNB price and calculate equivalent for 5 USDT
+  useEffect(() => {
+    const fetchBnbPrice = async () => {
+      try {
+        setLoadingPrice(true);
+        const prices = await CryptoCompareService.getAllPrices();
+        const bnbPrice = prices.BNB || 600; // Fallback to $600 if API fails
+        
+        // Calculate BNB equivalent of 5 USDT
+        const bnbEquivalent = 5 / bnbPrice;
+        setBnbAmount(bnbEquivalent.toFixed(6));
+      } catch (error) {
+        console.error("Error fetching BNB price:", error);
+        // Fallback calculation with $600 BNB
+        setBnbAmount((5 / 600).toFixed(6));
+      } finally {
+        setLoadingPrice(false);
+      }
+    };
+
+    if (isOpen) {
+      fetchBnbPrice();
+    }
+  }, [isOpen]);
 
   const handlePayment = async () => {
     if (!provider || !signer || !address) {
@@ -31,10 +59,10 @@ const MembershipActivationModal = ({ isOpen, onClose, onActivated }: MembershipA
     setIsProcessing(true);
     
     try {
-      // Send 0.01 BNB for membership activation
+      // Send BNB equivalent of 5 USDT for membership activation
       const transaction = {
-        to: "0x7a42F1196271B5A68A36FA0D6A61F85A6cFA7E12", // Placeholder address
-        value: ethers.utils.parseEther("0.01"), // 0.01 BNB
+        to: "0x7a42F1196271B5A68A36FA0D6A61F85A6cFA7E12", // Payment address
+        value: ethers.utils.parseEther(bnbAmount),
       };
 
       const tx = await signer.sendTransaction(transaction);
@@ -100,8 +128,10 @@ const MembershipActivationModal = ({ isOpen, onClose, onActivated }: MembershipA
               </p>
               
               <div className="bg-bitaccess-black rounded-lg p-4 mb-4">
-                <div className="text-2xl font-bold text-bitaccess-gold">0.01 BNB</div>
-                <div className="text-sm text-gray-400">Activation Fee</div>
+                <div className="text-2xl font-bold text-bitaccess-gold">
+                  {loadingPrice ? "Loading..." : `${bnbAmount} BNB`}
+                </div>
+                <div className="text-sm text-gray-400">Activation Fee (≈ $5 USDT)</div>
               </div>
 
               <div className="text-xs text-gray-500 mb-6">
@@ -112,10 +142,10 @@ const MembershipActivationModal = ({ isOpen, onClose, onActivated }: MembershipA
             <div className="space-y-3">
               <Button 
                 onClick={handlePayment}
-                disabled={isProcessing}
+                disabled={isProcessing || loadingPrice}
                 className="w-full bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black"
               >
-                {isProcessing ? "Processing Payment..." : "Pay 0.01 BNB to Activate"}
+                {isProcessing ? "Processing Payment..." : loadingPrice ? "Loading..." : `Pay ${bnbAmount} BNB to Activate`}
               </Button>
               
               <Button 

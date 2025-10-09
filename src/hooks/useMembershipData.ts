@@ -60,7 +60,7 @@ export const useMembershipData = () => {
         
         // Set mock membership data or null if no active membership
         const mockMembership: MembershipData = {
-          isActive: true,
+          isActive: false, // Set to inactive by default
           type: MembershipType.Regular,
           startDate: '2025-04-23',
           expiryDate: '2026-04-23',

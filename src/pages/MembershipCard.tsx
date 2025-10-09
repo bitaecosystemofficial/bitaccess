@@ -115,11 +115,13 @@ const MembershipCard = () => {
     return chunks.join(" ");
   };
 
-  // Format ID number
+  // Format ID number: BIT-[first 4 chars]-[last 4 chars]
   const formatIdNumber = (address: string) => {
-    if (!address) return "BIT-0000-0001";
-    const last4 = address.slice(-4);
-    return `BIT-${last4}-0001`;
+    if (!address) return "BIT-0000-0000";
+    const cleaned = address.replace("0x", "");
+    const first4 = cleaned.substring(0, 4).toUpperCase();
+    const last4 = cleaned.slice(-4).toUpperCase();
+    return `BIT-${first4}-${last4}`;
   };
 
   return (

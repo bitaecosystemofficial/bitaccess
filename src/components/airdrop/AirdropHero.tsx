@@ -20,11 +20,11 @@ const AirdropHero = ({
   return (
     <div className="mb-10">
       <div className="text-center mb-8">
-        <h1 className="text-4xl md:text-5xl font-bold mb-3 bg-gold-gradient text-transparent bg-clip-text">
+        <h1 className="text-3xl md:text-5xl font-bold mb-3 bg-gold-gradient text-transparent bg-clip-text">
           Bit Access Airdrop Program
         </h1>
         <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-          Complete social media tasks and receive free BIT tokens. Join our community and participate in the token distribution event.
+          Complete social media tasks and receive 2,000 BIT tokens. Join our community and participate in the token distribution event.
         </p>
       </div>
 
@@ -44,12 +44,6 @@ const AirdropHero = ({
           value={`${remainingTokens.toLocaleString()} BIT`}
           icon={<Coins className="h-5 w-5" />}
         />
-      </div>
-
-      <div className="mt-4 text-center">
-        <div className="inline-block bg-bitaccess-black-light px-4 py-1 rounded-full border border-bitaccess-gold/20">
-          <span className="text-bitaccess-gold">Current Phase: {phase}/{totalPhases}</span>
-        </div>
       </div>
     </div>
   );

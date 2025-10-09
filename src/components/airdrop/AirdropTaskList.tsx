@@ -50,6 +50,9 @@ const AirdropTaskList = ({ tasks, onTaskComplete, isConnected }: AirdropTasksPro
         if (result.success) {
           onTaskComplete(task.id);
           
+          // Auto-open the task link in a new tab after successful verification
+          window.open(task.url, '_blank');
+          
           toast({
             title: "Task Verified",
             description: `${task.name} task successfully verified on the blockchain.`,

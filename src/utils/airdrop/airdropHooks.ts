@@ -31,7 +31,7 @@ export const useAirdropData = () => {
   const [airdropData, setAirdropData] = useState<AirdropData>({
     phase: 1,
     totalPhases: 3,
-    allocation: 500000,
+    allocation: 5000000, // 5M BIT
     endTimeInSeconds: Math.floor(Date.now() / 1000) + 100 * 24 * 60 * 60, // 100 days from now
     tasks: [
       { 
@@ -68,8 +68,8 @@ export const useAirdropData = () => {
       }
     ],
     userAddress: address || null,
-    totalClaimed: 150000,
-    remainingTokens: 350000,
+    totalClaimed: 500000,
+    remainingTokens: 4500000,
     participants: 2500
   });
 

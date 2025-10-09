@@ -112,8 +112,11 @@ const Dashboard = () => {
                     <span className="text-sm font-semibold text-white">{membershipData.type}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-300">Level</span>
-                    <span className="text-sm font-semibold text-white">{membershipData.level}</span>
+                    <span className="text-sm text-gray-300">Referral Commission</span>
+                    <Badge variant={isMembershipActivated ? "default" : "secondary"} 
+                           className={isMembershipActivated ? "bg-green-600" : "bg-gray-600"}>
+                      {isMembershipActivated ? "Active" : "Inactive"}
+                    </Badge>
                   </div>
                 </>
               )}
