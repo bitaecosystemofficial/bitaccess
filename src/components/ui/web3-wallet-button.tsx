@@ -1,21 +1,24 @@
 import { useWeb3Modal } from '@web3modal/wagmi/react'
-import { useAccount, useDisconnect } from 'wagmi'
+import { useAccount, useDisconnect, useSwitchChain } from 'wagmi'
 import { Button } from '@/components/ui/button'
-import { Wallet, Copy, ExternalLink, LogOut, LayoutDashboard } from 'lucide-react'
+import { Wallet, Copy, ExternalLink, LogOut, LayoutDashboard, Network } from 'lucide-react'
 import { toast } from '@/hooks/use-toast'
 import { useNavigate } from 'react-router-dom'
+import { bsc, bscTestnet } from 'wagmi/chains'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu'
 
 export function Web3WalletButton() {
   const { open } = useWeb3Modal()
-  const { address, isConnected } = useAccount()
+  const { address, isConnected, chain } = useAccount()
   const { disconnect } = useDisconnect()
+  const { switchChain } = useSwitchChain()
   const navigate = useNavigate()
 
   const copyAddress = () => {
@@ -36,6 +39,14 @@ export function Web3WalletButton() {
 
   const goToDashboard = () => {
     navigate('/settings')
+  }
+
+  const handleNetworkSwitch = (chainId: number) => {
+    switchChain({ chainId })
+    toast({
+      title: "Network Switch",
+      description: `Switching to ${chainId === bsc.id ? 'BSC Mainnet' : 'BSC Testnet'}`,
+    })
   }
 
   const formatAddress = (addr: string) => {
@@ -69,6 +80,24 @@ export function Web3WalletButton() {
         <DropdownMenuItem onClick={goToDashboard} className="text-white hover:bg-bitaccess-gold/10">
           <LayoutDashboard className="w-4 h-4 mr-2" />
           Dashboard
+        </DropdownMenuItem>
+        <DropdownMenuSeparator className="bg-bitaccess-gold/20" />
+        <DropdownMenuLabel className="text-gray-400 text-xs">Network</DropdownMenuLabel>
+        <DropdownMenuItem 
+          onClick={() => handleNetworkSwitch(bsc.id)} 
+          className="text-white hover:bg-bitaccess-gold/10"
+          disabled={chain?.id === bsc.id}
+        >
+          <Network className="w-4 h-4 mr-2" />
+          BSC Mainnet {chain?.id === bsc.id && '✓'}
+        </DropdownMenuItem>
+        <DropdownMenuItem 
+          onClick={() => handleNetworkSwitch(bscTestnet.id)} 
+          className="text-white hover:bg-bitaccess-gold/10"
+          disabled={chain?.id === bscTestnet.id}
+        >
+          <Network className="w-4 h-4 mr-2" />
+          BSC Testnet {chain?.id === bscTestnet.id && '✓'}
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-bitaccess-gold/20" />
         <DropdownMenuItem onClick={copyAddress} className="text-white hover:bg-bitaccess-gold/10">

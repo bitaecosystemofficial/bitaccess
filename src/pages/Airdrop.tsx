@@ -85,9 +85,9 @@ const Airdrop = () => {
           
           <div className="mt-8 text-center text-sm text-gray-400">
             <p>
-              Running on {networkInfo.name} | Contract: {contractAddresses.airdrop.substring(0, 6)}...{contractAddresses.airdrop.substring(contractAddresses.airdrop.length - 4)} |
+              Running on BSC Mainnet | Contract: 0xd3bd...469c |{' '}
               <a 
-                href={`${networkInfo.blockExplorerUrl}address/${contractAddresses.airdrop}`} 
+                href="https://binplorer.com/address/0xd3bde17ebd27739cf5505cd58ecf31cb628e469c" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-bitaccess-gold ml-1 hover:underline"

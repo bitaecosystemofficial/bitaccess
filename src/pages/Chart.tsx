@@ -101,7 +101,10 @@ const Chart = () => {
         const formattedHolders = holdersData.holders.map((holder: any, index: number) => ({
           rank: index + 1,
           address: holder.address,
-          balance: parseFloat(holder.balance).toFixed(2),
+          balance: (parseFloat(holder.balance) / 1e9).toLocaleString(undefined, { 
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0 
+          }),
           share: holder.share
         }));
         setHolders(formattedHolders);
@@ -133,7 +136,10 @@ const Chart = () => {
   const formatBalance = (balance: string): string => {
     const balanceNum = parseFloat(balance);
     const actualBalance = balanceNum / 1_000_000_000; // Divide by 10^9
-    return `${actualBalance.toLocaleString(undefined, { maximumFractionDigits: 2 })} BIT`;
+    return actualBalance.toLocaleString(undefined, { 
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0 
+    });
   };
 
   // Paginate holders
@@ -407,7 +413,7 @@ const Chart = () => {
                             </td>
                             <td className="py-4 px-4 text-right">
                               <span className="text-white font-semibold">
-                                {(parseFloat(holder.balance) / 1000000000).toFixed(2)} Billion BIT
+                                {holder.balance}
                               </span>
                             </td>
                             <td className="py-4 px-4 text-right">

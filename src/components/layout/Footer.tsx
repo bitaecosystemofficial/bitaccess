@@ -138,13 +138,28 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="mt-12 pt-8 border-t border-bitaccess-gold/20 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-gray-400">
-            Copyright © {new Date().getFullYear()} Bit Access. All rights reserved.
-          </p>
-          <div className="flex space-x-6">
-            <Link to="/privacy-policy" className="text-sm text-gray-400 hover:text-bitaccess-gold">Privacy Policy</Link>
-            <Link to="/terms-of-service" className="text-sm text-gray-400 hover:text-bitaccess-gold">Terms of Service</Link>
+        <div className="mt-12 pt-8 border-t border-bitaccess-gold/20 space-y-4">
+          <div className="text-center text-sm text-gray-400">
+            <p>
+              Running on BSC Mainnet | Contract: 0xd3bd...469c |{' '}
+              <a 
+                href="https://binplorer.com/address/0xd3bde17ebd27739cf5505cd58ecf31cb628e469c" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-bitaccess-gold hover:underline"
+              >
+                View on Binexplorer
+              </a>
+            </p>
+          </div>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-gray-400">
+              Copyright © {new Date().getFullYear()} Bit Access. All rights reserved.
+            </p>
+            <div className="flex space-x-6">
+              <Link to="/privacy-policy" className="text-sm text-gray-400 hover:text-bitaccess-gold">Privacy Policy</Link>
+              <Link to="/terms-of-service" className="text-sm text-gray-400 hover:text-bitaccess-gold">Terms of Service</Link>
+            </div>
           </div>
         </div>
       </div>

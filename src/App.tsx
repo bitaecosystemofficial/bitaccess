@@ -25,7 +25,6 @@ import Docs from "./pages/Docs";
 import GuideDetails from "./pages/GuideDetails";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
-import Community from "./pages/Community";
 import WhitepaperDetails from "./pages/WhitepaperDetails";
 import MembershipCard from "./pages/MembershipCard";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -69,7 +68,6 @@ const AppRoutes = () => {
       <Route path="/docs" element={<Docs />} />
       <Route path="/guides/:guideId" element={<GuideDetails />} />
       <Route path="/whitepaper" element={<WhitepaperDetails />} />
-      <Route path="/community" element={<Community />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/membership-card" element={<MembershipCard />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />

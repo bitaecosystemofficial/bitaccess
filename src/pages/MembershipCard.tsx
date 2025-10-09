@@ -246,45 +246,24 @@ const MembershipCard = () => {
           {/* Add Dashboard Component */}
           <Dashboard />
 
-          <div className="mt-12">
-            <h2 className="text-xl font-bold mb-4">Membership Benefits</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="bg-bitaccess-black-light border-bitaccess-gold/10">
-                <CardContent className="p-4 flex items-start">
-                  <div className="mr-4 mt-1">
-                    <BarChart2 className="h-5 w-5 text-bitaccess-gold" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium mb-1">Token Rewards</h3>
-                    <p className="text-sm text-gray-400">
-                      Earn BTCB, USDT, BNB, and BIT tokens as part of your membership rewards
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-bitaccess-black-light border-bitaccess-gold/10">
-                <CardContent className="p-4 flex items-start">
-                  <div className="mr-4 mt-1">
-                    {/* Custom QR code as icon with gold border */}
-                    <div className="p-0.5 border border-bitaccess-gold/50 rounded">
-                      <img 
-                        src="/lovable-uploads/2083e9af-3de5-412c-94dc-88cde90c0b33.png" 
-                        alt="QR Code" 
-                        className="h-4 w-4" 
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="font-medium mb-1">Cross Border Payments</h3>
-                    <p className="text-sm text-gray-400">
-                      Access special rates for cross-border transactions with your membership
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+          {/* Activate Membership Button */}
+          {!membershipData?.isActive && (
+            <div className="mt-12 text-center">
+              <Button 
+                onClick={() => {
+                  // This will trigger the MembershipActivationModal through the Dashboard component
+                  toast({
+                    title: "Activate Membership",
+                    description: "Click on 'Activate Now' in the Membership Status card above",
+                  });
+                }}
+                className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black font-semibold px-8 py-4 text-lg"
+              >
+                <CreditCard className="mr-2 h-5 w-5" />
+                Activate Membership
+              </Button>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </Layout>

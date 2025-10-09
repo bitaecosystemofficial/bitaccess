@@ -1,26 +1,18 @@
 
 import SectionHeading from "@/components/ui/section-heading";
+import biitLogo from "@/assets/biit-logo.png";
+import pancakeswapLogo from "@/assets/pancakeswap-logo.png";
 
 const partners = [
   {
     name: "Biit",
-    logo: "https://storage.googleapis.com/hostinger-horizons-assets-prod/694d5dba-5a0b-4632-bef4-156b08369d2d/78342456301e206b15a59ff87b70c988.png",
+    logo: biitLogo,
     description: "Blockchain Technology Platform"
   },
   {
     name: "Binexplorer",
     logo: "https://binplorer.com/favicon-32x32.png",
     description: "BSC Blockchain Explorer"
-  },
-  {
-    name: "Solscan",
-    logo: "https://avatars.githubusercontent.com/u/92743431?s=280&v=4",
-    description: "Solana Blockchain Explorer"
-  },
-  {
-    name: "SuiScan",
-    logo: "https://insidebitcoins.com/wp-content/uploads/2024/08/sui-sui-logo.png",
-    description: "Sui Blockchain Explorer"
   },
   {
     name: "DexTools",
@@ -34,23 +26,8 @@ const partners = [
   },
   {
     name: "PancakeSwap",
-    logo: "https://images.seeklogo.com/logo-png/39/1/pancakeswap-cake-logo-png_seeklogo-398393.png",
+    logo: pancakeswapLogo,
     description: "BSC DEX"
-  },
-  {
-    name: "Raydium",
-    logo: "https://www.marketbeat.com/logos/cryptocurrencies/raydium-RAY.png?v=2022-10-05",
-    description: "Solana DEX"
-  },
-  {
-    name: "Orca",
-    logo: "https://files.swissborg.com/product/wealth-app/assets/ic_crypto_orca.png",
-    description: "Solana DEX"
-  },
-  {
-    name: "Cetus",
-    logo: "https://static1.tokenterminal.com//cetus/logo.png?logo_hash=d00f4aedf40df64dcef8f52ef25765b74c52031b",
-    description: "Sui DEX"
   },
   {
     name: "CoinMarketCap",

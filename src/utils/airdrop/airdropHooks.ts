@@ -68,9 +68,9 @@ export const useAirdropData = () => {
       }
     ],
     userAddress: address || null,
-    totalClaimed: 500000,
-    remainingTokens: 4500000,
-    participants: 2500
+    totalClaimed: 0,
+    remainingTokens: 5000000, // 5M BIT
+    participants: 0 // Will be calculated from actual purchases
   });
 
   // Update task completion status

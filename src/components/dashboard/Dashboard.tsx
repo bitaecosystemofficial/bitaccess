@@ -307,23 +307,26 @@ const Dashboard = () => {
           </Card>
 
 
-          {/* Community */}
+          {/* Rewards Program */}
           <Card className="bg-bitaccess-black-light border-bitaccess-gold/20 hover:border-bitaccess-gold/40 transition-colors">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">Community</CardTitle>
-              <TrendingUp className="h-4 w-4 text-bitaccess-gold" />
+              <CardTitle className="text-sm font-medium text-gray-400">Rewards Program</CardTitle>
+              <Gift className="h-4 w-4 text-bitaccess-gold" />
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <p className="text-sm text-gray-300">
-                  Connect with the community and participate in activities
-                </p>
-                <Button 
-                  onClick={() => window.location.href = '/community'}
-                  className="w-full bg-transparent border border-bitaccess-gold hover:bg-bitaccess-gold/10 text-bitaccess-gold"
-                >
-                  Join Community
-                </Button>
+                <div>
+                  <p className="text-2xl font-bold text-white">Active</p>
+                  <p className="text-xs text-gray-400 mt-1">Earn rewards program</p>
+                </div>
+                <div className="space-y-1 text-sm text-gray-300">
+                  <p className="font-medium text-bitaccess-gold">Ways to earn:</p>
+                  <ul className="space-y-1 text-xs">
+                    <li>• Complete airdrop tasks</li>
+                    <li>• Stake BIT tokens for rewards</li>
+                    <li>• Refer friends to earn commissions</li>
+                  </ul>
+                </div>
               </div>
             </CardContent>
           </Card>
