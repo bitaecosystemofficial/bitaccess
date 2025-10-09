@@ -31,8 +31,8 @@ const FeaturesSection = () => {
       icon: <ShoppingCart size={24} />
     },
     {
-      title: "Education Portal",
-      description: "Access comprehensive blockchain education resources and certification programs for all skill levels.",
+      title: "Community Hub",
+      description: "Connect with fellow BIT holders, participate in social activities, and engage in community-driven initiatives.",
       icon: <Users size={24} />
     },
     {

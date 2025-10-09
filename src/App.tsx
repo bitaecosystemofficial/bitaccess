@@ -11,6 +11,9 @@ import { Web3ModalProvider } from "@/contexts/Web3ModalProvider";
 import PwaInstallPrompt from "@/components/pwa/PwaInstallPrompt";
 import Index from "./pages/Index";
 import About from "./pages/About";
+import Ecosystem from "./pages/Ecosystem";
+import Roadmap from "./pages/Roadmap";
+import FAQ from "./pages/FAQ";
 import Airdrop from "./pages/Airdrop";
 import Presale from "./pages/Presale";
 import Staking from "./pages/Staking";
@@ -20,13 +23,8 @@ import Docs from "./pages/Docs";
 import GuideDetails from "./pages/GuideDetails";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
-import Education from "./pages/Education";
 import Community from "./pages/Community";
-import Governance from "./pages/Governance";
-import CourseDetails from "./pages/CourseDetails";
 import WhitepaperDetails from "./pages/WhitepaperDetails";
-import VideoPortal from "./pages/VideoPortal";
-import VideoDetails from "./pages/VideoDetails";
 import MembershipCard from "./pages/MembershipCard";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -55,6 +53,9 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/about" element={<About />} />
+      <Route path="/ecosystem" element={<Ecosystem />} />
+      <Route path="/roadmap" element={<Roadmap />} />
+      <Route path="/faq" element={<FAQ />} />
       <Route path="/airdrop" element={<Airdrop />} />
       <Route path="/presale" element={<Presale />} />
       <Route path="/staking" element={<Staking />} />
@@ -63,12 +64,7 @@ const AppRoutes = () => {
       <Route path="/docs" element={<Docs />} />
       <Route path="/guides/:guideId" element={<GuideDetails />} />
       <Route path="/whitepaper" element={<WhitepaperDetails />} />
-      <Route path="/education" element={<Education />} />
-      <Route path="/education/:courseId" element={<CourseDetails />} />
-      <Route path="/videos" element={<VideoPortal />} />
-      <Route path="/video/:videoId" element={<VideoDetails />} />
       <Route path="/community" element={<Community />} />
-      <Route path="/governance" element={<Governance />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/membership-card" element={<MembershipCard />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />

@@ -5,7 +5,7 @@ const partners = [
   {
     name: "Biit",
     logo: "https://storage.googleapis.com/hostinger-horizons-assets-prod/694d5dba-5a0b-4632-bef4-156b08369d2d/78342456301e206b15a59ff87b70c988.png",
-    description: "Blockchain Education Platform"
+    description: "Blockchain Technology Platform"
   },
   {
     name: "BSCScan",

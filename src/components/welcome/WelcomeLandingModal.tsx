@@ -25,13 +25,13 @@ const WelcomeLandingModal: React.FC<WelcomeLandingModalProps> = ({
     {
       title: "Welcome to Bit Access Ecosystem",
       subtitle: "Your Gateway to Blockchain Innovation",
-      content: "Join thousands of users in the revolutionary Bit Access ecosystem. Experience seamless blockchain education, merchant services, and exclusive rewards.",
+      content: "Join thousands of users in the revolutionary Bit Access ecosystem. Experience seamless blockchain technology, staking rewards, and exclusive community benefits.",
       icon: <Sparkles className="w-8 h-8 md:w-12 md:h-12 text-bitaccess-gold" />
     },
     {
       title: "Exclusive Membership Benefits",
       subtitle: "Unlock Premium Features",
-      content: "Get access to blockchain education, cross-border payment cards, referral commissions, and exclusive merchant discounts.",
+      content: "Get access to enhanced staking rewards, referral commissions, exclusive airdrops, and premium platform features.",
       icon: <Star className="w-8 h-8 md:w-12 md:h-12 text-bitaccess-gold" />
     },
     {
@@ -43,8 +43,8 @@ const WelcomeLandingModal: React.FC<WelcomeLandingModalProps> = ({
   ];
 
   const features = [
-    "🎓 Blockchain Education & Training",
-    "💳 Cross-Border Payment Cards",
+    "🎯 Token Staking & Rewards",
+    "💎 Exclusive Membership Tiers",
     "💰 Earn Referral Commissions",
     "🛍️ Exclusive Merchant Discounts",
     "🎁 Welcome Bonus Rewards",

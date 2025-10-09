@@ -42,7 +42,7 @@ const HeroSection = () => {
             Welcome to the <span className="bg-gold-gradient text-transparent bg-clip-text animate-pulse">Bit Access</span> Ecosystem
           </h1>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto animate-fade-in animation-delay-200">
-            Empowering blockchain education and merchant adoption through our comprehensive ecosystem and BIT utility token.
+            Empowering blockchain communities through our comprehensive ecosystem and BIT utility token.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in animation-delay-300">
             <Button 

@@ -2,8 +2,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { ethers } from "ethers";
 import { useWallet } from "@/contexts/WalletContext";
-// Fix imports for the hooks
-import { useEducationData } from "@/hooks/useEducation";
 import { useStaking } from "@/hooks/useStaking";
 
 // Helper function to calculate something based on blockchain data
@@ -30,21 +28,19 @@ export const useContractData = (contractAddress: string, functionName: string) =
   });
 };
 
-// Example of a hook that combines data from multiple sources
+// Example of a hook that combines staking data
 export const useCombinedData = () => {
   const { stakingData } = useStaking();
-  const { courses, videos } = useEducationData();
 
   return useQuery({
     queryKey: ["combinedData"],
     queryFn: async () => {
       // Process and combine data from different sources
       return {
-        stakingInfo: stakingData || "No staking data",
-        educationInfo: courses.length > 0 ? courses : "No education data"
+        stakingInfo: stakingData || "No staking data"
       };
     },
-    enabled: !!stakingData || (courses && courses.length > 0)
+    enabled: !!stakingData
   });
 };
 

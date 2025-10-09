@@ -4,7 +4,6 @@ import { StakingABI } from "../contracts/abis/StakingABI";
 import { TokenABI } from "../contracts/abis/TokenABI";
 import { AirdropABI } from "../contracts/abis/AirdropABI";
 import { SwapABI } from "../contracts/abis/SwapABI";
-import { GOVERNANCE_ABI } from "../contracts/abis/GovernanceABI";
 import { MEMBERSHIP_ABI } from "../contracts/abis/MembershipABI";
 import { DASHBOARD_ABI } from "../contracts/abis/DashboardABI";
 import { WELCOME_ABI } from "../contracts/abis/WelcomeABI";
@@ -12,8 +11,8 @@ import { contractAddresses } from "../constants/contracts";
 
 export type ContractType = 
   'presale' | 'staking' | 'token' | 
-  'airdrop' | 'swap' | 'governance' | 
-  'membership' | 'education' | 'dashboard' | 'welcome';
+  'airdrop' | 'swap' | 
+  'membership' | 'dashboard' | 'welcome';
 
 export const getContractABI = (contractType: ContractType) => {
   switch(contractType) {
@@ -27,17 +26,12 @@ export const getContractABI = (contractType: ContractType) => {
       return AirdropABI;
     case 'swap':
       return SwapABI;
-    case 'governance':
-      return GOVERNANCE_ABI;
     case 'membership':
       return MEMBERSHIP_ABI;
     case 'dashboard':
       return DASHBOARD_ABI;
     case 'welcome':
       return WELCOME_ABI;
-    case 'education':
-      // Add education ABI when available
-      return [];
     default:
       throw new Error(`Contract ABI not found for ${contractType}`);
   }
@@ -55,12 +49,8 @@ export const getContractAddress = (contractType: ContractType): string => {
       return contractAddresses.airdrop;
     case 'swap':
       return contractAddresses.swap;
-    case 'governance':
-      return contractAddresses.governance;
     case 'membership':
       return contractAddresses.membership;
-    case 'education':
-      return contractAddresses.education;
     case 'dashboard':
       return contractAddresses.membership; // Dashboard uses membership contract
     case 'welcome':
@@ -91,13 +81,6 @@ export const contractService = {
     if (typeof window.ethereum !== 'undefined') {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       return createContract('airdrop', provider);
-    }
-    throw new Error('Ethereum provider not available');
-  },
-  getEducationContract: async () => {
-    if (typeof window.ethereum !== 'undefined') {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      return createContract('education', provider);
     }
     throw new Error('Ethereum provider not available');
   },

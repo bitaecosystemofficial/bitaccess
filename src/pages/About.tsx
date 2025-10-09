@@ -15,9 +15,9 @@ const About = () => {
           <section className="space-y-4">
             <h1 className="text-3xl md:text-4xl font-bold bg-gold-gradient text-transparent bg-clip-text">About BitAccess</h1>
             <p className="text-lg text-gray-400 leading-relaxed">
-              BitAccess is a pioneering ecosystem designed to bridge the gap between blockchain education and merchant adoption.
-              Our platform provides innovative solutions for both users learning about blockchain technology and merchants
-              looking to integrate cryptocurrency payments into their business models.
+              BitAccess is a pioneering ecosystem designed to connect blockchain communities and provide comprehensive DeFi solutions.
+              Our platform offers innovative tools for token staking, trading, community engagement, and wealth building
+              in the decentralized finance space.
             </p>
           </section>
           
@@ -43,8 +43,8 @@ const About = () => {
             <div className="space-y-3 p-6 bg-bitaccess-black-light rounded-lg">
               <h2 className="text-2xl font-bold text-bitaccess-gold">Our Mission</h2>
               <p className="text-gray-400">
-                To empower individuals through accessible blockchain education and enable businesses
-                to seamlessly integrate cryptocurrency payment solutions, creating a more inclusive
+                To empower individuals through accessible blockchain technology and enable seamless participation
+                in the decentralized finance ecosystem, creating a more inclusive
                 and efficient global economy.
               </p>
             </div>

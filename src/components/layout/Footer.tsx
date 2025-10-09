@@ -31,7 +31,7 @@ const Footer = () => {
               <Logo />
             </div>
             <p className="text-sm text-gray-400 mt-2">
-              Empowering blockchain education and merchant adoption through the Bit Access Ecosystem.
+              Empowering blockchain communities through the Bit Access Ecosystem.
             </p>
             <div className="flex gap-4 mt-4">
               <a href="#" className="text-bitaccess-gold hover:text-bitaccess-gold-light transition-colors">
@@ -82,7 +82,7 @@ const Footer = () => {
               <li><Link to="/presale" className="text-gray-400 hover:text-bitaccess-gold">Presale</Link></li>
               <li><Link to="/staking" className="text-gray-400 hover:text-bitaccess-gold">Staking</Link></li>
               <li><Link to="/swap" className="text-gray-400 hover:text-bitaccess-gold">Swap</Link></li>
-              <li><Link to="/merchants" className="text-gray-400 hover:text-bitaccess-gold">Merchants</Link></li>
+              <li><Link to="/ecosystem" className="text-gray-400 hover:text-bitaccess-gold">Platform Overview</Link></li>
             </ul>
           </div>
           
@@ -90,9 +90,9 @@ const Footer = () => {
             <h3 className="text-lg font-semibold text-bitaccess-gold mb-4">Resources</h3>
             <ul className="space-y-2">
               <li><Link to="/docs" className="text-gray-400 hover:text-bitaccess-gold">Documentation</Link></li>
-              <li><Link to="/docs/whitepaper" className="text-gray-400 hover:text-bitaccess-gold">Whitepaper</Link></li>
-              <li><Link to="/docs/roadmap" className="text-gray-400 hover:text-bitaccess-gold">Roadmap</Link></li>
-              <li><Link to="/docs/faq" className="text-gray-400 hover:text-bitaccess-gold">FAQ</Link></li>
+              <li><Link to="/whitepaper" className="text-gray-400 hover:text-bitaccess-gold">Whitepaper</Link></li>
+              <li><Link to="/roadmap" className="text-gray-400 hover:text-bitaccess-gold">Roadmap</Link></li>
+              <li><Link to="/faq" className="text-gray-400 hover:text-bitaccess-gold">FAQ</Link></li>
               <li><Link to="/contact" className="text-gray-400 hover:text-bitaccess-gold">Contact Us</Link></li>
             </ul>
           </div>

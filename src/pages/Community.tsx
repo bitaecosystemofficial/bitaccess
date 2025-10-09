@@ -72,15 +72,6 @@ const Community = () => {
           <h1 className="text-4xl font-bold text-center mb-12 bg-gold-gradient text-transparent bg-clip-text">
             Join Our Community
           </h1>
-          
-          <div className="text-center mb-8">
-            <Link to="/governance">
-              <Button className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black">
-                <Gavel className="mr-2 h-4 w-4" />
-                Visit Governance Platform
-              </Button>
-            </Link>
-          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="bg-bitaccess-black-light border-bitaccess-gold/20">

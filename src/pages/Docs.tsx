@@ -116,7 +116,7 @@ const Docs = () => {
                   
                   <div className="space-y-6 mb-8">
                     <p className="text-gray-300">
-                      The BitAccess Whitepaper outlines the vision, technology, tokenomics, and roadmap for the BitAccess ecosystem. It provides a comprehensive overview of how BitAccess is revolutionizing blockchain education and merchant adoption.
+                      The BitAccess Whitepaper outlines the vision, technology, tokenomics, and roadmap for the BitAccess ecosystem. It provides a comprehensive overview of how BitAccess is revolutionizing decentralized finance and community-driven blockchain solutions.
                     </p>
                     
                     <div className="bg-bitaccess-black p-4 rounded-lg border border-bitaccess-gold/10">

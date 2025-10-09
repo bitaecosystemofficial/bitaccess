@@ -270,7 +270,7 @@ const Dashboard = () => {
             <CardContent>
               <div className="space-y-3">
                 <p className="text-sm text-gray-300">
-                  Increase your BIT holdings for staking and governance
+                  Increase your BIT holdings for staking and rewards
                 </p>
                 <Button 
                   onClick={handleBuyBIT}
@@ -296,7 +296,7 @@ const Dashboard = () => {
                    <ul className="text-sm text-gray-300 space-y-1">
                     <li>• Stake BIT tokens for rewards</li>
                     <li>• Refer friends to earn commissions</li>
-                    <li>• Participate in governance voting</li>
+                    <li>• Participate in community activities</li>
                   </ul>
                 </div>
               </div>
@@ -304,22 +304,22 @@ const Dashboard = () => {
           </Card>
 
 
-          {/* Governance */}
+          {/* Community */}
           <Card className="bg-bitaccess-black-light border-bitaccess-gold/20 hover:border-bitaccess-gold/40 transition-colors">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">Governance</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-400">Community</CardTitle>
               <TrendingUp className="h-4 w-4 text-bitaccess-gold" />
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 <p className="text-sm text-gray-300">
-                  Participate in community governance and voting
+                  Connect with the community and participate in activities
                 </p>
                 <Button 
-                  onClick={() => window.location.href = '/governance'}
+                  onClick={() => window.location.href = '/community'}
                   className="w-full bg-transparent border border-bitaccess-gold hover:bg-bitaccess-gold/10 text-bitaccess-gold"
                 >
-                  View Proposals
+                  Join Community
                 </Button>
               </div>
             </CardContent>
