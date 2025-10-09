@@ -1,4 +1,3 @@
-
 import { NavItem } from "./NavigationItems";
 
 export const NAVIGATION_ITEMS: NavItem[] = [
@@ -6,7 +5,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
   { label: "Ecosystem", href: "/ecosystem", requiresWallet: false, hideWhenConnected: true },
   { label: "Tokenomics", href: "/tokenomics", requiresWallet: false, hideWhenConnected: true },
   { label: "Audit", href: "/audit", requiresWallet: false, hideWhenConnected: true },
-  { label: "Chart", href: "/chart", requiresWallet: false, hideWhenConnected: false },
+  { label: "Chart", href: "/chart", requiresWallet: false, hideWhenConnected: true },
   { label: "Roadmap", href: "/roadmap", requiresWallet: false, hideWhenConnected: true },
   { label: "Airdrop", href: "/airdrop", requiresWallet: true, hideWhenConnected: false },
   { label: "Presale", href: "/presale", requiresWallet: true, hideWhenConnected: false },
