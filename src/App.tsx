@@ -76,8 +76,8 @@ const AppRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <Web3ModalProvider>
-      <TooltipProvider>
+    <TooltipProvider>
+      <Web3ModalProvider>
         <WalletProvider>
           <MembershipProvider>
             <Toaster />
@@ -88,8 +88,8 @@ const App = () => (
             </BrowserRouter>
           </MembershipProvider>
         </WalletProvider>
-      </TooltipProvider>
-    </Web3ModalProvider>
+      </Web3ModalProvider>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 
