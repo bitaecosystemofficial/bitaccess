@@ -59,15 +59,12 @@ const Docs = () => {
           
           <div className="max-w-5xl mx-auto">
             <Tabs defaultValue="guides" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-8">
+              <TabsList className="grid w-full grid-cols-2 mb-8">
                 <TabsTrigger value="guides" className="data-[state=active]:bg-bitaccess-gold data-[state=active]:text-bitaccess-black">
                   Guides
                 </TabsTrigger>
                 <TabsTrigger value="whitepaper" className="data-[state=active]:bg-bitaccess-gold data-[state=active]:text-bitaccess-black">
                   Whitepaper
-                </TabsTrigger>
-                <TabsTrigger value="api" className="data-[state=active]:bg-bitaccess-gold data-[state=active]:text-bitaccess-black">
-                  API Reference
                 </TabsTrigger>
               </TabsList>
               
@@ -146,40 +143,6 @@ const Docs = () => {
                         View Complete Whitepaper
                       </Button>
                     </RouterLink>
-                  </div>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="api">
-                <div className="bg-bitaccess-black-light rounded-xl p-8 border border-bitaccess-gold/20">
-                  <h3 className="text-xl font-bold text-white mb-6">API Reference</h3>
-                  
-                  <div className="bg-bitaccess-black p-6 rounded-lg border border-bitaccess-gold/10 mb-8">
-                    <p className="text-gray-300 mb-6">
-                      The BitAccess API allows developers to integrate with our ecosystem and build applications that leverage our services. This documentation provides a comprehensive guide to all available endpoints.
-                    </p>
-                    
-                    <div className="mb-6">
-                      <h4 className="font-medium text-bitaccess-gold mb-2">Authentication</h4>
-                      <pre className="bg-bitaccess-black-dark p-4 rounded text-gray-300 overflow-x-auto">
-                        <code>{`// Example request with API key
-const response = await fetch('https://api.bitaccess.com/v1/market/price', {
-  headers: {
-    'Authorization': 'Bearer YOUR_API_KEY'
-  }
-});`}</code>
-                      </pre>
-                    </div>
-                    
-                    <p className="text-gray-400 text-center py-4">
-                      Please connect your wallet and subscribe to access the full API documentation.
-                    </p>
-                  </div>
-                  
-                  <div className="text-center">
-                    <Button className="bg-bitaccess-gold hover:bg-bitaccess-gold-dark text-bitaccess-black font-medium">
-                      Connect Wallet to Access
-                    </Button>
                   </div>
                 </div>
               </TabsContent>

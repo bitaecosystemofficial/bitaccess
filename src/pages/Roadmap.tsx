@@ -1,79 +1,118 @@
 import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
-import { CheckCircle, Circle, Clock } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle2, Circle, Clock, Rocket } from "lucide-react";
 
 const Roadmap = () => {
   const roadmapPhases = [
     {
-      quarter: "Q1 2024",
+      quarter: "Q4 2024",
       status: "completed",
       title: "Foundation & Launch",
       items: [
-        "Platform development and testing",
-        "Smart contract deployment on BSC",
-        "Website and documentation launch",
-        "Community building initiatives",
-        "Initial marketing campaigns"
-      ]
-    },
-    {
-      quarter: "Q2 2024",
-      status: "completed",
-      title: "Ecosystem Expansion",
-      items: [
-        "Token presale launch",
-        "Airdrop campaign activation",
-        "Staking platform release",
-        "Membership system implementation",
-        "Strategic partnerships announcement"
-      ]
-    },
-    {
-      quarter: "Q3 2024",
-      status: "in-progress",
-      title: "Growth & Integration",
-      items: [
-        "DEX integration and swap functionality",
-        "Mobile app development",
-        "Community rewards program",
-        "Enhanced security audits",
-        "Marketing expansion to Asia-Pacific"
-      ]
-    },
-    {
-      quarter: "Q4 2024",
-      status: "upcoming",
-      title: "Advanced Features",
-      items: [
-        "Cross-chain bridge development",
-        "NFT marketplace integration",
-        "Advanced trading tools",
-        "Institutional partnerships",
-        "Global exchange listings"
+        "Smart contract development and deployment",
+        "Website and platform launch",
+        "Initial community building",
+        "Security audit completion",
+        "Whitepaper release"
       ]
     },
     {
       quarter: "Q1 2025",
-      status: "upcoming",
-      title: "DeFi Expansion",
+      status: "completed",
+      title: "Ecosystem Expansion",
       items: [
-        "Lending and borrowing protocols",
-        "Yield farming opportunities",
-        "DAO governance implementation",
-        "Layer 2 scaling solutions",
-        "Enterprise blockchain solutions"
+        "Airdrop campaign launch",
+        "Staking platform activation",
+        "Community governance implementation",
+        "Partnership announcements",
+        "Marketing campaign rollout"
       ]
     },
     {
       quarter: "Q2 2025",
-      status: "upcoming",
-      title: "Metaverse Integration",
+      status: "completed",
+      title: "Platform Enhancement",
       items: [
-        "Virtual world partnerships",
-        "Metaverse token utilities",
-        "Virtual events and conferences",
-        "Gaming integrations",
-        "AR/VR experiences"
+        "Mobile app development",
+        "Enhanced wallet integration",
+        "Referral program launch",
+        "Community rewards system",
+        "Trading volume milestones"
+      ]
+    },
+    {
+      quarter: "Q3 2025",
+      status: "completed",
+      title: "Growth & Integration",
+      items: [
+        "Cross-chain bridge development",
+        "Strategic partnerships expansion",
+        "NFT marketplace integration",
+        "Advanced analytics dashboard",
+        "Community voting mechanisms"
+      ]
+    },
+    {
+      quarter: "Q4 2025",
+      status: "in-progress",
+      title: "Pre-Exchange Preparation",
+      items: [
+        "DEX listing preparations and documentation",
+        "Enhanced liquidity pool management",
+        "Advanced security audits",
+        "Market maker partnerships",
+        "Global marketing campaign intensification"
+      ],
+      progress: "Currently finalizing DEX listing requirements and expanding market maker network"
+    },
+    {
+      quarter: "Q1 2026",
+      status: "upcoming",
+      title: "DEX Exchange Launch 🚀",
+      items: [
+        "Official DEX listing on major platforms",
+        "PancakeSwap and Uniswap integration",
+        "Liquidity provision programs",
+        "Trading competitions and incentives",
+        "Mass adoption marketing campaign"
+      ]
+    },
+    {
+      quarter: "Q2 2026",
+      status: "upcoming",
+      title: "Post-DEX Growth",
+      items: [
+        "Additional DEX listings",
+        "Enhanced trading features",
+        "Institutional partnerships",
+        "Advanced DeFi integrations",
+        "Community expansion initiatives"
+      ]
+    },
+    {
+      quarter: "Q3 2026",
+      status: "upcoming",
+      title: "CEX Exchange Launch 🎯",
+      items: [
+        "Centralized exchange listings (Binance, KuCoin, etc.)",
+        "Fiat on-ramp integrations",
+        "Global payment partnerships",
+        "Enterprise solutions launch",
+        "Mainstream media coverage"
+      ]
+    },
+    {
+      quarter: "Q4 2026",
+      status: "upcoming",
+      title: "Ecosystem Maturity",
+      items: [
+        "Multi-chain expansion",
+        "Advanced governance features",
+        "Enterprise API launch",
+        "Global merchant adoption",
+        "Sustainable growth initiatives"
       ]
     }
   ];
@@ -81,9 +120,11 @@ const Roadmap = () => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "completed":
-        return <CheckCircle className="h-6 w-6 text-green-500" />;
+        return <CheckCircle2 className="h-6 w-6 text-green-500" />;
       case "in-progress":
         return <Clock className="h-6 w-6 text-bitaccess-gold" />;
+      case "upcoming":
+        return <Circle className="h-6 w-6 text-gray-500" />;
       default:
         return <Circle className="h-6 w-6 text-gray-500" />;
     }
@@ -92,9 +133,11 @@ const Roadmap = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "completed":
-        return "bg-green-500/20 text-green-400 border-green-500/30";
+        return "bg-green-500/20 text-green-500 border-green-500/30";
       case "in-progress":
         return "bg-bitaccess-gold/20 text-bitaccess-gold border-bitaccess-gold/30";
+      case "upcoming":
+        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
       default:
         return "bg-gray-500/20 text-gray-400 border-gray-500/30";
     }
@@ -105,94 +148,107 @@ const Roadmap = () => {
       <div className="py-16 md:py-24">
         <div className="container px-4 md:px-8 max-w-6xl">
           <SectionHeading
-            title="Project Roadmap"
-            subtitle="Our journey to building a comprehensive blockchain ecosystem"
+            title="BIT Access Roadmap"
+            subtitle="Our journey from launch to global adoption - tracking progress and future milestones"
             centered
           />
 
           {/* Vision Statement */}
           <div className="mt-12 mb-16 bg-bitaccess-black-light p-8 rounded-xl border border-bitaccess-gold/20">
-            <h2 className="text-2xl font-bold text-bitaccess-gold mb-4 text-center">Our Vision</h2>
-            <p className="text-gray-400 leading-relaxed text-center max-w-3xl mx-auto">
-              To create the most accessible and comprehensive blockchain ecosystem that empowers individuals and
-              businesses worldwide. We're committed to continuous innovation and delivering value to our community
-              at every step of our journey.
+            <h2 className="text-2xl font-bold text-bitaccess-gold mb-4 flex items-center gap-3">
+              <Rocket className="h-6 w-6" />
+              Our Vision
+            </h2>
+            <p className="text-gray-400 leading-relaxed">
+              BIT Access is committed to creating a comprehensive blockchain ecosystem that bridges traditional 
+              finance with decentralized technologies. Our roadmap reflects our dedication to innovation, security, 
+              and community-driven growth. From our successful launch in Q4 2024 to our upcoming DEX listing in 
+              Q1 2026 and CEX expansion in Q3 2026, we're building a sustainable platform for the future of finance.
             </p>
           </div>
 
           {/* Roadmap Timeline */}
           <div className="space-y-8">
             {roadmapPhases.map((phase, index) => (
-              <div
-                key={index}
-                className={`relative bg-bitaccess-black-light p-6 md:p-8 rounded-xl border-2 transition-all ${
-                  phase.status === "completed"
-                    ? "border-green-500/30"
-                    : phase.status === "in-progress"
-                    ? "border-bitaccess-gold/50"
-                    : "border-gray-500/20"
+              <Card 
+                key={index} 
+                className={`bg-bitaccess-black-light border transition-all ${
+                  phase.status === "in-progress" 
+                    ? "border-bitaccess-gold shadow-lg shadow-bitaccess-gold/20" 
+                    : "border-bitaccess-gold/20 hover:border-bitaccess-gold/40"
                 }`}
               >
-                {/* Timeline Connector */}
-                {index < roadmapPhases.length - 1 && (
-                  <div className="hidden md:block absolute left-12 top-full h-8 w-0.5 bg-gradient-to-b from-bitaccess-gold/50 to-transparent" />
-                )}
-
-                <div className="flex flex-col md:flex-row md:items-start gap-4">
-                  {/* Status Icon */}
-                  <div className="flex items-center gap-3">
-                    {getStatusIcon(phase.status)}
-                    <div>
-                      <h3 className="text-xl font-bold text-white">{phase.quarter}</h3>
-                      <span
-                        className={`inline-block px-3 py-1 rounded-full text-xs font-semibold border ${getStatusBadge(
-                          phase.status
-                        )} mt-1`}
-                      >
-                        {phase.status === "completed"
-                          ? "Completed"
-                          : phase.status === "in-progress"
-                          ? "In Progress"
-                          : "Upcoming"}
-                      </span>
+                <CardHeader>
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      {getStatusIcon(phase.status)}
+                      <div>
+                        <CardTitle className="text-white text-xl md:text-2xl">
+                          {phase.quarter}
+                        </CardTitle>
+                        <p className="text-bitaccess-gold font-semibold mt-1">{phase.title}</p>
+                      </div>
                     </div>
+                    <Badge className={`${getStatusBadge(phase.status)} uppercase text-xs font-semibold`}>
+                      {phase.status === "in-progress" ? "Current Phase" : phase.status.replace("-", " ")}
+                    </Badge>
                   </div>
-
-                  {/* Content */}
-                  <div className="flex-1">
-                    <h4 className="text-lg font-bold text-bitaccess-gold mb-3">{phase.title}</h4>
-                    <ul className="space-y-2">
-                      {phase.items.map((item, itemIndex) => (
-                        <li key={itemIndex} className="flex items-start gap-2 text-gray-400">
-                          <span className="text-bitaccess-gold mt-1">•</span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    {phase.items.map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-3 text-gray-400">
+                        <div className={`mt-1 ${
+                          phase.status === "completed" 
+                            ? "text-green-500" 
+                            : phase.status === "in-progress"
+                            ? "text-bitaccess-gold"
+                            : "text-gray-500"
+                        }`}>
+                          {phase.status === "completed" ? "✓" : "•"}
+                        </div>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {phase.progress && (
+                    <div className="mt-4 pt-4 border-t border-bitaccess-gold/20">
+                      <p className="text-sm text-bitaccess-gold font-medium flex items-center gap-2">
+                        <Clock className="h-4 w-4" />
+                        Current Progress
+                      </p>
+                      <p className="text-sm text-gray-400 mt-2">{phase.progress}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             ))}
           </div>
 
-          {/* Future Plans */}
-          <div className="mt-16 bg-gradient-to-r from-bitaccess-black-light to-bitaccess-black p-8 rounded-xl border border-bitaccess-gold/20">
-            <h2 className="text-2xl font-bold text-bitaccess-gold mb-4 text-center">Beyond 2025</h2>
-            <p className="text-gray-400 text-center max-w-3xl mx-auto mb-6">
-              We're continuously planning for the future, with initiatives focused on:
+          {/* Beyond 2026 */}
+          <div className="mt-16 bg-gradient-to-br from-bitaccess-gold/10 to-bitaccess-black-light p-8 rounded-xl border border-bitaccess-gold/30">
+            <h2 className="text-2xl font-bold text-bitaccess-gold mb-6">Beyond 2026</h2>
+            <p className="text-gray-400 mb-6 leading-relaxed">
+              Our long-term vision extends beyond 2026 as we continue to innovate and expand the BIT Access ecosystem:
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
-              <div className="text-center p-4 bg-bitaccess-black rounded-lg border border-bitaccess-gold/10">
-                <h4 className="text-white font-semibold mb-2">Global Expansion</h4>
-                <p className="text-sm text-gray-400">Worldwide partnerships and market penetration</p>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-3">Technology Innovation</h3>
+                <ul className="space-y-2 text-gray-400 text-sm">
+                  <li>• Layer 2 scaling solutions</li>
+                  <li>• AI-powered trading tools</li>
+                  <li>• Quantum-resistant security</li>
+                  <li>• Advanced DeFi protocols</li>
+                </ul>
               </div>
-              <div className="text-center p-4 bg-bitaccess-black rounded-lg border border-bitaccess-gold/10">
-                <h4 className="text-white font-semibold mb-2">Technology Innovation</h4>
-                <p className="text-sm text-gray-400">Cutting-edge blockchain solutions and integrations</p>
-              </div>
-              <div className="text-center p-4 bg-bitaccess-black rounded-lg border border-bitaccess-gold/10">
-                <h4 className="text-white font-semibold mb-2">Community Growth</h4>
-                <p className="text-sm text-gray-400">Expanding our user base to millions worldwide</p>
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-3">Global Expansion</h3>
+                <ul className="space-y-2 text-gray-400 text-sm">
+                  <li>• Worldwide merchant network</li>
+                  <li>• Regional payment systems</li>
+                  <li>• International partnerships</li>
+                  <li>• Multi-language platform support</li>
+                </ul>
               </div>
             </div>
           </div>

@@ -2,6 +2,11 @@
 import SectionHeading from "@/components/ui/section-heading";
 import biitLogo from "@/assets/biit-logo.png";
 import pancakeswapLogo from "@/assets/pancakeswap-logo.png";
+import dappradarLogo from "@/assets/dappradar-logo.png";
+import goplusLogo from "@/assets/goplus-logo.png";
+import bscscanLogo from "@/assets/bscscan-logo.png";
+import cyberscopeLogo from "@/assets/cyberscope-logo.png";
+import uniswapLogo from "@/assets/uniswap-logo.png";
 
 const partners = [
   {
@@ -13,6 +18,26 @@ const partners = [
     name: "Binexplorer",
     logo: "https://binplorer.com/favicon-32x32.png",
     description: "BSC Blockchain Explorer"
+  },
+  {
+    name: "DappRadar",
+    logo: dappradarLogo,
+    description: "DApp Analytics"
+  },
+  {
+    name: "GoPlus Security",
+    logo: goplusLogo,
+    description: "Security Platform"
+  },
+  {
+    name: "BscScan",
+    logo: bscscanLogo,
+    description: "BSC Explorer"
+  },
+  {
+    name: "Cyberscope",
+    logo: cyberscopeLogo,
+    description: "Smart Contract Audits"
   },
   {
     name: "DexTools",
@@ -28,6 +53,11 @@ const partners = [
     name: "PancakeSwap",
     logo: pancakeswapLogo,
     description: "BSC DEX"
+  },
+  {
+    name: "Uniswap",
+    logo: uniswapLogo,
+    description: "Decentralized Exchange"
   },
   {
     name: "CoinMarketCap",
@@ -51,7 +81,7 @@ const StrategicPartnersSection = () => {
           centered
         />
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-8 mt-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-12">
           {partners.map((partner, index) => (
             <div
               key={partner.name}

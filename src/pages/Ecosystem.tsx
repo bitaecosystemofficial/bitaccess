@@ -83,13 +83,13 @@ const Ecosystem = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
                     <Users className="text-bitaccess-gold h-6 w-6" />
-                    <span>Community Hub</span>
+                    <span>Daily Rewards Claim</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-400 text-sm">
-                    Connect with fellow BIT holders, participate in social-to-earn activities, and engage in
-                    community-driven initiatives and promotions.
+                    Claim daily rewards and bonuses. Participate in social-to-earn activities and engage in
+                    community-driven initiatives to maximize your earnings.
                   </p>
                 </CardContent>
               </Card>
