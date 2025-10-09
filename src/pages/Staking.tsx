@@ -51,7 +51,7 @@ const Staking = () => {
       <div className="py-16 md:py-24 bg-hero-pattern">
         <div className="container px-4 md:px-8">
           <SectionHeading
-            title="BitAccess Staking Program"
+            title="BIT Stake Token Program"
             subtitle="Stake your BIT tokens and earn rewards up to 30% APY"
             centered
           />

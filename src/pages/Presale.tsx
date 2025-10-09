@@ -64,7 +64,7 @@ const Presale = () => {
       <div className="py-16 md:py-24 bg-hero-pattern">
         <div className="container px-4 md:px-8">
           <SectionHeading
-            title="BitAccess Token Presale"
+            title="Buy BIT Token"
             subtitle={`Secure your BIT tokens using ${networkInfo.currency} or USDT before public listing`}
             centered
           />

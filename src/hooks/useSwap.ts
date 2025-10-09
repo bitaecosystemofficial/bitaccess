@@ -6,6 +6,7 @@ import { ContractResult } from '@/types/contracts';
 import { useToast } from '@/hooks/use-toast';
 import { useWallet } from '@/contexts/WalletContext';
 import { tokenAddresses } from '@/constants/contracts';
+import { CryptoCompareService } from '@/services/CryptoCompareService';
 
 export type SwapPair = {
   from: string;
@@ -27,6 +28,13 @@ export type SwapDataType = {
   fees: {
     swap: number;
     liquidity: number;
+  };
+  prices: {
+    BNB: number;
+    USDT: number;
+    USDC: number;
+    BTCB: number;
+    BIT: number;
   };
   isLoading: boolean;
   error: string | null;
@@ -83,6 +91,13 @@ export const useSwapData = (): SwapDataType => {
       swap: 0.3,
       liquidity: 0.17
     },
+    prices: {
+      BNB: 600,
+      USDT: 1,
+      USDC: 1,
+      BTCB: 95000,
+      BIT: 0.000108
+    },
     isLoading: true,
     error: null
   });
@@ -98,11 +113,14 @@ export const useSwapData = (): SwapDataType => {
       }
 
       try {
-        // Get fee data - this now has error handling built in
+        // Fetch real-time prices from CryptoCompare
+        const prices = await CryptoCompareService.getAllPrices();
+        
+        // Get fee data
         const { fee, feeDenominator } = await swapService.getSwapFee();
         const feePercentage = (fee / feeDenominator) * 100;
 
-        // Get pair info for BNB-BIT with better error handling
+        // Get pair info for liquidity pools
         let bnbBitPair = { reserveA: "0", reserveB: "0", totalLiquidity: "0" };
         let usdtBitPair = { reserveA: "0", reserveB: "0", totalLiquidity: "0" };
         
@@ -115,7 +133,6 @@ export const useSwapData = (): SwapDataType => {
           console.error("Error fetching BNB-BIT pair:", error);
         }
         
-        // Get pair info for USDT-BIT with better error handling
         try {
           usdtBitPair = await swapService.getPairInfo(
             tokenAddresses.usdt,
@@ -125,47 +142,43 @@ export const useSwapData = (): SwapDataType => {
           console.error("Error fetching USDT-BIT pair:", error);
         }
 
-        // Calculate rates with safeguards against division by zero
-        const bnbBitRate = parseFloat(bnbBitPair.reserveA) > 0 
-          ? parseFloat(bnbBitPair.reserveB) / parseFloat(bnbBitPair.reserveA)
-          : 0;
-          
-        const usdtBitRate = parseFloat(usdtBitPair.reserveA) > 0
-          ? parseFloat(usdtBitPair.reserveB) / parseFloat(usdtBitPair.reserveA)
-          : 0;
-          
-        const usdtBnbRate = parseFloat(bnbBitPair.reserveA) > 0
-          ? parseFloat(usdtBitPair.reserveA) / parseFloat(bnbBitPair.reserveA)
-          : 0;
+        // Calculate swap rates based on real-time USD prices
+        const calculateRate = (fromPrice: number, toPrice: number) => {
+          return toPrice > 0 ? fromPrice / toPrice : 0;
+        };
 
-        // Prepare data
+        // Create all possible trading pairs
+        const createPair = (fromToken: string, toToken: string, fromAddress: string, toAddress: string) => {
+          const fromPrice = prices[fromToken as keyof typeof prices];
+          const toPrice = prices[toToken as keyof typeof prices];
+          return {
+            from: fromToken,
+            to: toToken,
+            rate: calculateRate(fromPrice, toPrice),
+            fromAddress,
+            toAddress,
+            reserveFrom: fromToken === 'BNB' ? bnbBitPair.reserveA : 
+                         fromToken === 'USDT' ? usdtBitPair.reserveA : "0",
+            reserveTo: toToken === 'BIT' ? 
+                      (fromToken === 'BNB' ? bnbBitPair.reserveB : usdtBitPair.reserveB) : "0"
+          };
+        };
+
+        const pairs: SwapPair[] = [
+          createPair('BNB', 'BIT', tokenAddresses.bnb, tokenAddresses.bit),
+          createPair('USDT', 'BIT', tokenAddresses.usdt, tokenAddresses.bit),
+          createPair('USDC', 'BIT', tokenAddresses.usdc, tokenAddresses.bit),
+          createPair('BTCB', 'BIT', tokenAddresses.btcb, tokenAddresses.bit),
+          createPair('BNB', 'USDT', tokenAddresses.bnb, tokenAddresses.usdt),
+          createPair('BNB', 'USDC', tokenAddresses.bnb, tokenAddresses.usdc),
+          createPair('BNB', 'BTCB', tokenAddresses.bnb, tokenAddresses.btcb),
+          createPair('USDT', 'USDC', tokenAddresses.usdt, tokenAddresses.usdc),
+          createPair('USDT', 'BTCB', tokenAddresses.usdt, tokenAddresses.btcb),
+          createPair('USDC', 'BTCB', tokenAddresses.usdc, tokenAddresses.btcb),
+        ];
+
         setSwapData({
-          pairs: [
-            { 
-              from: 'BNB', to: 'BIT', 
-              rate: bnbBitRate,
-              fromAddress: tokenAddresses.bnb,
-              toAddress: tokenAddresses.bit,
-              reserveFrom: bnbBitPair.reserveA,
-              reserveTo: bnbBitPair.reserveB
-            },
-            { 
-              from: 'USDT', to: 'BIT', 
-              rate: usdtBitRate,
-              fromAddress: tokenAddresses.usdt,
-              toAddress: tokenAddresses.bit,
-              reserveFrom: usdtBitPair.reserveA,
-              reserveTo: usdtBitPair.reserveB
-            },
-            { 
-              from: 'USDT', to: 'BNB', 
-              rate: usdtBnbRate,
-              fromAddress: tokenAddresses.usdt,
-              toAddress: tokenAddresses.bnb,
-              reserveFrom: usdtBitPair.reserveA,
-              reserveTo: bnbBitPair.reserveA
-            }
-          ],
+          pairs,
           liquidity: {
             bnbPool: parseFloat(bnbBitPair.reserveA),
             usdtPool: parseFloat(usdtBitPair.reserveA),
@@ -173,8 +186,9 @@ export const useSwapData = (): SwapDataType => {
           },
           fees: {
             swap: feePercentage,
-            liquidity: feePercentage * 0.55 // Liquidity provider fee (55% of swap fee)
+            liquidity: feePercentage * 0.55
           },
+          prices,
           isLoading: false,
           error: null
         });
@@ -195,6 +209,11 @@ export const useSwapData = (): SwapDataType => {
     };
 
     fetchSwapData();
+    
+    // Refresh prices every 30 seconds
+    const interval = setInterval(fetchSwapData, 30000);
+    
+    return () => clearInterval(interval);
   }, [isConnected, toast]);
 
   return swapData;

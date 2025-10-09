@@ -19,7 +19,7 @@ import bitLogo from "@/assets/bit-token-logo.png";
 
 const Swap = () => {
   const { isConnected } = useWallet();
-  const { pairs, isLoading: pairsLoading, error } = useSwapData();
+  const { pairs, prices, isLoading: pairsLoading, error } = useSwapData();
   
   const [fromToken, setFromToken] = useState(tokenAddresses.bnb);
   const [toToken, setToToken] = useState(tokenAddresses.bit);
@@ -202,13 +202,57 @@ const Swap = () => {
       <div className="py-16 md:py-24 bg-hero-pattern">
         <div className="container px-4 md:px-8">
           <SectionHeading
-            title="BitAccess Token Swap"
-            subtitle="Swap between BIT tokens, BNB, and stablecoins"
+            title="BIT Token Swap"
+            subtitle="Swap between BIT tokens, BNB, and stablecoins with real-time pricing"
             centered
           />
           
           <div className="max-w-xl mx-auto bg-bitaccess-black-light rounded-xl p-6 border border-bitaccess-gold/20">
-            <h2 className="text-xl font-bold mb-6 text-center">Swap Tokens on {networkInfo.name}</h2>
+            <h2 className="text-xl font-bold mb-4 text-center">Swap Tokens on {networkInfo.name}</h2>
+            
+            {/* Real-time Prices Display */}
+            {!pairsLoading && !error && prices && (
+              <div className="mb-6 p-4 bg-bitaccess-black rounded-lg border border-bitaccess-gold/10">
+                <p className="text-xs text-gray-400 mb-3 text-center">Real-time Market Prices (USD)</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="flex items-center gap-2">
+                    <img src={getTokenLogo(tokenAddresses.bnb)!} alt="BNB" className="w-5 h-5" />
+                    <div>
+                      <p className="text-xs text-gray-400">BNB</p>
+                      <p className="text-sm font-semibold">${prices.BNB.toFixed(2)}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <img src={getTokenLogo(tokenAddresses.usdt)!} alt="USDT" className="w-5 h-5" />
+                    <div>
+                      <p className="text-xs text-gray-400">USDT</p>
+                      <p className="text-sm font-semibold">${prices.USDT.toFixed(2)}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <img src={getTokenLogo(tokenAddresses.usdc)!} alt="USDC" className="w-5 h-5" />
+                    <div>
+                      <p className="text-xs text-gray-400">USDC</p>
+                      <p className="text-sm font-semibold">${prices.USDC.toFixed(2)}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <img src={getTokenLogo(tokenAddresses.btcb)!} alt="BTCB" className="w-5 h-5" />
+                    <div>
+                      <p className="text-xs text-gray-400">BTCB</p>
+                      <p className="text-sm font-semibold">${prices.BTCB.toLocaleString()}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <img src={getTokenLogo(tokenAddresses.bit)!} alt="BIT" className="w-5 h-5" />
+                    <div>
+                      <p className="text-xs text-gray-400">BIT</p>
+                      <p className="text-sm font-semibold">${prices.BIT.toFixed(6)}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             
             <div className="space-y-6">
               {error ? (
