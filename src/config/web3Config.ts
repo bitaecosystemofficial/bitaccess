@@ -3,8 +3,8 @@ import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
 import { bsc, bscTestnet } from 'wagmi/chains'
 import { walletConnect, injected, metaMask } from 'wagmi/connectors'
 
-// 1. Get projectId from https://cloud.walletconnect.com
-const projectId = 'f7b8c3b8a8b0d4e6f2c1a9b7e5d3c8f4' // Use your actual project ID
+// 1. Reown API Project ID
+const projectId = 'e277359f0fca74fc6f379c202652ad12'
 
 // 2. Create wagmiConfig
 const metadata = {

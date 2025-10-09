@@ -40,7 +40,7 @@ export interface MembershipStats {
 
 export const useMembershipData = () => {
   const { isConnected, address } = useWallet();
-  const { isLoading, setIsLoading, checkMerchantStatus } = useMembershipService();
+  const { isLoading, setIsLoading } = useMembershipService();
   const [membershipData, setMembershipData] = useState<MembershipData | null>(null);
   const [membershipStats, setMembershipStats] = useState<MembershipStats | null>(null);
   const [referralEarningsHistory, setReferralEarningsHistory] = useState<any[]>([]);
@@ -57,12 +57,11 @@ export const useMembershipData = () => {
       setIsLoading(true);
       try {
         // This is mock data - in a real app, we would fetch this from a backend
-        const isMerchant = await checkMerchantStatus(address);
         
         // Set mock membership data or null if no active membership
         const mockMembership: MembershipData = {
           isActive: true,
-          type: isMerchant ? MembershipType.Merchant : MembershipType.Regular,
+          type: MembershipType.Regular,
           startDate: '2025-04-23',
           expiryDate: '2026-04-23',
           endDate: new Date('2026-04-23'), // Fixed to string-compatible date

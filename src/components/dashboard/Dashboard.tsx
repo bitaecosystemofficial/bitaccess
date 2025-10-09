@@ -121,30 +121,6 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Merchant Subscription */}
-        <Card className="bg-bitaccess-black-light border-bitaccess-gold/20">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Merchant Status</CardTitle>
-            <TrendingUp className="h-4 w-4 text-bitaccess-gold" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-300">Subscription</span>
-                <Badge variant={membershipData?.type === "Merchant" ? "default" : "secondary"} 
-                       className={membershipData?.type === "Merchant" ? "bg-green-600" : ""}>
-                  {membershipData?.type === "Merchant" ? "Active" : "Inactive"}
-                </Badge>
-              </div>
-              {membershipData?.type === "Merchant" && (
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-300">Plan</span>
-                  <span className="text-sm font-semibold text-white">Premium</span>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Card Expiration */}
         <Card className="bg-bitaccess-black-light border-bitaccess-gold/20">
@@ -317,39 +293,16 @@ const Dashboard = () => {
               <div className="space-y-3">
                 <div className="space-y-2">
                   <p className="text-xs text-gray-400">Based on your membership:</p>
-                  <ul className="text-sm text-gray-300 space-y-1">
+                   <ul className="text-sm text-gray-300 space-y-1">
                     <li>• Stake BIT tokens for rewards</li>
                     <li>• Refer friends to earn commissions</li>
-                    <li>• Explore marketplace for exclusive deals</li>
-                    {membershipData?.type === "Merchant" && (
-                      <li>• Set up your merchant store</li>
-                    )}
+                    <li>• Participate in governance voting</li>
                   </ul>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Marketplace Quick Access */}
-          <Card className="bg-bitaccess-black-light border-bitaccess-gold/20 hover:border-bitaccess-gold/40 transition-colors">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">Marketplace</CardTitle>
-              <ShoppingCart className="h-4 w-4 text-bitaccess-gold" />
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <p className="text-sm text-gray-300">
-                  Explore exclusive products and services from verified merchants
-                </p>
-                <Button 
-                  onClick={() => window.location.href = '/marketplace'}
-                  className="w-full bg-transparent border border-bitaccess-gold hover:bg-bitaccess-gold/10 text-bitaccess-gold"
-                >
-                  Visit Marketplace
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Governance */}
           <Card className="bg-bitaccess-black-light border-bitaccess-gold/20 hover:border-bitaccess-gold/40 transition-colors">

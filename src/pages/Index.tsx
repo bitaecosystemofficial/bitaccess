@@ -7,7 +7,6 @@ import CommunitySection from "@/components/home/CommunitySection";
 import CtaSection from "@/components/home/CtaSection";
 import RoadmapSection from "@/components/home/RoadmapSection";
 import StrategicPartnersSection from "@/components/home/StrategicPartnersSection";
-import MerchantSection from "@/components/home/MerchantSection";
 
 const Index = () => {
   return (
@@ -32,7 +31,6 @@ const Index = () => {
         <HeroSection />
         <FeaturesSection />
         <TokenSection />
-        <MerchantSection />
         <StrategicPartnersSection />
         <RoadmapSection />
         <CommunitySection />

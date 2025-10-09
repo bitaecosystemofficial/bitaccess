@@ -4,7 +4,6 @@ import { MembershipType } from "@/contexts/MembershipContext";
 import { useWallet } from "@/contexts/WalletContext";
 import { toast } from "@/hooks/use-toast";
 import { membershipService } from "@/services/MembershipService";
-import { storeService } from "@/services/StoreService";
 import { switchNetwork } from "@/utils/blockchainUtils";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -14,18 +13,6 @@ export const useMembershipService = () => {
   const [loadingStats, setLoadingStats] = useState(true);
   const queryClient = useQueryClient();
 
-  // Check if the user is a merchant
-  const checkMerchantStatus = async (userAddress: string): Promise<boolean> => {
-    try {
-      // In a real app, this would call a contract or API
-      const status = await storeService.getStoreStatus(userAddress);
-      return status > 0;
-    } catch (error) {
-      console.error("Error checking merchant status:", error);
-      return false;
-    }
-  };
-  
   // Subscribe to membership
   const subscribe = async (type: MembershipType, referrer?: string): Promise<boolean> => {
     if (!isConnected) {
@@ -49,23 +36,6 @@ export const useMembershipService = () => {
           variant: "destructive",
         });
         return false;
-      }
-      
-      // For merchant subscription, we'll use the StoreService
-      if (type === MembershipType.Merchant) {
-        const duration = 180; // 6 months in days
-        const planName = "Merchant";
-        
-        const result = await storeService.payWithToken(planName, duration, "USDT");
-        
-        if (!result.success) {
-          toast({
-            title: "Subscription Failed",
-            description: result.error || "Transaction failed",
-            variant: "destructive",
-          });
-          return false;
-        }
       }
       
       // Invalidate any queries that might depend on membership status
@@ -158,7 +128,6 @@ export const useMembershipService = () => {
     loadingStats,
     setIsLoading,
     setLoadingStats,
-    checkMerchantStatus,
     subscribe,
     claimRewards,
     withdrawEarnings

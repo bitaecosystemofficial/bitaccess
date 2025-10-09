@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { tokenService } from '@/services/TokenService';
 import { useWallet } from '@/contexts/WalletContext';
-import { useTokenMetrics } from './useTokenMetrics';
 
 export interface TokenData {
   name: string;
@@ -35,8 +34,6 @@ export const useTokenData = () => {
     balance: "0",
     price: 0.00000275,
   });
-  
-  const { metrics } = useTokenMetrics();
 
   useEffect(() => {
     const fetchTokenData = async () => {
@@ -69,7 +66,7 @@ export const useTokenData = () => {
           buyTax: "3%", // Could be fetched from contract
           sellTax: "3%", // Could be fetched from contract
           balance: userBalance,
-          price: metrics.price,
+          price: 0.00000275,
         });
         
         setIsLoading(false);
@@ -80,7 +77,7 @@ export const useTokenData = () => {
     };
 
     fetchTokenData();
-  }, [address, isConnected, metrics.price]);
+  }, [address, isConnected]);
 
   return {
     tokenData,

@@ -1,10 +1,8 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { useRealTimeTokenData } from "@/hooks/useRealTimeTokenData";
 
 const HeroSection = () => {
-  const { tokenInfo, activity, isLoading } = useRealTimeTokenData();
   
   const handleAffiliateRedirect = () => {
     window.open("https://portal.bitaecosystem.org/login", "_blank");
@@ -70,15 +68,11 @@ const HeroSection = () => {
             <p className="text-sm text-gray-400">BIT Tokens</p>
           </div>
           <div className="text-center p-4 rounded-lg bg-bitaccess-black-light bg-opacity-50 backdrop-blur-sm border border-bitaccess-gold/10 hover:border-bitaccess-gold/30 transition-all duration-300 hover-scale">
-            <p className="text-3xl font-bold text-bitaccess-gold mb-1 animate-pulse">
-              {isLoading ? "..." : "3,198"}
-            </p>
+            <p className="text-3xl font-bold text-bitaccess-gold mb-1 animate-pulse">3,198</p>
             <p className="text-sm text-gray-400">Token Holders</p>
           </div>
           <div className="text-center p-4 rounded-lg bg-bitaccess-black-light bg-opacity-50 backdrop-blur-sm border border-bitaccess-gold/10 hover:border-bitaccess-gold/30 transition-all duration-300 hover-scale">
-            <p className="text-3xl font-bold text-bitaccess-gold mb-1 animate-pulse">
-              {isLoading ? "..." : (activity?.transfers24h?.toLocaleString() || "Live")}
-            </p>
+            <p className="text-3xl font-bold text-bitaccess-gold mb-1 animate-pulse">Live</p>
             <p className="text-sm text-gray-400">Token Transfers</p>
           </div>
         </div>

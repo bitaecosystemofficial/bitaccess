@@ -1,7 +1,6 @@
 import { ethers } from "ethers";
 import { PresaleABI } from "../contracts/abis/PresaleABI";
 import { StakingABI } from "../contracts/abis/StakingABI";
-import { MARKETPLACE_ABI } from "../contracts/abis/MarketplaceABI";
 import { TokenABI } from "../contracts/abis/TokenABI";
 import { AirdropABI } from "../contracts/abis/AirdropABI";
 import { SwapABI } from "../contracts/abis/SwapABI";
@@ -12,8 +11,8 @@ import { WELCOME_ABI } from "../contracts/abis/WelcomeABI";
 import { contractAddresses } from "../constants/contracts";
 
 export type ContractType = 
-  'presale' | 'staking' | 'marketplace' | 'token' | 
-  'airdrop' | 'swap' | 'governance' | 'merchants' | 
+  'presale' | 'staking' | 'token' | 
+  'airdrop' | 'swap' | 'governance' | 
   'membership' | 'education' | 'dashboard' | 'welcome';
 
 export const getContractABI = (contractType: ContractType) => {
@@ -22,8 +21,6 @@ export const getContractABI = (contractType: ContractType) => {
       return PresaleABI;
     case 'staking':
       return StakingABI;
-    case 'marketplace':
-      return MARKETPLACE_ABI;
     case 'token':
       return TokenABI;
     case 'airdrop':
@@ -41,9 +38,6 @@ export const getContractABI = (contractType: ContractType) => {
     case 'education':
       // Add education ABI when available
       return [];
-    case 'merchants':
-      // Add merchants ABI when available
-      return [];
     default:
       throw new Error(`Contract ABI not found for ${contractType}`);
   }
@@ -55,8 +49,6 @@ export const getContractAddress = (contractType: ContractType): string => {
       return contractAddresses.presale;
     case 'staking':
       return contractAddresses.staking;
-    case 'marketplace':
-      return contractAddresses.marketplace;
     case 'token':
       return contractAddresses.token;
     case 'airdrop':
@@ -65,8 +57,6 @@ export const getContractAddress = (contractType: ContractType): string => {
       return contractAddresses.swap;
     case 'governance':
       return contractAddresses.governance;
-    case 'merchants':
-      return contractAddresses.merchants;
     case 'membership':
       return contractAddresses.membership;
     case 'education':
