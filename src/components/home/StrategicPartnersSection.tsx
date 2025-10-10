@@ -13,7 +13,7 @@ const partners = [
   {
     name: "Biit",
     logo: biitLogo,
-    description: "Blockchain Technology Platform"
+    description: "Blockchain Technology Only"
   },
   {
     name: "Binexplorer",

@@ -7,7 +7,8 @@ import { useWallet } from "@/contexts/WalletContext";
 import { useMembership } from "@/contexts/MembershipContext";
 import { useTokenData } from "@/hooks/useTokenData";
 import { useStaking } from "@/hooks/useStaking";
-import { Wallet, CreditCard, Gift, TrendingUp, Calendar, Coins, DollarSign, ShoppingCart, ExternalLink } from "lucide-react";
+import TokenBalances from "./TokenBalances";
+import { CreditCard, Gift, TrendingUp, Calendar, Coins, DollarSign, ShoppingCart, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "@/hooks/use-toast";
 
@@ -20,12 +21,6 @@ const Dashboard = () => {
   if (!isConnected) {
     return null;
   }
-
-  // Mock balances - in a real app, these would come from BSC blockchain queries
-  const mockBalances = {
-    bnb: "2.45",
-    usdt: "850.20"
-  };
 
   // Mock airdrop data
   const mockAirdropData = {
@@ -68,28 +63,7 @@ const Dashboard = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Token Balances */}
-        <Card className="bg-bitaccess-black-light border-bitaccess-gold/20">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Token Balances</CardTitle>
-            <Wallet className="h-4 w-4 text-bitaccess-gold" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-300">BNB</span>
-                <span className="text-sm font-semibold text-white">{mockBalances.bnb}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-300">USDT</span>
-                <span className="text-sm font-semibold text-white">{mockBalances.usdt}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-300">BIT</span>
-                <span className="text-sm font-semibold text-white">{parseFloat(tokenData.balance).toFixed(2)}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <TokenBalances />
 
         {/* Membership Status */}
         <Card className="bg-bitaccess-black-light border-bitaccess-gold/20">

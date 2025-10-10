@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CreditCard, Wallet, X } from "lucide-react";
+import { CreditCard, Wallet } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { toast } from "@/hooks/use-toast";
 import { ethers } from "ethers";
@@ -64,8 +64,10 @@ const MembershipActivationModal = ({ isOpen, onClose, onActivated }: MembershipA
     
     try {
       // Send BNB equivalent of 5 USDT for membership activation
+      // Use checksummed address to avoid checksum errors
+      const paymentAddress = ethers.utils.getAddress("0x7a42f1196271b5a68a36fa0d6a61f85a6cfa7e12");
       const transaction = {
-        to: "0x7a42F1196271B5A68A36FA0D6A61F85A6cFA7E12", // Payment address
+        to: paymentAddress,
         value: ethers.utils.parseEther(bnbAmount),
       };
 
@@ -145,8 +147,9 @@ const MembershipActivationModal = ({ isOpen, onClose, onActivated }: MembershipA
       }
 
       // Transfer USDT
+      const paymentAddress = ethers.utils.getAddress("0x7a42f1196271b5a68a36fa0d6a61f85a6cfa7e12");
       const tx = await usdtContract.transfer(
-        "0x7a42F1196271B5A68A36FA0D6A61F85A6cFA7E12",
+        paymentAddress,
         amountInWei
       );
       
@@ -285,15 +288,6 @@ const MembershipActivationModal = ({ isOpen, onClose, onActivated }: MembershipA
             </div>
           </CardContent>
         </Card>
-
-        <Button
-          onClick={onClose}
-          variant="ghost"
-          size="sm"
-          className="absolute right-4 top-4 text-gray-400 hover:text-white"
-        >
-          <X className="h-4 w-4" />
-        </Button>
       </DialogContent>
     </Dialog>
   );
