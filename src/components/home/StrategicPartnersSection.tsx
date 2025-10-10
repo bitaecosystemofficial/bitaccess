@@ -7,6 +7,7 @@ import goplusLogo from "@/assets/goplus-logo.png";
 import bscscanLogo from "@/assets/bscscan-logo.png";
 import cyberscopeLogo from "@/assets/cyberscope-logo.png";
 import uniswapLogo from "@/assets/uniswap-logo.png";
+import newgenWeb3Logo from "@/assets/newgenweb3-logo.png";
 
 const partners = [
   {
@@ -40,9 +41,9 @@ const partners = [
     description: "Smart Contract Audits"
   },
   {
-    name: "DexTools",
-    logo: "https://img.cryptorank.io/coins/dextools1629975030345.png",
-    description: "Trading Analytics"
+    name: "NewGen Web3",
+    logo: newgenWeb3Logo,
+    description: "Web3 Community"
   },
   {
     name: "DexScreener",

@@ -4,6 +4,7 @@ import { useWallet } from "@/contexts/WalletContext";
 import { useMembership } from "@/contexts/MembershipContext";
 import Layout from '@/components/layout/Layout';
 import Dashboard from '@/components/dashboard/Dashboard';
+import MembershipActivationModal from '@/components/membership/MembershipActivationModal';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CreditCard, BarChart2 } from "lucide-react";
@@ -15,10 +16,11 @@ import { toast } from '@/hooks/use-toast';
 import "../components/ui/card-flip.css";
 
 const MembershipCard = () => {
-  const { isConnected, address } = useWallet();
+  const { isConnected, address, isMembershipActivated } = useWallet();
   const { membershipData } = useMembership();
   const [isFlipped, setIsFlipped] = useState(false);
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
+  const [showActivationModal, setShowActivationModal] = useState(false);
 
   // Check for correct network on component mount
   useEffect(() => {
@@ -246,24 +248,38 @@ const MembershipCard = () => {
           {/* Add Dashboard Component */}
           <Dashboard />
 
-          {/* Activate Membership Button */}
-          {!membershipData?.isActive && (
-            <div className="mt-12 text-center">
-              <Button 
-                onClick={() => {
-                  // This will trigger the MembershipActivationModal through the Dashboard component
-                  toast({
-                    title: "Activate Membership",
-                    description: "Click on 'Activate Now' in the Membership Status card above",
-                  });
-                }}
-                className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black font-semibold px-8 py-4 text-lg"
-              >
-                <CreditCard className="mr-2 h-5 w-5" />
-                Activate Membership
-              </Button>
+          {/* Activate Membership Button Container */}
+          {!isMembershipActivated && (
+            <div className="mt-12">
+              <Card className="bg-bitaccess-black-light border-bitaccess-gold/20">
+                <CardContent className="p-6 text-center">
+                  <h3 className="text-xl font-bold text-white mb-2">Activate Your Membership</h3>
+                  <p className="text-gray-400 mb-6">
+                    Unlock exclusive benefits, referral commissions, and premium features
+                  </p>
+                  <Button 
+                    onClick={() => setShowActivationModal(true)}
+                    className="bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black font-semibold px-8 py-4 text-lg"
+                  >
+                    <CreditCard className="mr-2 h-5 w-5" />
+                    Activate Membership Card
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
           )}
+
+          {/* Membership Activation Modal */}
+          <MembershipActivationModal
+            isOpen={showActivationModal}
+            onClose={() => setShowActivationModal(false)}
+            onActivated={() => {
+              toast({
+                title: "Success!",
+                description: "Your membership has been activated successfully",
+              });
+            }}
+          />
         </div>
       </div>
     </Layout>

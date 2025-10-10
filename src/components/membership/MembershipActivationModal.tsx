@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CreditCard, Wallet, X } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import { toast } from "@/hooks/use-toast";
 import { ethers } from "ethers";
 import { CryptoCompareService } from "@/services/CryptoCompareService";
+import { MEMBERSHIP_ABI } from "@/contracts/abis/MembershipABI";
 
 interface MembershipActivationModalProps {
   isOpen: boolean;
@@ -18,8 +20,10 @@ interface MembershipActivationModalProps {
 const MembershipActivationModal = ({ isOpen, onClose, onActivated }: MembershipActivationModalProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [bnbAmount, setBnbAmount] = useState("0.0");
+  const [usdtAmount] = useState("5"); // Fixed $5 USDT
   const [loadingPrice, setLoadingPrice] = useState(true);
-  const { provider, signer, address } = useWallet();
+  const [paymentMethod, setPaymentMethod] = useState<"bnb" | "usdt">("bnb");
+  const { provider, signer, address, setMembershipActivated } = useWallet();
 
   // Fetch BNB price and calculate equivalent for 5 USDT
   useEffect(() => {
@@ -46,7 +50,7 @@ const MembershipActivationModal = ({ isOpen, onClose, onActivated }: MembershipA
     }
   }, [isOpen]);
 
-  const handlePayment = async () => {
+  const handleBnbPayment = async () => {
     if (!provider || !signer || !address) {
       toast({
         title: "Wallet Error",
@@ -74,9 +78,18 @@ const MembershipActivationModal = ({ isOpen, onClose, onActivated }: MembershipA
 
       await tx.wait();
       
+      // Activate membership with 1 year expiry
+      const expiryDate = new Date();
+      expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+      
+      // Store activation status
+      setMembershipActivated(true);
+      localStorage.setItem('membershipExpiryDate', expiryDate.toISOString());
+      localStorage.setItem('referralCommissionActive', 'true');
+      
       toast({
         title: "Membership Activated!",
-        description: "Your membership card has been successfully activated.",
+        description: `Your membership is now active until ${expiryDate.toLocaleDateString()}. Referral commission is active!`,
       });
 
       onActivated();
@@ -90,6 +103,93 @@ const MembershipActivationModal = ({ isOpen, onClose, onActivated }: MembershipA
       });
     } finally {
       setIsProcessing(false);
+    }
+  };
+
+  const handleUsdtPayment = async () => {
+    if (!provider || !signer || !address) {
+      toast({
+        title: "Wallet Error",
+        description: "Please ensure your wallet is connected",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsProcessing(true);
+    
+    try {
+      // USDT contract on BSC
+      const USDT_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
+      const USDT_ABI = [
+        "function transfer(address to, uint256 amount) returns (bool)",
+        "function approve(address spender, uint256 amount) returns (bool)",
+        "function allowance(address owner, address spender) view returns (uint256)",
+        "function balanceOf(address account) view returns (uint256)"
+      ];
+
+      const usdtContract = new ethers.Contract(USDT_CONTRACT, USDT_ABI, signer);
+      
+      // Check balance
+      const balance = await usdtContract.balanceOf(address);
+      const amountInWei = ethers.utils.parseUnits(usdtAmount, 18);
+      
+      if (balance.lt(amountInWei)) {
+        toast({
+          title: "Insufficient USDT",
+          description: "You don't have enough USDT balance",
+          variant: "destructive",
+        });
+        setIsProcessing(false);
+        return;
+      }
+
+      // Transfer USDT
+      const tx = await usdtContract.transfer(
+        "0x7a42F1196271B5A68A36FA0D6A61F85A6cFA7E12",
+        amountInWei
+      );
+      
+      toast({
+        title: "Payment Processing",
+        description: "Your membership activation payment is being processed...",
+      });
+
+      await tx.wait();
+      
+      // Activate membership with 1 year expiry
+      const expiryDate = new Date();
+      expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+      
+      // Store activation status
+      setMembershipActivated(true);
+      localStorage.setItem('membershipExpiryDate', expiryDate.toISOString());
+      localStorage.setItem('referralCommissionActive', 'true');
+      
+      toast({
+        title: "Membership Activated!",
+        description: `Your membership is now active until ${expiryDate.toLocaleDateString()}. Referral commission is active!`,
+      });
+
+      onActivated();
+      onClose();
+    } catch (error: any) {
+      console.error("Payment error:", error);
+      toast({
+        title: "Payment Failed",
+        description: error.message || "Failed to process payment",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handlePayment = () => {
+    if (paymentMethod === "bnb") {
+      handleBnbPayment();
+    } else {
+      handleUsdtPayment();
     }
   };
 
@@ -124,28 +224,55 @@ const MembershipActivationModal = ({ isOpen, onClose, onActivated }: MembershipA
                 Membership Card Activation
               </h3>
               <p className="text-gray-400 text-sm mb-4">
-                Pay a one-time activation fee to unlock your digital membership card
+                Pay a one-time activation fee to unlock your digital membership card for 1 year
               </p>
-              
-              <div className="bg-bitaccess-black rounded-lg p-4 mb-4">
-                <div className="text-2xl font-bold text-bitaccess-gold">
-                  {loadingPrice ? "Loading..." : `${bnbAmount} BNB`}
-                </div>
-                <div className="text-sm text-gray-400">Activation Fee (≈ $5 USDT)</div>
-              </div>
+
+              <Tabs value={paymentMethod} onValueChange={(v) => setPaymentMethod(v as "bnb" | "usdt")} className="mb-4">
+                <TabsList className="grid w-full grid-cols-2 bg-bitaccess-black">
+                  <TabsTrigger value="bnb" className="data-[state=active]:bg-bitaccess-gold data-[state=active]:text-black">
+                    BNB
+                  </TabsTrigger>
+                  <TabsTrigger value="usdt" className="data-[state=active]:bg-bitaccess-gold data-[state=active]:text-black">
+                    USDT
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="bnb">
+                  <div className="bg-bitaccess-black rounded-lg p-4">
+                    <div className="text-2xl font-bold text-bitaccess-gold">
+                      {loadingPrice ? "Loading..." : `${bnbAmount} BNB`}
+                    </div>
+                    <div className="text-sm text-gray-400">Activation Fee (≈ $5 USDT)</div>
+                  </div>
+                </TabsContent>
+                <TabsContent value="usdt">
+                  <div className="bg-bitaccess-black rounded-lg p-4">
+                    <div className="text-2xl font-bold text-bitaccess-gold">
+                      {usdtAmount} USDT
+                    </div>
+                    <div className="text-sm text-gray-400">Activation Fee</div>
+                  </div>
+                </TabsContent>
+              </Tabs>
 
               <div className="text-xs text-gray-500 mb-6">
-                This one-time payment activates your membership card and grants access to exclusive features
+                <p>• Membership valid for 1 year from activation</p>
+                <p>• Referral commission will be activated</p>
+                <p>• One-time payment unlocks all features</p>
               </div>
             </div>
 
             <div className="space-y-3">
               <Button 
                 onClick={handlePayment}
-                disabled={isProcessing || loadingPrice}
+                disabled={isProcessing || (paymentMethod === "bnb" && loadingPrice)}
                 className="w-full bg-bitaccess-gold hover:bg-bitaccess-gold/90 text-black"
               >
-                {isProcessing ? "Processing Payment..." : loadingPrice ? "Loading..." : `Pay ${bnbAmount} BNB to Activate`}
+                {isProcessing 
+                  ? "Processing Payment..." 
+                  : loadingPrice && paymentMethod === "bnb"
+                  ? "Loading..." 
+                  : `Pay ${paymentMethod === "bnb" ? `${bnbAmount} BNB` : `${usdtAmount} USDT`} to Activate`
+                }
               </Button>
               
               <Button 

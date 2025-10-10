@@ -7,7 +7,7 @@ import { useWallet } from "@/contexts/WalletContext";
 import { useMembership } from "@/contexts/MembershipContext";
 import { useTokenData } from "@/hooks/useTokenData";
 import { useStaking } from "@/hooks/useStaking";
-import { Wallet, CreditCard, Gift, TrendingUp, Calendar, Coins, DollarSign, ShoppingCart, Star, ExternalLink } from "lucide-react";
+import { Wallet, CreditCard, Gift, TrendingUp, Calendar, Coins, DollarSign, ShoppingCart, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "@/hooks/use-toast";
 
@@ -286,50 +286,6 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Recommendations */}
-          <Card className="bg-bitaccess-black-light border-bitaccess-gold/20 hover:border-bitaccess-gold/40 transition-colors md:col-span-2 lg:col-span-1">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">Recommendations</CardTitle>
-              <Star className="h-4 w-4 text-bitaccess-gold" />
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <p className="text-xs text-gray-400">Based on your membership:</p>
-                   <ul className="text-sm text-gray-300 space-y-1">
-                    <li>• Stake BIT tokens for rewards</li>
-                    <li>• Refer friends to earn commissions</li>
-                    <li>• Participate in community activities</li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-
-          {/* Rewards Program */}
-          <Card className="bg-bitaccess-black-light border-bitaccess-gold/20 hover:border-bitaccess-gold/40 transition-colors">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">Rewards Program</CardTitle>
-              <Gift className="h-4 w-4 text-bitaccess-gold" />
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-2xl font-bold text-white">Active</p>
-                  <p className="text-xs text-gray-400 mt-1">Earn rewards program</p>
-                </div>
-                <div className="space-y-1 text-sm text-gray-300">
-                  <p className="font-medium text-bitaccess-gold">Ways to earn:</p>
-                  <ul className="space-y-1 text-xs">
-                    <li>• Complete airdrop tasks</li>
-                    <li>• Stake BIT tokens for rewards</li>
-                    <li>• Refer friends to earn commissions</li>
-                  </ul>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>
