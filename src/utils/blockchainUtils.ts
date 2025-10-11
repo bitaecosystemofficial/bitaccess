@@ -94,7 +94,7 @@ export const switchNetwork = async (): Promise<boolean> => {
           });
           
           toast({
-            title: "BSC Mainnet Added",
+            title: `${networkInfo.name} Added`,
             description: `${networkInfo.name} has been added to your wallet.`,
           });
           
@@ -103,7 +103,7 @@ export const switchNetwork = async (): Promise<boolean> => {
           console.error("Error adding chain:", addError);
           toast({
             title: "Network Addition Failed",
-            description: "Failed to add BSC Mainnet to your wallet.",
+            description: `Failed to add ${networkInfo.name} to your wallet.`,
             variant: "destructive",
           });
           return false;
@@ -120,7 +120,7 @@ export const switchNetwork = async (): Promise<boolean> => {
       } else {
         toast({
           title: "Network Switch Failed",
-          description: "Failed to switch to BSC Mainnet in your wallet.",
+          description: `Failed to switch to ${networkInfo.name} in your wallet.`,
           variant: "destructive",
         });
       }
