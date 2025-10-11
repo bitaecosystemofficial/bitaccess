@@ -1,6 +1,6 @@
 export const contractAddresses = {
   presale: "0x1234567890123456789012345678901234567890",
-  airdrop: "0x0987654321098765432109876543210987654321",
+  airdrop: "0x5D7C0351CfD769Ecd2e724aC7F99465226d64949",
   staking: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
   swap: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
   merchants: "0x123abc123abc123abc123abc123abc123abc123a",
