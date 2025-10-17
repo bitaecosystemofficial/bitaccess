@@ -5,9 +5,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { contractAddresses } from "@/constants/contracts";
 
-const BINPLORER_API_KEY = "EK-tLJmD-TV5Qqjd-hQhSS";
+const BSCSCAN_API_KEY = "3SWXK3BDBVB97KZSXZHAVG69Q2ECNRB87P";
 const TOKEN_ADDRESS = contractAddresses.token;
-const API_BASE_URL = "https://api.binplorer.com";
+const API_BASE_URL = "https://api-testnet.bscscan.com/api";
 
 interface TokenInfo {
   address: string;
@@ -81,43 +81,98 @@ const Chart = () => {
     try {
       setLoading(true);
       
-      // Fetch token info using Binplorer API
-      const tokenResponse = await fetch(
-        `${API_BASE_URL}/getTokenInfo/${TOKEN_ADDRESS}?apiKey=${BINPLORER_API_KEY}`
-      );
+      // Fetch token info using BSCScan API
+      const tokenInfoParams = new URLSearchParams({
+        module: 'token',
+        action: 'tokeninfo',
+        contractaddress: TOKEN_ADDRESS,
+        apikey: BSCSCAN_API_KEY
+      });
+      
+      const tokenResponse = await fetch(`${API_BASE_URL}?${tokenInfoParams}`);
       const tokenData = await tokenResponse.json();
       
-      if (tokenData && !tokenData.error) {
-        setTokenInfo(tokenData);
+      if (tokenData.status === "1" && tokenData.result) {
+        const result = Array.isArray(tokenData.result) ? tokenData.result[0] : tokenData.result;
+        setTokenInfo({
+          address: TOKEN_ADDRESS,
+          name: result.tokenName || "Bit Access Token",
+          symbol: result.symbol || "BIT",
+          totalSupply: result.totalSupply || "0",
+          decimals: result.divisor || "9",
+          holdersCount: 0, // Will be updated separately
+          transfersCount: 0 // Will be updated separately
+        });
       }
 
-      // Fetch top 20 holders
-      const holdersResponse = await fetch(
-        `${API_BASE_URL}/getTopTokenHolders/${TOKEN_ADDRESS}?apiKey=${BINPLORER_API_KEY}&limit=20`
-      );
+      // Fetch holder count using BSCScan API
+      const holderParams = new URLSearchParams({
+        module: 'token',
+        action: 'tokenholderlist',
+        contractaddress: TOKEN_ADDRESS,
+        page: '1',
+        offset: '20',
+        apikey: BSCSCAN_API_KEY
+      });
+      
+      const holdersResponse = await fetch(`${API_BASE_URL}?${holderParams}`);
       const holdersData = await holdersResponse.json();
       
-      if (holdersData && holdersData.holders) {
-        const formattedHolders = holdersData.holders.map((holder: any, index: number) => ({
-          rank: index + 1,
-          address: holder.address,
-          balance: (parseFloat(holder.balance) / 1e9).toLocaleString(undefined, { 
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0 
-          }),
-          share: holder.share
-        }));
+      if (holdersData.status === "1" && holdersData.result) {
+        // Calculate total supply for percentage calculation
+        const totalSupplyNum = parseFloat(tokenInfo?.totalSupply || "1000000000000000000");
+        
+        const formattedHolders = holdersData.result.map((holder: any, index: number) => {
+          const balance = parseFloat(holder.TokenHolderQuantity);
+          const share = (balance / totalSupplyNum) * 100;
+          
+          return {
+            rank: index + 1,
+            address: holder.TokenHolderAddress,
+            balance: (balance / 1e9).toLocaleString(undefined, { 
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0 
+            }),
+            share: share
+          };
+        });
         setHolders(formattedHolders);
+        
+        // Update holder count in tokenInfo
+        setTokenInfo(prev => prev ? { ...prev, holdersCount: holdersData.result.length } : prev);
       }
 
-      // Fetch recent operations (transfers, mints, burns)
-      const operationsResponse = await fetch(
-        `${API_BASE_URL}/getTokenHistory/${TOKEN_ADDRESS}?apiKey=${BINPLORER_API_KEY}&limit=50`
-      );
+      // Fetch recent token transfers using BSCScan API
+      const transferParams = new URLSearchParams({
+        module: 'account',
+        action: 'tokentx',
+        contractaddress: TOKEN_ADDRESS,
+        page: '1',
+        offset: '50',
+        sort: 'desc',
+        apikey: BSCSCAN_API_KEY
+      });
+      
+      const operationsResponse = await fetch(`${API_BASE_URL}?${transferParams}`);
       const operationsData = await operationsResponse.json();
       
-      if (operationsData && operationsData.operations) {
-        setOperations(operationsData.operations);
+      if (operationsData.status === "1" && operationsData.result) {
+        const formattedOps = operationsData.result.map((tx: any) => ({
+          timestamp: parseInt(tx.timeStamp),
+          transactionHash: tx.hash,
+          type: tx.from === "0x0000000000000000000000000000000000000000" ? "mint" : 
+                tx.to === "0x0000000000000000000000000000000000000000" ? "burn" : "transfer",
+          from: tx.from,
+          to: tx.to,
+          value: (parseFloat(tx.value) / 1e9).toLocaleString(undefined, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+          })
+        }));
+        setOperations(formattedOps);
+        
+        // Update transfer count
+        setTokenInfo(prev => prev ? { ...prev, transfersCount: operationsData.result.length } : prev);
       }
     } catch (error) {
       console.error("Error fetching token data:", error);
@@ -191,7 +246,7 @@ const Chart = () => {
             Bit Access Token Analytics
           </h1>
           <p className="text-gray-400 mb-8">
-            Real-time token data and analytics powered by Binplorer
+            Real-time token data and analytics powered by BSCScan
           </p>
 
           <Tabs defaultValue="info" className="space-y-6" onValueChange={setActiveTab}>
@@ -403,7 +458,7 @@ const Chart = () => {
                             </td>
                             <td className="py-4 px-4">
                               <a
-                                href={`https://binplorer.com/address/${holder.address}`}
+                                href={`https://testnet.bscscan.com/address/${holder.address}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-bitaccess-gold hover:text-bitaccess-gold/80 font-mono text-sm transition-colors"
@@ -490,8 +545,8 @@ const Chart = () => {
                                 {op.from && (
                                   <div className="flex items-center gap-2 text-sm">
                                     <span className="text-gray-400">From:</span>
-                                    <a
-                                      href={`https://binplorer.com/address/${op.from}`}
+                                     <a
+                                      href={`https://testnet.bscscan.com/address/${op.from}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       className="text-bitaccess-gold hover:text-bitaccess-gold/80 font-mono"
@@ -503,8 +558,8 @@ const Chart = () => {
                                 {op.to && (
                                   <div className="flex items-center gap-2 text-sm">
                                     <span className="text-gray-400">To:</span>
-                                    <a
-                                      href={`https://binplorer.com/address/${op.to}`}
+                                     <a
+                                      href={`https://testnet.bscscan.com/address/${op.to}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       className="text-bitaccess-gold hover:text-bitaccess-gold/80 font-mono"
@@ -523,7 +578,7 @@ const Chart = () => {
                             </div>
                             
                             <a
-                              href={`https://binplorer.com/tx/${op.transactionHash}`}
+                              href={`https://testnet.bscscan.com/tx/${op.transactionHash}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-xs text-bitaccess-gold hover:text-bitaccess-gold/80 font-mono whitespace-nowrap"
@@ -567,12 +622,12 @@ const Chart = () => {
                   
                   <div className="mt-6 pt-6 border-t border-bitaccess-gold/10 text-center">
                     <a
-                      href={`https://binplorer.com/address/${TOKEN_ADDRESS}`}
+                      href={`https://testnet.bscscan.com/token/${TOKEN_ADDRESS}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center px-6 py-3 bg-bitaccess-gold text-bitaccess-black font-semibold rounded-lg hover:bg-bitaccess-gold/90 transition-colors"
                     >
-                      View All Activity on Binplorer
+                      View All Activity on BSCScan
                     </a>
                   </div>
                 </CardContent>
