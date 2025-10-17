@@ -5,7 +5,6 @@ import AirdropTaskList from "@/components/airdrop/AirdropTaskList";
 import AirdropCountdown from "@/components/airdrop/AirdropCountdown";
 import AirdropClaim from "@/components/airdrop/AirdropClaim";
 import AirdropHero from "@/components/airdrop/AirdropHero";
-import WalletConnectPrompt from "@/components/ui/wallet-connect-prompt";
 import { useAirdropData } from "@/utils/airdrop/airdropHooks";
 import { useWallet } from "@/contexts/WalletContext";
 import { contractAddresses, networkInfo } from "@/constants/contracts";
@@ -38,17 +37,6 @@ const Airdrop = () => {
       checkAndSwitchNetwork();
     }
   }, [isConnected]);
-
-  if (!isConnected) {
-    return (
-      <Layout>
-        <WalletConnectPrompt 
-          title="Airdrop Access Required"
-          description="Please connect your wallet to participate in the token airdrop"
-        />
-      </Layout>
-    );
-  }
 
   const handleTaskComplete = (taskId: number) => {
     updateTaskCompletionStatus(taskId, true);

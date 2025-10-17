@@ -8,7 +8,6 @@ import UnstakeForm from "@/components/staking/UnstakeForm";
 import StakingInfo from "@/components/staking/StakingInfo";
 import StakingContract from "@/components/staking/StakingContract";
 import StakingTiers from "@/components/staking/StakingTiers";
-import WalletConnectPrompt from "@/components/ui/wallet-connect-prompt";
 import { useWallet } from "@/contexts/WalletContext";
 import { networkInfo } from "@/constants/contracts";
 import { switchNetwork } from "@/utils/blockchainUtils";
@@ -34,17 +33,6 @@ const Staking = () => {
       checkAndSwitchNetwork();
     }
   }, [isConnected]);
-  
-  if (!isConnected) {
-    return (
-      <Layout>
-        <WalletConnectPrompt 
-          title="Staking Access Required"
-          description="Please connect your wallet to access the staking platform"
-        />
-      </Layout>
-    );
-  }
   
   return (
     <Layout>

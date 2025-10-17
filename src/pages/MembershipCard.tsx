@@ -8,7 +8,6 @@ import MembershipActivationModal from '@/components/membership/MembershipActivat
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CreditCard, BarChart2 } from "lucide-react";
-import WalletConnectPrompt from '@/components/ui/wallet-connect-prompt';
 import { format } from "date-fns";
 import { networkInfo } from '@/constants/contracts';
 import { switchNetwork } from '@/utils/blockchainUtils';
@@ -66,18 +65,7 @@ const MembershipCard = () => {
     // Reset rotation when mouse leaves
     setRotation({ x: 0, y: 0 });
   };
-
-  if (!isConnected) {
-    return (
-      <Layout>
-        <WalletConnectPrompt 
-          title="Membership Card Access Required"
-          description="Please connect your wallet to view your membership card"
-        />
-      </Layout>
-    );
-  }
-
+  
   // Show card even if inactive, but display inactive status
   const cardStatus = membershipData?.isActive ? "Active" : "Inactive";
 

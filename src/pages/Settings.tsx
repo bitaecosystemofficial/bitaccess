@@ -3,40 +3,16 @@ import React from "react";
 import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
 import { useWallet } from "@/contexts/WalletContext";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Settings, Bell, Shield, Network } from "lucide-react";
-import WalletConnectPrompt from "@/components/ui/wallet-connect-prompt";
 import { networkInfo } from "@/constants/contracts";
 
 const SettingsPage = () => {
   const { isConnected } = useWallet();
-
-  if (!isConnected) {
-    return (
-      <Layout>
-        <WalletConnectPrompt 
-          title="Settings Access Required"
-          description="Please connect your wallet to access settings"
-        />
-      </Layout>
-    );
-  }
 
   return (
     <Layout>

@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import SectionHeading from "@/components/ui/section-heading";
-import WalletConnectPrompt from "@/components/ui/wallet-connect-prompt";
 import { useWallet } from "@/contexts/WalletContext";
 import { tokenAddresses, networkInfo } from "@/constants/contracts";
 import { switchNetwork } from "@/utils/blockchainUtils";
@@ -185,17 +184,6 @@ const Swap = () => {
       setSwapping(false);
     }
   };
-  
-  if (!isConnected) {
-    return (
-      <Layout>
-        <WalletConnectPrompt 
-          title="Swap Access Required"
-          description="Please connect your wallet to use the token swap feature"
-        />
-      </Layout>
-    );
-  }
   
   return (
     <Layout>
